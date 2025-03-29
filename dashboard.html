@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zeus Dashboard</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/style.css"> <!-- Updated to absolute path -->
     <script>
         // Check if user is authenticated
         window.onload = function() {
@@ -17,7 +17,7 @@
                 loadUserData();
             } else if (!localStorage.getItem('discord_code')) {
                 // Redirect to login if no auth code
-                window.location.href = 'index.html';
+                window.location.href = '/index.html'; // Updated to absolute path
             } else {
                 loadUserData();
             }
