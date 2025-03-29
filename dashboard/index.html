@@ -1,1 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zeus Bot - Dashboard</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="../assets/zeus-icon.png" type="image/png">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="../style.css">
+    
+    <!-- Dashboard CSS -->
+    <link rel="stylesheet" href="./dashboard.css">
+</head>
+<body>
+    <!-- Header Navigation -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="/">
+                    <img src="../assets/zeus-logo.png" alt="Zeus Bot Logo">
+                </a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/#features">Features</a></li>
+                    <li><a href="/#commands">Commands</a></li>
+                    <li class="active"><a href="/dashboard">Dashboard</a></li>
+                </ul>
+            </nav>
+            <div class="header-buttons">
+                <div class="language-selector">
+                    <button id="langToggle">
+                        <i class="fas fa-globe"></i>
+                        <span id="currentLang">English</span>
+                    </button>
+                    <div class="language-dropdown">
+                        <a href="#" id="lang-en" onclick="updateLanguageToEnglish()">English</a>
+                        <a href="#" id="lang-ar" onclick="updateLanguageToArabic()">العربية</a>
+                    </div>
+                </div>
+                <button id="loginBtn" class="btn"><i class="fab fa-discord"></i> <span>Login</span></button>
+            </div>
+        </div>
+    </header>
 
+    <!-- Dashboard Main Section -->
+    <div class="dashboard-container">
+        <div class="dashboard-sidebar">
+            <div class="user-profile">
+                <div class="user-avatar">
+                    <img id="userAvatar" src="../assets/default-avatar.png" alt="User Avatar">
+                </div>
+                <div class="user-info">
+                    <h3 id="userName">Welcome</h3>
+                    <p id="userTag">Please log in</p>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active"><a href="/dashboard"><i class="fas fa-home"></i> <span data-lang="overview">Overview</span></a></li>
+                    <li><a href="/dashboard/servers"><i class="fas fa-server"></i> <span data-lang="servers">Servers</span></a></li>
+                    <li><a href="/dashboard/settings"><i class="fas fa-cog"></i> <span data-lang="settings">Settings</span></a></li>
+                    <li><a href="/dashboard/commands"><i class="fas fa-terminal"></i> <span data-lang="commands">Commands</span></a></li>
+                    <li><a href="/dashboard/analytics"><i class="fas fa-chart-line"></i> <span data-lang="analytics">Analytics</span></a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="/auth/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i> <span data-lang="logout">Logout</span></a>
+            </div>
+        </div>
+
+        <div class="dashboard-main">
+            <div class="dashboard-header">
+                <h1><span data-lang="dashboard">Dashboard</span></h1>
+                <div class="dashboard-actions">
+                    <button class="btn secondary"><i class="fas fa-sync-alt"></i> <span data-lang="refresh">Refresh</span></button>
+                    <button class="btn primary"><i class="fas fa-plus"></i> <span data-lang="add-server">Add to Server</span></button>
+                </div>
+            </div>
+
+            <div class="servers-grid" id="serversGrid">
+                <div class="servers-loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p data-lang="loading-servers">Loading your servers...</p>
+                </div>
+            </div>
+
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-server"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="serverCount">0</h3>
+                        <p data-lang="managed-servers">Managed Servers</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="userCount">0</h3>
+                        <p data-lang="total-users">Total Users</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-terminal"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="commandCount">0</h3>
+                        <p data-lang="commands-used">Commands Used</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="uptime">0%</h3>
+                        <p data-lang="uptime">Uptime</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-section">
+                <h2><span data-lang="recent-activity">Recent Activity</span></h2>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="activity-content">
+                            <p><strong>Zeus Bot</strong> was added to <strong>Server Name</strong></p>
+                            <span class="activity-time">2 hours ago</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-cog"></i>
+                        </div>
+                        <div class="activity-content">
+                            <p><strong>Welcome Message</strong> was configured in <strong>Server Name</strong></p>
+                            <span class="activity-time">Yesterday</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-ban"></i>
+                        </div>
+                        <div class="activity-content">
+                            <p><strong>Auto-moderation</strong> removed 5 messages in <strong>Server Name</strong></p>
+                            <span class="activity-time">2 days ago</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="container">
+            <div class="footer-logo">
+                <img src="../assets/zeus-logo.png" alt="Zeus Bot Logo">
+            </div>
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h3 data-lang="resources">Resources</h3>
+                    <ul>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">API</a></li>
+                        <li><a href="#">Support</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3 data-lang="company">Company</h3>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Careers</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3 data-lang="legal">Legal</h3>
+                    <ul>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Cookies</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-social">
+                <a href="#" class="social-icon"><i class="fab fa-discord"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
+            </div>
+            <div class="footer-copyright">
+                <p>&copy; 2025 Zeus Bot. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Dashboard JS -->
+    <script src="./dashboard.js"></script>
+</body>
+</html>
