@@ -1,1 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zeus | The Ultimate Discord Bot</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="assets/images/generated-icon.svg">
+</head>
+<body>
+    <!-- Header -->
+    <header id="mainHeader" class="animated-header">
+        <div class="header-bg-animation">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+        <div class="left-section">
+            <div class="hamburger-menu" id="menuBtn">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+            <div class="logo-container glow-effect">
+                <img src="assets/images/generated-icon.svg" alt="Zeus Bot Logo" class="bot-logo pulse-animation">
+                <h1>Zeus <span class="tagline shine-text">Ultimate Discord Bot</span></h1>
+            </div>
+        </div>
+        <div class="right-section">
+            <div class="nav-container">
+                <nav class="nav-menu" id="navMenu">
+                    <a href="#features" class="nav-link"><i class="fas fa-crown"></i> Features</a>
+                    <a href="#commands" class="nav-link"><i class="fas fa-code"></i> Commands</a>
+                    <a href="https://discord.gg/zeusbot" class="nav-link" target="_blank"><i class="fas fa-headset"></i> Support</a>
+                    <a href="/auth/discord?redirect=/dashboard" id="headerDashboardBtn" class="nav-link"><i class="fas fa-chart-line"></i> Dashboard</a>
+                </nav>
+            </div>
+            <div class="header-buttons">
+                <a href="https://discord.com/oauth2/authorize?client_id=1353340921831493714&redirect_uri=https%3A%2F%2Fxxybg5xx.github.io%2Fdashboard.html&response_type=code&scope=identify%20guilds" class="login-btn">
+                    <i class="fab fa-discord"></i> Login with Discord
+                </a>
+            </div>
+        </div>
+    </header>
 
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content sliding-element">
+            <h2>Empower your Discord server with <span>Zeus</span></h2>
+            <p>The powerful Discord bot with advanced moderation, music streaming, giveaways, welcome system, and much more!</p>
+            <div class="hero-buttons">
+                <a href="https://discord.com/oauth2/authorize?client_id=1353340921831493714&scope=bot%20applications.commands&permissions=8" class="btn invite-link"><i class="fas fa-bolt"></i> Add Zeus to Server</a>
+                <a href="https://discord.com/oauth2/authorize?client_id=1353340921831493714&redirect_uri=https%3A%2F%2Fxxybg5xx.github.io%2Fcallback&response_type=code&scope=identify%20guilds" class="btn secondary">
+                    <i class="fas fa-cog"></i> Manage Your Servers
+                </a>
+            </div>
+            
+            <div class="trusted-servers-heading">
+                <h3>TRUSTED BY OVER 1000+ DISCORD SERVERS</h3>
+            </div>
+            <div class="server-list-container">
+                <div class="server-list">
+                    <div class="server-list-inner">
+                        <!-- Original cards -->
+                        <div class="server-card">
+                            <img src="https://cdn.discordapp.com/icons/123456789/server1.png" alt="Server 1">
+                            <h4>Gaming Hub</h4>
+                        </div>
+                        <div class="server-card">
+                            <img src="https://cdn.discordapp.com/icons/987654321/server2.png" alt="Server 2">
+                            <h4>Community Zone</h4>
+                        </div>
+                        <div class="server-card">
+                            <img src="https://cdn.discordapp.com/icons/456789123/server3.png" alt="Server 3">
+                            <h4>Anime World</h4>
+                        </div>
+                        <div class="server-card">
+                            <img src="https://cdn.discordapp.com/icons/789123456/server4.png" alt="Server 4">
+                            <h4>Music Lounge</h4>
+                        </div>
+                        
+                        <!-- Duplicated cards for continuous movement -->
+                        <div class="server-card">
+                            <img src="https://cdn.discordapp.com/icons/123456789/server1.png" alt="Server 1">
+                            <h4>Gaming Hub</h4>
+                        </div>
+                        <div class="server-card">
+                            <img src="https://cdn.discordapp.com/icons/987654321/server2.png" alt="Server 2">
+                            <h4>Community Zone</h4>
+                        </div>
+                        <div class="server-card">
+                            <img src="https://cdn.discordapp.com/icons/456789123/server3.png" alt="Server 3">
+                            <h4>Anime World</h4>
+                        </div>
+                        <div class="server-card">
+                            <img src="https://cdn.discordapp.com/icons/789123456/server4.png" alt="Server 4">
+                            <h4>Music Lounge</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bot Animation - Moved below server cards -->
+            <div class="bot-animation sliding-element centered-animation">
+                <img src="assets/images/bot-animation.svg" alt="Zeus Bot Animation" class="animated-bot">
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="statistics" id="statistics">
+        <h2 class="section-title">Bot Statistics</h2>
+        <div class="stats-grid">
+            <div class="stat-card sliding-element">
+                <i class="fas fa-server"></i>
+                <h3>1000+</h3>
+                <p>Active Servers</p>
+            </div>
+            <div class="stat-card sliding-element">
+                <i class="fas fa-users"></i>
+                <h3>100K+</h3>
+                <p>Users</p>
+            </div>
+            <div class="stat-card sliding-element">
+                <i class="fas fa-music"></i>
+                <h3>500K+</h3>
+                <p>Songs Played</p>
+            </div>
+            <div class="stat-card sliding-element">
+                <i class="fas fa-shield-alt"></i>
+                <h3>50K+</h3>
+                <p>Admin Actions</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <h2 class="section-title">Bot Features</h2>
+        <div class="features-grid">
+            <!-- Music System -->
+            <div class="feature-card embed-style sliding-element">
+                <div class="embed-header">
+                    <div class="embed-icon">🎵</div>
+                    <h3 class="embed-title">Music System</h3>
+                </div>
+                <div class="embed-description">
+                    High quality music playback with playlists and search functionality
+                </div>
+                <div class="embed-footer">
+                    <span class="embed-footer-icon">🔊</span>
+                    Crystal clear audio
+                </div>
+            </div>
+
+            <!-- Moderation -->
+            <div class="feature-card embed-style sliding-element">
+                <div class="embed-header">
+                    <div class="embed-icon">🛡️</div>
+                    <h3 class="embed-title">Moderation</h3>
+                </div>
+                <div class="embed-description">
+                    Advanced moderation tools to keep your server safe and clean
+                </div>
+                <div class="embed-footer">
+                    <span class="embed-footer-icon">⚙️</span>
+                    Auto-moderation available
+                </div>
+            </div>
+
+            <!-- Welcome System -->
+            <div class="feature-card embed-style sliding-element">
+                <div class="embed-header">
+                    <div class="embed-icon">👋</div>
+                    <h3 class="embed-title">Welcome Messages</h3>
+                </div>
+                <div class="embed-description">
+                    Custom welcome images with user's avatar and personalized messages
+                </div>
+            </div>
+
+            <!-- Giveaway -->
+            <div class="feature-card embed-style sliding-element">
+                <div class="embed-header">
+                    <div class="embed-icon">🎁</div>
+                    <h3 class="embed-title">Giveaways</h3>
+                </div>
+                <div class="embed-description">
+                    Create and manage giveaways with just a few commands
+                </div>
+                <div class="embed-footer">
+                    <span class="embed-footer-icon">⏱️</span>
+                    Automatic winner selection
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Commands Section -->
+    <section class="commands" id="commands">
+        <h2 class="section-title">Bot Commands</h2>
+        <div class="commands-container">
+            <div class="command-category">
+                <h3 class="category-title">🔨 Moderation</h3>
+                <div class="command-list">
+                    <div class="command">
+                        <span class="command-name">kick</span>
+                        <span class="command-desc">Kick a member from the server</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">ban</span>
+                        <span class="command-desc">Ban a member from the server</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">unban</span>
+                        <span class="command-desc">Unban a previously banned member</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">mute</span>
+                        <span class="command-desc">Mute a member in text channels</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">unmute</span>
+                        <span class="command-desc">Unmute a muted member</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">vmute</span>
+                        <span class="command-desc">Mute a member in voice channels</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">vunmute</span>
+                        <span class="command-desc">Unmute a voice muted member</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">warn</span>
+                        <span class="command-desc">Warn a member for rule violations</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">warn-remove</span>
+                        <span class="command-desc">Remove a warning from a member</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">warnings</span>
+                        <span class="command-desc">View a member's warnings</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">lock</span>
+                        <span class="command-desc">Lock a channel</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">unlock</span>
+                        <span class="command-desc">Unlock a locked channel</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">clear</span>
+                        <span class="command-desc">Clear messages from a channel</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">move-me</span>
+                        <span class="command-desc">Move yourself to another voice channel</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">move-all</span>
+                        <span class="command-desc">Move all members to another voice channel</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">move-user</span>
+                        <span class="command-desc">Move a specific user to another voice channel</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">vkick</span>
+                        <span class="command-desc">Kick a member from voice channel</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">timeout</span>
+                        <span class="command-desc">Timeout a member</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">untimeout</span>
+                        <span class="command-desc">Remove timeout from a member</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">set-nick</span>
+                        <span class="command-desc">Change a member's nickname</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">role-give</span>
+                        <span class="command-desc">Give a role to a member</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">role-remove</span>
+                        <span class="command-desc">Remove a role from a member</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">role-meltipe</span>
+                        <span class="command-desc">Meltipe role management</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="command-category">
+                <h3 class="category-title">👤 User</h3>
+                <div class="command-list">
+                    <div class="command">
+                        <span class="command-name">profile</span>
+                        <span class="command-desc">View your profile</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">avatar</span>
+                        <span class="command-desc">View a user's avatar</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">user</span>
+                        <span class="command-desc">Get user information</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">server</span>
+                        <span class="command-desc">Get server information</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">color</span>
+                        <span class="command-desc">View your color role</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">roles</span>
+                        <span class="command-desc">List server roles</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">colors</span>
+                        <span class="command-desc">List available color roles</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">set-color</span>
+                        <span class="command-desc">Set your color role</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">help</span>
+                        <span class="command-desc">Show help menu</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">invite</span>
+                        <span class="command-desc">Get bot invite link</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">set-nick-self</span>
+                        <span class="command-desc">Change your own nickname</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="command-category">
+                <h3 class="category-title">🎵 Music</h3>
+                <div class="command-list">
+                    <div class="command">
+                        <span class="command-name">play</span>
+                        <span class="command-desc">Play music from YouTube or other sources</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">stop</span>
+                        <span class="command-desc">Stop the current music</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">skip</span>
+                        <span class="command-desc">Skip the current song</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">queue</span>
+                        <span class="command-desc">View the current queue</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="command-category">
+                <h3 class="category-title">🎁 Giveaways</h3>
+                <div class="command-list">
+                    <div class="command">
+                        <span class="command-name">gstart/gcreate</span>
+                        <span class="command-desc">Create a giveaway (time) (winners) (prize)</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">gend/gdelete</span>
+                        <span class="command-desc">End a giveaway early</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="command-category">
+                <h3 class="category-title">🖼️ Welcome</h3>
+                <div class="command-list">
+                    <div class="command">
+                        <span class="command-name">set-image</span>
+                        <span class="command-desc">Set welcome image</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">set-text</span>
+                        <span class="command-desc">Set welcome message text</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">set-message</span>
+                        <span class="command-desc">Set complete welcome message</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">turnon-welcome</span>
+                        <span class="command-desc">Enable welcome messages</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">turnoff-welcome</span>
+                        <span class="command-desc">Disable welcome messages</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="command-category">
+                <h3 class="category-title">🏆 Ranking</h3>
+                <div class="command-list">
+                    <div class="command">
+                        <span class="command-name">rank</span>
+                        <span class="command-desc">Check your rank</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">top</span>
+                        <span class="command-desc">View top users globally</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">top-server</span>
+                        <span class="command-desc">View top users in this server</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="command-category">
+                <h3 class="category-title">🤖 Auto Reactions</h3>
+                <div class="command-list">
+                    <div class="command">
+                        <span class="command-name">autoreaction</span>
+                        <span class="command-desc">Enable/disable auto reactions (true/false)</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">autoreaction-channel add</span>
+                        <span class="command-desc">Add channel to auto reaction list</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">autoreaction-channel list</span>
+                        <span class="command-desc">List auto reaction channels</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">autoreaction-channel remove</span>
+                        <span class="command-desc">Remove channel from auto reaction list</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">autoreaction-emoji add</span>
+                        <span class="command-desc">Add emoji to auto reactions</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">autoreaction-emoji list</span>
+                        <span class="command-desc">List auto reaction emojis</span>
+                    </div>
+                    <div class="command">
+                        <span class="command-name">autoreaction-emoji remove</span>
+                        <span class="command-desc">Remove emoji from auto reactions</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Auth Error Section -->
+    <section id="auth-error-section" class="auth-error-section" style="display: none;">
+        <div class="error-container">
+            <div class="error-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h2 class="error-title">Authentication Error</h2>
+            <p id="error-message">An error occurred during authentication. Please try again.</p>
+            <div class="error-actions">
+                <a href="https://discord.com/oauth2/authorize?client_id=1353340921831493714&redirect_uri=https%3A%2F%2Fxxybg5xx.github.io%2Fcallback&response_type=code&scope=identify%20guilds" class="btn">
+                    <i class="fab fa-discord"></i> Try Again
+                </a>
+                <a href="/" class="btn secondary"><i class="fas fa-home"></i> Return Home</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Section -->
+    <section id="dashboard-section" class="dashboard-section" style="display: none;">
+        <div class="dashboard-container">
+            <div class="dashboard-header">
+                <h2>Zeus Dashboard</h2>
+                <div class="user-info">
+                    <div class="user-avatar-container">
+                        <img id="dashboard-user-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="User Avatar" class="dashboard-avatar">
+                    </div>
+                    <div class="user-details">
+                        <h3 id="dashboard-username">Username</h3>
+                        <p id="dashboard-user-tag">Username#0000</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-stats">
+                <div class="stat-item">
+                    <i class="fas fa-server"></i>
+                    <h4>Your Servers</h4>
+                    <p id="server-count">0</p>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-users"></i>
+                    <h4>Total Members</h4>
+                    <p id="member-count">0</p>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-terminal"></i>
+                    <h4>Commands Used</h4>
+                    <p id="command-count">0</p>
+                </div>
+            </div>
+
+            <div class="dashboard-search">
+                <div class="search-container">
+                    <input type="text" id="server-search" placeholder="Search your servers..." class="search-input">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+            </div>
+
+            <div id="no-servers-message" class="no-servers" style="display: none;">
+                <i class="fas fa-server"></i>
+                <h3>No Servers Found</h3>
+                <p>You don't have any servers where you have manager permissions, or Zeus bot is not added to your servers yet.</p>
+                <a href="https://discord.com/oauth2/authorize?client_id=1353340921831493714&scope=bot%20applications.commands&permissions=8" class="btn invite-link"><i class="fas fa-bolt"></i> Add Zeus to a Server</a>
+            </div>
+
+            <div id="servers-grid" class="servers-grid"></div>
+        </div>
+    </section>
+
+    <!-- Guild Dashboard Section -->
+    <section id="guild-dashboard-section" class="guild-dashboard-section" style="display: none;">
+        <div class="guild-dashboard-container">
+            <div class="guild-header">
+                <div class="guild-icon-container">
+                    <img id="guild-icon" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Server Icon" class="guild-icon">
+                </div>
+                <div class="guild-details">
+                    <h2 id="guild-name">Server Name</h2>
+                    <p id="guild-members">Members: 0</p>
+                </div>
+                <div class="back-button">
+                    <a href="/?view=dashboard" class="btn secondary"><i class="fas fa-arrow-left"></i> Back to Servers</a>
+                </div>
+            </div>
+
+            <div class="guild-settings-tabs">
+                <button class="tab-button active" data-tab="general">General</button>
+                <button class="tab-button" data-tab="welcome">Welcome</button>
+                <button class="tab-button" data-tab="moderation">Moderation</button>
+                <button class="tab-button" data-tab="music">Music</button>
+                <button class="tab-button" data-tab="giveaway">Giveaways</button>
+                <button class="tab-button" data-tab="levels">Levels</button>
+            </div>
+
+            <div class="guild-settings-content">
+                <div id="general-tab" class="tab-content active">
+                    <h3>General Settings</h3>
+                    <p>Configure general settings for Zeus bot in your server.</p>
+                    <div class="settings-form">
+                        <div class="form-group">
+                            <label>Prefix</label>
+                            <input type="text" id="prefix-input" placeholder="!" class="settings-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Language</label>
+                            <select id="language-select" class="settings-select">
+                                <option value="en">English</option>
+                                <option value="ar">Arabic</option>
+                                <option value="fr">French</option>
+                                <option value="es">Spanish</option>
+                            </select>
+                        </div>
+                        <div class="settings-actions">
+                            <button class="btn" id="save-general-settings"><i class="fas fa-save"></i> Save Settings</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="terms.html">Terms of Service</a></li>
+                    <li><a href="privacy.html">Privacy Policy</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Links</h4>
+                <ul>
+                    <li><a href="https://discord.gg/zeusbot" target="_blank">Support Server</a></li>
+                    <li><a href="https://top.gg/bot/1353340921831493714" target="_blank">Vote on Top.gg</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>About</h4>
+                <p>&copy; 2023-2025 Zeus Bot. All rights reserved. Developed by Zeus Team.</p>
+                <p>The ultimate Discord bot for server management, moderation, music, and much more!</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- Back to Top Button -->
+    <button id="scrollToTopBtn" class="scroll-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="script.js"></script>
+</body>
+</html>

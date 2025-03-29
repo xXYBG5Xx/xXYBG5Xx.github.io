@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zeus Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        // Check if user is authenticated
+        window.onload = function() {
+            const params = new URLSearchParams(window.location.search);
+            const code = params.get('code');
+            
+            if (code) {
+                // Store the auth code
+                localStorage.setItem('discord_code', code);
+                loadUserData();
+            } else if (!localStorage.getItem('discord_code')) {
+                // Redirect to login if no auth code
+                window.location.href = 'index.html';
+            } else {
+                loadUserData();
+            }
+        }
+
+        // Load mock user data for demo
+        function loadUserData() {
+            // In a real app, this would make API calls to Discord
+            // For demo, we'll show mock data
+            const mockUser = {
+                username: "Demo User",
+                avatar: "https://cdn.discordapp.com/embed/avatars/0.png",
+                servers: [
+                    {
+                        name: "Gaming Server",
+                        members: 1500,
+                        icon: "https://cdn.discordapp.com/embed/avatars/1.png"
+                    },
+                    {
+                        name: "Community Hub",
+                        members: 2500,
+                        icon: "https://cdn.discordapp.com/embed/avatars/2.png"
+                    }
+                ]
+            };
+
+            // Update UI with mock data
+            document.getElementById('user-name').textContent = mockUser.username;
+            document.getElementById('user-avatar').src = mockUser.avatar;
+            
+            const serverList = document.getElementById('server-list');
+            mockUser.servers.forEach(server => {
+                const serverCard = document.createElement('div');
+                serverCard.className = 'server-card';
+                serverCard.innerHTML = `
+                    <img src="${server.icon}" alt="${server.name}">
+                    <h3>${server.name}</h3>
+                    <p>${server.members} members</p>
+                `;
+                serverList.appendChild(serverCard);
+            });
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <div class="dashboard-header">
+            <img id="user-avatar" alt="User Avatar">
+            <h1>Welcome, <span id="user-name">User</span></h1>
+        </div>
+    </header>
+    
+    <main>
+        <section class="server-section">
+            <h2>Your Servers</h2>
+            <div id="server-list" class="server-grid"></div>
+        </section>
+    </main>
+</body>
+</html>
