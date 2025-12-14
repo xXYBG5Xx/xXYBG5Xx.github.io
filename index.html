@@ -1,95 +1,0 @@
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>واجهة شبيهة بصفحة المتصفح</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div class="overlay"></div>
-
-  <header class="topbar">
-    <div class="logo">My Start</div>
-    <div class="controls">
-      <button id="btn-add" class="btn">إضافة</button>
-      <button id="btn-settings" class="btn">الإعدادات</button>
-    </div>
-  </header>
-
-  <main class="main">
-    <section class="search-wrap">
-      <input id="search" class="search" placeholder="اكتب بحث أو عنوان موقع..." />
-    </section>
-
-    <section class="tiles-section">
-      <h2 class="section-title">التطبيقات</h2>
-      <ul id="tiles" class="tiles" aria-label="قائمة التطبيقات"></ul>
-      <p class="hint">اسحب العناصر لإعادة الترتيب — اضغط مطولاً أو استخدم أيقونات التعديل</p>
-    </section>
-  </main>
-
-  <!-- Add / Edit Modal -->
-  <div id="modal" class="modal hidden" role="dialog" aria-modal="true">
-    <div class="modal-card">
-      <h3 id="modal-title">إضافة تطبيق</h3>
-      <label>الاسم
-        <input id="tile-title" placeholder="مثال: WhatsApp" />
-      </label>
-      <label>الرابط (URL)
-        <input id="tile-url" placeholder="https://..." />
-      </label>
-      <label>أيقونة (إيموجي أو حرف واحد)
-        <input id="tile-icon" maxlength="2" placeholder="مثال: 💬 أو W" />
-      </label>
-      <label>لون خلفية الأيقونة
-        <input id="tile-color" type="color" value="#4a90e2" />
-      </label>
-
-      <div class="modal-actions">
-        <button id="modal-save" class="btn primary">حفظ</button>
-        <button id="modal-cancel" class="btn">إلغاء</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Settings Modal -->
-  <div id="settings" class="modal hidden" role="dialog" aria-modal="true">
-    <div class="modal-card">
-      <h3>الإعدادات</h3>
-      <label>خلفية ثابتة (لون)
-        <input id="bg-color" type="color" />
-      </label>
-      <label>أو رفع صورة كخلفية
-        <input id="bg-image" type="file" accept="image/*" />
-      </label>
-      <label>
-        تفعيل أنيميشن عند الضغط
-        <input id="toggle-click-anim" type="checkbox" />
-      </label>
-      <div class="modal-actions">
-        <button id="settings-save" class="btn primary">حفظ</button>
-        <button id="settings-reset" class="btn">إعادة الإعدادات</button>
-        <button id="settings-close" class="btn">قفل</button>
-      </div>
-    </div>
-  </div>
-
-  <template id="tile-template">
-    <li class="tile" draggable="true">
-      <button class="tile-btn">
-        <span class="tile-icon"></span>
-        <span class="tile-title"></span>
-      </button>
-      <div class="tile-actions">
-        <button class="edit" title="تعديل">✎</button>
-        <button class="remove" title="حذف">✖</button>
-        <button class="move-up" title="تحريك للأعلى">▲</button>
-        <button class="move-down" title="تحريك للأسفل">▼</button>
-      </div>
-    </li>
-  </template>
-
-  <script src="script.js" defer></script>
-</body>
-</html>
