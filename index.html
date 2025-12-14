@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>بحث ويب — واجهة إدج</title>
+  <link rel="stylesheet" href="style.css" />
+  <meta name="color-scheme" content="light dark" />
+</head>
+<body>
+  <!-- شريط علوي بأسلوب متصفح إدج -->
+  <header class="edge-bar">
+    <div class="edge-left">
+      <div class="tab active">
+        <span class="tab-favicon">🔎</span>
+        <span class="tab-title">بحث</span>
+      </div>
+      <div class="tab">
+        <span class="tab-favicon">📄</span>
+        <span class="tab-title">تبويب جديد</span>
+      </div>
+    </div>
+    <div class="edge-address">
+      <span class="lock">🔒</span>
+      <input type="text" id="address-input" value="https://www.example.com" />
+      <button id="refresh-btn" title="تحديث">↻</button>
+    </div>
+    <div class="edge-actions">
+      <button title="تصغير">—</button>
+      <button title="تكبير">□</button>
+      <button title="إغلاق">×</button>
+    </div>
+  </header>
+
+  <!-- لوحة معلومات: الساعة، التاريخ، الطقس -->
+  <section class="status-bar">
+    <div class="status-item">
+      <strong>الوقت:</strong>
+      <span id="clock">--:--</span>
+    </div>
+    <div class="status-item">
+      <strong>التاريخ:</strong>
+      <span id="date">----/--/--</span>
+    </div>
+    <div class="status-item">
+      <strong>الطقس:</strong>
+      <span id="weather">جاري التحميل...</span>
+    </div>
+  </section>
+
+  <!-- جسم الصفحة: واجهة بحث -->
+  <main class="search-wrapper">
+    <div class="logo">
+      <!-- شعار بسيط بديل، بدون علامات تجارية -->
+      <span class="g g1">ب</span><span class="g g2">ح</span><span class="g g3">ث</span>
+    </div>
+
+    <form id="search-form" class="search-form" role="search" aria-label="بحث على الويب">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input
+          id="q"
+          name="q"
+          type="text"
+          autocomplete="off"
+          placeholder="اكتب سؤالك أو كلمات البحث"
+          aria-label="اكتب للبحث"
+        />
+        <div class="actions">
+          <button type="button" id="mic-btn" title="بحث صوتي">🎤</button>
+          <button type="submit" class="search-btn">بحث</button>
+        </div>
+      </div>
+      <div class="hints">
+        <span>مثال: حالة الطقس اليوم في تونس</span>
+      </div>
+    </form>
+
+    <div class="quick-links">
+      <a href="#" data-suggest="أخبار اليوم في تونس">أخبار</a>
+      <a href="#" data-suggest="نتائج مباريات كرة القدم">رياضة</a>
+      <a href="#" data-suggest="أفضل مطاعم في تونس">مطاعم</a>
+      <a href="#" data-suggest="سعر صرف الدينار مقابل اليورو">اقتصاد</a>
+    </div>
+  </main>
+
+  <!-- تذييل بسيط -->
+  <footer class="footer">
+    <div class="footer-links">
+      <a href="#">الإعدادات</a>
+      <a href="#">الخصوصية</a>
+      <a href="#">المساعدة</a>
+    </div>
+    <div class="footer-note">واجهة تجريبية مستوحاة من متصفح إدج وصفحة بحث عامة</div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
