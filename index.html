@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>صفحة بداية - مظهر Edge + شكل Google</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-logo">Start</div>
+      <div class="brand-sub">صفحتي الشخصية</div>
+    </div>
+    <div class="top-actions">
+      <button id="btn-settings" class="icon-btn" title="الإعدادات">⚙️</button>
+      <button id="btn-add" class="primary-btn" title="إضافة اختصار">إضافة</button>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="hero">
+      <h1 class="hero-logo">بحث</h1>
+      <form id="search-form" class="search-form" role="search">
+        <input id="search" class="search-input" placeholder="ابحث في الويب أو اكتب عنوان موقع..." aria-label="بحث" />
+        <button type="submit" class="search-go" title="بحث">🔍</button>
+      </form>
+    </section>
+
+    <section class="tiles-section">
+      <ul id="tiles" class="tiles" aria-label="قائمة التطبيقات"></ul>
+    </section>
+  </main>
+
+  <!-- Modal إضافة/تعديل -->
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-card">
+      <h3 id="modal-title">إضافة اختصار</h3>
+      <label>الاسم
+        <input id="tile-title" placeholder="مثال: WhatsApp" />
+      </label>
+      <label>الرابط (URL)
+        <input id="tile-url" placeholder="https://..." />
+      </label>
+      <label>أيقونة (إيموجي أو حرف)
+        <input id="tile-icon" maxlength="2" placeholder="💬 أو W" />
+      </label>
+      <label>لون الأيقونة
+        <input id="tile-color" type="color" value="#4a90e2" />
+      </label>
+      <div class="modal-actions">
+        <button id="modal-save" class="btn primary">حفظ</button>
+        <button id="modal-cancel" class="btn">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="settings" class="modal hidden" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-card">
+      <h3>الإعدادات</h3>
+      <label>خلفية ثابتة (لون)
+        <input id="bg-color" type="color" />
+      </label>
+      <label>أو رفع صورة كخلفية
+        <input id="bg-image" type="file" accept="image/*" />
+      </label>
+      <label class="row"><input id="toggle-click-anim" type="checkbox" /> تفعيل أنيميشن عند الضغط على التطبيق</label>
+      <div class="modal-actions">
+        <button id="settings-save" class="btn primary">حفظ</button>
+        <button id="settings-close" class="btn">إغلاق</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- قالب Tile -->
+  <template id="tile-template">
+    <li class="tile" draggable="true" data-index="">
+      <button class="tile-btn" title="فتح">
+        <span class="tile-icon"></span>
+        <span class="tile-title"></span>
+      </button>
+      <div class="tile-actions">
+        <button class="edit" title="تعديل">✎</button>
+        <button class="remove" title="حذف">✖</button>
+        <button class="up" title="تحريك للأعلى">▲</button>
+        <button class="down" title="تحريك للأسفل">▼</button>
+      </div>
+    </li>
+  </template>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
