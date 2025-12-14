@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Start Page</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="bg"></div>
+
+  <main class="container">
+    <!-- شعار / عنوان -->
+    <h1 class="logo">My Space</h1>
+
+    <!-- البحث -->
+    <div class="search-box">
+      <input id="searchInput" type="text" placeholder="ابحث في Google..." />
+    </div>
+
+    <!-- التطبيقات / الصفحات -->
+    <div class="apps" id="apps">
+      <div class="app add" id="addBtn">+</div>
+    </div>
+      <!-- تغيير الخلفية -->
+    <input type="file" id="bgInput" accept="image/*" hidden />
+    <button class="bg-btn" onclick="document.getElementById('bgInput').click()">تغيير الخلفية</button>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
