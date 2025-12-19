@@ -1,61 +1,145 @@
-:root{
-  --edge1: #0078d7; /* أزرق Edge */
-  --edge2: #00b3ff; /* أزرق فاتح */
-  --edge3: #00d48f; /* أخضر/تركواز */
-  --bg: linear-gradient(135deg,var(--edge1),var(--edge2),var(--edge3));
-  --card: rgba(255,255,255,0.06);
-  --text: #ffffff;
-  --muted: rgba(255,255,255,0.85);
+:root {
+  --dark-bg: #0e1116;
+  --light-bg: #f3f3f3;
+  --text-dark: #ffffff;
+  --text-light: #111111;
+  --glass-dark: rgba(255,255,255,0.08);
+  --glass-light: rgba(0,0,0,0.08);
 }
 
-*{box-sizing:border-box;font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;direction:rtl}
-html,body{height:100%;margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
-.topbar{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:linear-gradient(180deg, rgba(0,0,0,0.06), transparent)}
-.brand{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
-.brand-logo{font-weight:700;font-size:18px}
-.brand-sub{font-size:12px;color:var(--muted);opacity:0.9}
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
 
-/* Buttons */
-.icon-btn, .btn, .primary-btn{background:transparent;border:1px solid rgba(255,255,255,0.12);color:var(--text);padding:8px 10px;border-radius:10px;cursor:pointer}
-.primary-btn{background:rgba(255,255,255,0.06);border:none;box-shadow:0 6px 18px rgba(0,0,0,0.18)}
-.icon-btn{padding:8px;border-radius:8px}
+body {
+  margin: 0;
+  height: 100vh;
+  background-size: cover;
+  background-position: center;
+  transition: 0.4s;
+}
 
-/* Hero / Search like Google */
-.main{max-width:980px;margin:36px auto;padding:0 18px}
-.hero{display:flex;flex-direction:column;align-items:center;gap:18px;margin-bottom:28px}
-.hero-logo{font-size:42px;margin:0;font-weight:600;letter-spacing:2px}
-.search-form{display:flex;gap:8px;width:100%;max-width:760px}
-.search-input{flex:1;padding:14px 18px;border-radius:999px;border:none;outline:none;background:rgba(255,255,255,0.12);color:var(--text);font-size:16px;box-shadow:0 6px 20px rgba(0,0,0,0.25)}
-.search-go{padding:12px 16px;border-radius:999px;border:none;background:linear-gradient(90deg,var(--edge2),var(--edge3));color:white;font-size:16px;cursor:pointer;box-shadow:0 8px 26px rgba(0,0,0,0.28)}
+body.dark {
+  background-color: var(--dark-bg);
+  color: var(--text-dark);
+}
 
-/* Tiles */
-.tiles-section{display:flex;justify-content:center}
-.tiles{display:flex;flex-wrap:wrap;gap:18px;list-style:none;padding:0;margin:0;justify-content:center}
-.tile{width:110px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:grab}
-.tile-btn{width:110px;height:110px;border-radius:20px;border:none;background:rgba(255,255,255,0.04);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:12px;color:var(--text);transition:transform .18s ease, box-shadow .18s}
-.tile-icon{width:60px;height:60px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:28px;color:white}
-.tile-title{font-size:13px;color:var(--muted);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%}
-.tile-btn:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 16px 40px rgba(0,0,0,0.35)}
-.tile-btn.click-anim{animation:pop .26s cubic-bezier(.2,.9,.3,1)}
-@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.16)}100%{transform:scale(1)}}
+body.light {
+  background-color: var(--light-bg);
+  color: var(--text-light);
+}
 
-.tile-actions{display:flex;gap:6px}
-.tile-actions button{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:6px;border-radius:6px}
-.tile-actions button:hover{color:var(--text);background:rgba(255,255,255,0.04)}
+.glass {
+  backdrop-filter: blur(18px);
+  border-radius: 18px;
+}
 
-/* Modal */
-.modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.45);z-index:40}
-.modal.hidden{display:none}
-.modal-card{width:100%;max-width:420px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.06)}
-.modal-card h3{margin-top:0}
-.modal-card label{display:flex;flex-direction:column;margin:8px 0;font-size:14px}
-.modal-card input[type="text"], .modal-card input[type="url"], .modal-card input[type="file"], .modal-card input[type="color"]{padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text)}
-.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+body.dark .glass {
+  background: var(--glass-dark);
+}
 
-/* Responsive */
-@media (max-width:520px){
-  .tile{width:90px}
-  .tile-btn{width:90px;height:90px}
-  .tile-icon{width:48px;height:48px}
-  .hero-logo{font-size:34px}
+body.light .glass {
+  background: var(--glass-light);
+}
+
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+}
+
+.info {
+  text-align: center;
+}
+
+#time {
+  font-size: 56px;
+  font-weight: 600;
+}
+
+#weather {
+  opacity: 0.8;
+  margin-top: 5px;
+}
+
+.search input {
+  width: 420px;
+  padding: 14px 18px;
+  border-radius: 30px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+}
+
+.apps {
+  display: flex;
+  gap: 26px;
+}
+
+.app {
+  width: 96px;
+  height: 96px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.app:hover {
+  transform: scale(1.15);
+}
+
+.icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+}
+
+#settingsBtn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  font-size: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+}
+
+#settings {
+  position: fixed;
+  top: 60px;
+  right: 20px;
+  width: 210px;
+  padding: 15px;
+}
+
+#settings h3 {
+  margin-top: 0;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+#settings button,
+.upload {
+  width: 100%;
+  padding: 8px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.hidden {
+  display: none;
 }
