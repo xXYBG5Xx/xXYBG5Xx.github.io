@@ -3,49 +3,108 @@
 <head>
 <meta charset="UTF-8">
 <title>One Line Heart + T</title>
+
 <style>
   body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background: #111;
+    background:#111;
+    color:#fff;
+    font-family: system-ui, sans-serif;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    height:100vh;
+    gap:20px;
+  }
+
+  svg {
+    width:600px;
+    height:300px;
+  }
+
+  path {
+    fill:none;
+    stroke:#ff4d6d;
+    stroke-width:4;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    stroke-dasharray:1000;
+    stroke-dashoffset:1000;
+  }
+
+  button {
+    padding:10px 25px;
+    font-size:16px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    background:#ff4d6d;
+    color:#fff;
+  }
+
+  #msg {
+    opacity:0;
+    transition:opacity 1.5s ease;
+    font-size:18px;
+    text-align:center;
+    max-width:400px;
+    line-height:1.8;
   }
 </style>
 </head>
 <body>
 
-<canvas id="c" width="600" height="300"></canvas>
+<svg viewBox="0 0 600 300">
+  <!-- خط واحد: قلب + T -->
+  <path id="line"
+    d="
+      M150 160
+      C120 120 80 140 100 180
+      C130 230 150 240 150 260
+      C150 240 170 230 200 180
+      C220 140 180 120 150 160
+      L260 160
+      L340 160
+      L300 160
+      L300 260
+    "
+  />
+</svg>
+
+<button id="start">ابدأ</button>
+
+<div id="msg">
+  ثريا،  
+  آسف لو جرحتك أو قصّرت بحقك 💔  
+  وجودك مهم عندي، وما كان قصدي أزعلِك أبداً.
+</div>
 
 <script>
-const c = document.getElementById("c");
-const ctx = c.getContext("2d");
+const path = document.getElementById("line");
+const btn = document.getElementById("start");
+const msg = document.getElementById("msg");
 
-ctx.strokeStyle = "#ff4d6d";
-ctx.lineWidth = 4;
-ctx.lineCap = "round";
-ctx.lineJoin = "round";
+const length = path.getTotalLength();
+path.style.strokeDasharray = length;
+path.style.strokeDashoffset = length;
 
-ctx.beginPath();
+btn.onclick = () => {
+  // إعادة ضبط
+  path.style.transition = "none";
+  path.style.strokeDashoffset = length;
+  msg.style.opacity = 0;
 
-// نقطة البداية
-ctx.moveTo(150, 160);
+  // تشغيل الأنيميشن
+  setTimeout(() => {
+    path.style.transition = "stroke-dashoffset 6s linear"; // بطيء
+    path.style.strokeDashoffset = 0;
+  }, 50);
 
-// ❤️ القلب (مسار واحد)
-ctx.bezierCurveTo(120, 120, 80, 140, 100, 180);
-ctx.bezierCurveTo(130, 230, 150, 240, 150, 260);
-ctx.bezierCurveTo(150, 240, 170, 230, 200, 180);
-ctx.bezierCurveTo(220, 140, 180, 120, 150, 160);
-
-// ➜ الانتقال بدون قطع الخط
-ctx.lineTo(260, 160);
-
-// 🔤 حرف T (بنفس الخط)
-ctx.lineTo(340, 160); // الخط العلوي
-ctx.lineTo(300, 160);
-ctx.lineTo(300, 260); // الخط العمودي
-
-ctx.stroke();
+  // إظهار الرسالة بعد الانتهاء
+  setTimeout(() => {
+    msg.style.opacity = 1;
+  }, 6500);
+};
 </script>
 
 </body>
