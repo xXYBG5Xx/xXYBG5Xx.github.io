@@ -23,6 +23,16 @@
   </label>
 </div>
 
+<!-- نافذة إضافة موقع -->
+<div id="addModal" class="modal hidden">
+  <div class="modal-box glass">
+    <h3>Add Site</h3>
+    <input id="siteName" placeholder="Site name">
+    <input id="siteUrl" placeholder="https://example.com">
+    <button id="addSiteBtn">Add</button>
+  </div>
+</div>
+
 <div class="container fade">
 
   <div class="info">
@@ -38,16 +48,11 @@
     >
   </div>
 
-  <!-- أنت تضيف المواقع هنا -->
-  <div class="apps">
-    <div class="app glass" data-url="https://google.com">
-      <img class="icon">
-      <span>Google</span>
-    </div>
-
-    <div class="app glass" data-url="https://youtube.com">
-      <img class="icon">
-      <span>YouTube</span>
+  <!-- الصفحات -->
+  <div class="apps" id="apps">
+    <!-- زر الإضافة -->
+    <div class="app add glass" id="addBtn">
+      <span>+</span>
     </div>
   </div>
 

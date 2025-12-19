@@ -1,8 +1,8 @@
 :root {
   --dark-bg: #0e1116;
   --light-bg: #f4f4f4;
-  --text-dark: #ffffff;
-  --text-light: #111111;
+  --text-dark: #fff;
+  --text-light: #111;
   --glass-dark: rgba(255,255,255,0.06);
   --glass-light: rgba(0,0,0,0.06);
 }
@@ -17,18 +17,11 @@ body {
   height: 100vh;
   background-size: cover;
   background-position: center;
-  transition: background 0.4s, color 0.4s;
+  transition: 0.4s;
 }
 
-body.dark {
-  background-color: var(--dark-bg);
-  color: var(--text-dark);
-}
-
-body.light {
-  background-color: var(--light-bg);
-  color: var(--text-light);
-}
+body.dark { background: var(--dark-bg); color: var(--text-dark); }
+body.light { background: var(--light-bg); color: var(--text-light); }
 
 .glass {
   backdrop-filter: blur(16px);
@@ -47,9 +40,7 @@ body.light .glass { background: var(--glass-light); }
   gap: 34px;
 }
 
-.info {
-  text-align: center;
-}
+.info { text-align: center; }
 
 #time {
   font-size: 56px;
@@ -58,7 +49,6 @@ body.light .glass { background: var(--glass-light); }
 
 #weather {
   opacity: 0.75;
-  margin-top: 4px;
 }
 
 .search input {
@@ -68,12 +58,12 @@ body.light .glass { background: var(--glass-light); }
   border: none;
   outline: none;
   font-size: 16px;
-  transition: box-shadow 0.3s, transform 0.3s;
+  transition: 0.3s;
 }
 
 .search input:focus {
   transform: scale(1.02);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
 }
 
 .apps {
@@ -91,12 +81,11 @@ body.light .glass { background: var(--glass-light); }
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform 0.25s, box-shadow 0.25s;
+  transition: 0.25s;
 }
 
 .app:hover {
   transform: scale(1.12);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
 }
 
 .icon {
@@ -105,39 +94,54 @@ body.light .glass { background: var(--glass-light); }
   margin-bottom: 6px;
 }
 
-#settingsBtn {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  font-size: 20px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: inherit;
+.add span {
+  font-size: 40px;
+  opacity: 0.6;
 }
 
-#settings {
+/* Modal */
+.modal {
   position: fixed;
-  top: 60px;
-  right: 20px;
-  width: 210px;
-  padding: 15px;
-}
-
-.row {
+  inset: 0;
+  background: rgba(0,0,0,0.5);
   display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-box {
+  width: 260px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
   gap: 10px;
-  margin-bottom: 12px;
+}
+
+.modal-box input,
+.modal-box button {
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
 }
 
 .hidden { display: none; }
 
-/* Animations */
+/* Anim */
 .fade {
   animation: fadeIn 0.6s ease;
 }
 
 @keyframes fadeIn {
   from { opacity: 0; transform: scale(0.98); }
-  to   { opacity: 1; transform: scale(1); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+#settingsBtn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
 }
