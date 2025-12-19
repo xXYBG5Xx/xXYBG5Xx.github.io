@@ -1,10 +1,11 @@
 :root {
-  --dark-bg: #0e1116;
-  --light-bg: #f4f4f4;
+  --dark-bg: #0c0f14;
+  --light-bg: #f5f5f5;
   --text-dark: #fff;
   --text-light: #111;
-  --glass-dark: rgba(255,255,255,0.06);
-  --glass-light: rgba(0,0,0,0.06);
+  --glass-dark: rgba(255,255,255,0.07);
+  --glass-light: rgba(0,0,0,0.07);
+  --shadow: 0 12px 35px rgba(0,0,0,0.35);
 }
 
 * {
@@ -24,8 +25,8 @@ body.dark { background: var(--dark-bg); color: var(--text-dark); }
 body.light { background: var(--light-bg); color: var(--text-light); }
 
 .glass {
-  backdrop-filter: blur(16px);
-  border-radius: 18px;
+  backdrop-filter: blur(18px);
+  border-radius: 20px;
 }
 
 body.dark .glass { background: var(--glass-dark); }
@@ -52,8 +53,8 @@ body.light .glass { background: var(--glass-light); }
 }
 
 .search input {
-  width: 460px;
-  padding: 15px 20px;
+  width: 480px;
+  padding: 16px 22px;
   border-radius: 30px;
   border: none;
   outline: none;
@@ -62,14 +63,14 @@ body.light .glass { background: var(--glass-light); }
 }
 
 .search input:focus {
-  transform: scale(1.02);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  transform: scale(1.03);
+  box-shadow: var(--shadow);
 }
 
 .apps {
   display: grid;
   grid-template-columns: repeat(auto-fill, 96px);
-  gap: 28px;
+  gap: 30px;
   justify-content: center;
 }
 
@@ -80,17 +81,21 @@ body.light .glass { background: var(--glass-light); }
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  transition: 0.25s;
+  cursor: grab;
+  transition: transform 0.25s, box-shadow 0.25s;
 }
 
 .app:hover {
-  transform: scale(1.12);
+  transform: scale(1.15);
+  box-shadow: var(--shadow);
+}
+
+.app.dragging {
+  opacity: 0.4;
 }
 
 .icon {
   width: 32px;
-  height: 32px;
   margin-bottom: 6px;
 }
 
@@ -99,7 +104,6 @@ body.light .glass { background: var(--glass-light); }
   opacity: 0.6;
 }
 
-/* Modal */
 .modal {
   position: fixed;
   inset: 0;
@@ -120,19 +124,18 @@ body.light .glass { background: var(--glass-light); }
 .modal-box input,
 .modal-box button {
   padding: 10px;
-  border-radius: 10px;
+  border-radius: 12px;
   border: none;
 }
 
 .hidden { display: none; }
 
-/* Anim */
 .fade {
   animation: fadeIn 0.6s ease;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.98); }
+  from { opacity: 0; transform: scale(0.97); }
   to { opacity: 1; transform: scale(1); }
 }
 

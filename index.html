@@ -11,19 +11,17 @@
 
 <div id="settings" class="hidden glass">
   <h3>Settings</h3>
-
   <div class="row">
     <button onclick="setTheme('dark')">🌙 Dark</button>
     <button onclick="setTheme('light')">☀️ Light</button>
   </div>
-
   <label class="upload">
     🖼️ Background
     <input type="file" id="bgUpload" hidden>
   </label>
 </div>
 
-<!-- نافذة إضافة موقع -->
+<!-- Add Site Modal -->
 <div id="addModal" class="modal hidden">
   <div class="modal-box glass">
     <h3>Add Site</h3>
@@ -41,16 +39,10 @@
   </div>
 
   <div class="search glass">
-    <input
-      id="searchInput"
-      placeholder="Search the web"
-      autocomplete="off"
-    >
+    <input id="searchInput" placeholder="Search the web" autocomplete="off">
   </div>
 
-  <!-- الصفحات -->
   <div class="apps" id="apps">
-    <!-- زر الإضافة -->
     <div class="app add glass" id="addBtn">
       <span>+</span>
     </div>

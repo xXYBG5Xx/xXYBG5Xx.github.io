@@ -1,17 +1,14 @@
 // ===== Time =====
 const time = document.getElementById("time");
-function updateTime() {
+setInterval(() => {
   const now = new Date();
   time.textContent = now.toLocaleTimeString([], {
     hour: "2-digit",
     minute: "2-digit"
   });
-}
-setInterval(updateTime, 1000);
-updateTime();
+}, 1000);
 
 // ===== Search =====
-const searchInput = document.getElementById("searchInput");
 searchInput.value = "";
 searchInput.addEventListener("keydown", e => {
   if (e.key === "Enter" && searchInput.value.trim()) {
@@ -44,25 +41,21 @@ if (localStorage.getItem("bg"))
 settingsBtn.onclick = () =>
   settings.classList.toggle("hidden");
 
-// ===== Apps (+ add sites) =====
+// ===== Sites =====
 const apps = document.getElementById("apps");
 const addModal = document.getElementById("addModal");
-const siteName = document.getElementById("siteName");
-const siteUrl = document.getElementById("siteUrl");
-
-addBtn.onclick = () => addModal.classList.remove("hidden");
-addModal.onclick = e => {
-  if (e.target === addModal) addModal.classList.add("hidden");
-};
 
 let sites = JSON.parse(localStorage.getItem("sites") || "[]");
 
 function renderSites() {
   apps.querySelectorAll(".site").forEach(e => e.remove());
 
-  sites.forEach(site => {
+  sites.forEach((site, i) => {
     const div = document.createElement("div");
     div.className = "app glass site";
+    div.draggable = true;
+    div.dataset.index = i;
+
     div.innerHTML = `
       <img class="icon">
       <span>${site.name}</span>
@@ -73,19 +66,59 @@ function renderSites() {
       `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
 
     div.onclick = () => location.href = site.url;
+
+    // Drag events
+    div.addEventListener("dragstart", () => {
+      div.classList.add("dragging");
+    });
+
+    div.addEventListener("dragend", () => {
+      div.classList.remove("dragging");
+      saveOrder();
+    });
+
     apps.insertBefore(div, addBtn);
   });
+
+  enableDrag();
 }
+
+function enableDrag() {
+  const draggables = document.querySelectorAll(".site");
+  draggables.forEach(item => {
+    item.addEventListener("dragover", e => {
+      e.preventDefault();
+      const dragging = document.querySelector(".dragging");
+      if (dragging && item !== dragging) {
+        apps.insertBefore(dragging, item);
+      }
+    });
+  });
+}
+
+function saveOrder() {
+  const newOrder = [];
+  document.querySelectorAll(".site").forEach(siteEl => {
+    const name = siteEl.querySelector("span").textContent;
+    const site = sites.find(s => s.name === name);
+    if (site) newOrder.push(site);
+  });
+  sites = newOrder;
+  localStorage.setItem("sites", JSON.stringify(sites));
+}
+
+// Add site
+addBtn.onclick = () => addModal.classList.remove("hidden");
+addModal.onclick = e => {
+  if (e.target === addModal) addModal.classList.add("hidden");
+};
 
 addSiteBtn.onclick = () => {
   if (!siteName.value || !siteUrl.value) return;
 
-  sites.push({
-    name: siteName.value,
-    url: siteUrl.value
-  });
-
+  sites.push({ name: siteName.value, url: siteUrl.value });
   localStorage.setItem("sites", JSON.stringify(sites));
+
   siteName.value = siteUrl.value = "";
   addModal.classList.add("hidden");
   renderSites();
