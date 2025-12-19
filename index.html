@@ -3,61 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>صفحتي الفاخرة</title>
+  <title>صفحتي البسيطة</title>
   <link rel="stylesheet" href="style.css">
-  <!-- Vanta.js for interactive background -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.clouds.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta/dist/vanta.dots.min.js"></script>
+  <!-- أنواع أخرى: vanta.waves.min.js أو vanta.net.min.js -->
 </head>
 <body>
-  <!-- Interactive Background -->
   <div id="vanta-bg"></div>
 
   <div class="container">
-    <!-- Profile Image -->
-    <img src="https://i.imgur.com/صورة_لك.jpg" alt="صورتي" class="profile-img">
-
-    <h1>مرحبًا يا [اسمك]!</h1>
-
-    <!-- Clock -->
-    <div id="clock">جاري التحميل...</div>
-
-    <!-- Weather -->
-    <div id="weather">
-      <span id="weather-desc">جاري التحميل...</span>
-      <span id="weather-temp"></span>
-    </div>
-
-    <!-- Search Bar -->
+    <h1>مرحبا يا [اسمك]!</h1>
+    
+    <!-- شريط البحث (اختياري) -->
     <form id="search-form" class="search-bar">
       <input type="text" id="search-input" placeholder="ابحث في جوجل...">
       <button type="submit">🔍</button>
     </form>
 
-    <!-- Links Grid -->
-    <div id="links-grid" class="links"></div>
-
-    <!-- Add Link Form -->
-    <div class="add-link-form">
-      <input type="text" id="new-link-name" placeholder="اسم الرابط">
-      <input type="url" id="new-link-url" placeholder="الرابط (مثل https://example.com)">
-      <button id="add-link-btn">أضف رابط</button>
-    </div>
-
-    <!-- Settings -->
+    <!-- إعدادات -->
     <div class="settings">
-      <button id="toggle-mode">تبديل الوضع (دارك/لايت)</button>
-      <input type="url" id="bg-url" placeholder="رابط خلفية جديدة">
-      <button id="set-bg-btn">غيّر الخلفية</button>
       <select id="effect-select">
-        <option value="none">بدون إفكت</option>
-        <option value="blur(5px)">بلور (5px)</option>
-        <option value="grayscale(1)">أبيض وأسود</option>
+        <option value="dots">نقاط (Dots)</option>
+        <option value="waves">موجات (Waves)</option>
+        <option value="net">شبكة (Net)</option>
+        <option value="none">بدون تفاعل (صورة عادية)</option>
       </select>
-      <button id="apply-effect-btn">طبّق الإفكت</button>
+      <input type="url" id="bg-url" placeholder="رابط صورة خلفية جديدة">
+      <button id="apply-bg">طبّق الخلفية</button>
+      <select id="filter-select">
+        <option value="none">بدون إفكت</option>
+        <option value="blur(8px)">بلور خفيف</option>
+        <option value="blur(15px)">بلور قوي</option>
+        <option value="grayscale(50%)">أبيض وأسود جزئي</option>
+      </select>
+      <button id="apply-filter">طبّق الإفكت</button>
     </div>
-
-    <footer>صفحتي الفاخرة – صنعناها مع قروك ❤️</footer>
   </div>
 
   <script src="script.js"></script>
