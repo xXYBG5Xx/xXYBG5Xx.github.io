@@ -1,55 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>Zen Start</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>صفحتي الفاخرة</title>
   <link rel="stylesheet" href="style.css">
+  <!-- Vanta.js for interactive background -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.clouds.min.js"></script>
 </head>
-<body class="dark">
+<body>
+  <!-- Interactive Background -->
+  <div id="vanta-bg"></div>
 
-<button id="settingsBtn">⚙️</button>
+  <div class="container">
+    <!-- Profile Image -->
+    <img src="https://i.imgur.com/صورة_لك.jpg" alt="صورتي" class="profile-img">
 
-<div id="settings" class="hidden glass">
-  <h3>Settings</h3>
-  <div class="row">
-    <button onclick="setTheme('dark')">🌙 Dark</button>
-    <button onclick="setTheme('light')">☀️ Light</button>
-  </div>
-  <label class="upload">
-    🖼️ Background
-    <input type="file" id="bgUpload" hidden>
-  </label>
-</div>
+    <h1>مرحبًا يا [اسمك]!</h1>
 
-<!-- Add Site Modal -->
-<div id="addModal" class="modal hidden">
-  <div class="modal-box glass">
-    <h3>Add Site</h3>
-    <input id="siteName" placeholder="Site name">
-    <input id="siteUrl" placeholder="https://example.com">
-    <button id="addSiteBtn">Add</button>
-  </div>
-</div>
+    <!-- Clock -->
+    <div id="clock">جاري التحميل...</div>
 
-<div class="container fade">
-
-  <div class="info">
-    <div id="time">--:--</div>
-    <div id="weather">Loading...</div>
-  </div>
-
-  <div class="search glass">
-    <input id="searchInput" placeholder="Search the web" autocomplete="off">
-  </div>
-
-  <div class="apps" id="apps">
-    <div class="app add glass" id="addBtn">
-      <span>+</span>
+    <!-- Weather -->
+    <div id="weather">
+      <span id="weather-desc">جاري التحميل...</span>
+      <span id="weather-temp"></span>
     </div>
+
+    <!-- Search Bar -->
+    <form id="search-form" class="search-bar">
+      <input type="text" id="search-input" placeholder="ابحث في جوجل...">
+      <button type="submit">🔍</button>
+    </form>
+
+    <!-- Links Grid -->
+    <div id="links-grid" class="links"></div>
+
+    <!-- Add Link Form -->
+    <div class="add-link-form">
+      <input type="text" id="new-link-name" placeholder="اسم الرابط">
+      <input type="url" id="new-link-url" placeholder="الرابط (مثل https://example.com)">
+      <button id="add-link-btn">أضف رابط</button>
+    </div>
+
+    <!-- Settings -->
+    <div class="settings">
+      <button id="toggle-mode">تبديل الوضع (دارك/لايت)</button>
+      <input type="url" id="bg-url" placeholder="رابط خلفية جديدة">
+      <button id="set-bg-btn">غيّر الخلفية</button>
+      <select id="effect-select">
+        <option value="none">بدون إفكت</option>
+        <option value="blur(5px)">بلور (5px)</option>
+        <option value="grayscale(1)">أبيض وأسود</option>
+      </select>
+      <button id="apply-effect-btn">طبّق الإفكت</button>
+    </div>
+
+    <footer>صفحتي الفاخرة – صنعناها مع قروك ❤️</footer>
   </div>
 
-</div>
-
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>

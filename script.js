@@ -1,146 +1,114 @@
-// ===== Time =====
-const time = document.getElementById("time");
-setInterval(() => {
-  const now = new Date();
-  time.textContent = now.toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit"
-  });
-}, 1000);
+// Interactive Background with Vanta.js
+VANTA.CLOUDS({
+  el: "#vanta-bg",
+  mouseControls: true,
+  touchControls: true,
+  gyroControls: false,
+  minHeight: 200.00,
+  minWidth: 200.00,
+  skyColor: 0x68b8d7,
+  cloudColor: 0xc4e9f4,
+  sunColor: 0xff9f1a,
+  speed: 1.50
+});
 
-// ===== Search =====
-searchInput.value = "";
-searchInput.addEventListener("keydown", e => {
-  if (e.key === "Enter" && searchInput.value.trim()) {
-    const q = encodeURIComponent(searchInput.value);
-    searchInput.value = "";
-    location.href = `https://www.google.com/search?q=${q}`;
+// Clock Update
+function updateClock() {
+  const now = new Date();
+  const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+  const time = now.toLocaleTimeString('ar-SA', options);
+  const date = now.toLocaleDateString('ar-SA', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  document.getElementById('clock').innerHTML = `${time}<br><small>${date}</small>`;
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+// Weather Fetch (using Open-Meteo - free, no key)
+function fetchWeather(lat, lon) {
+  fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&timezone=auto`)
+    .then(res => res.json())
+    .then(data => {
+      const weather = data.current_weather;
+      document.getElementById('weather-desc').textContent = getWeatherDescription(weather.weathercode);
+      document.getElementById('weather-temp').textContent = `${weather.temperature}°C`;
+    })
+    .catch(() => document.getElementById('weather-desc').textContent = 'تعذر جلب الطقس');
+}
+
+function getWeatherDescription(code) {
+  const descriptions = { 0: 'صافي', 1: 'غائم جزئيًا', 2: 'غائم', 3: 'ممطر', /* add more as needed */ };
+  return descriptions[code] || 'غير معروف';
+}
+
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(pos => fetchWeather(pos.coords.latitude, pos.coords.longitude));
+} else {
+  fetchWeather(24.7136, 46.6753); // Default: Riyadh
+}
+
+// Search Form
+document.getElementById('search-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const query = document.getElementById('search-input').value;
+  window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
+});
+
+// Links Management with LocalStorage and Thumbnails
+const linksGrid = document.getElementById('links-grid');
+let links = JSON.parse(localStorage.getItem('customLinks')) || [];
+
+function renderLinks() {
+  linksGrid.innerHTML = '';
+  links.forEach((link, index) => {
+    const item = document.createElement('a');
+    item.classList.add('link-item');
+    item.href = link.url;
+    item.target = '_blank';
+    item.innerHTML = `
+      <img src="https://image.thum.io/get/width/200/crop/200/${link.url}" alt="${link.name}">
+      <span>${link.name}</span>
+    `;
+    const deleteBtn = document.createElement('button');
+    deleteBtn.classList.add('delete-btn');
+    deleteBtn.textContent = 'X';
+    deleteBtn.onclick = () => {
+      links.splice(index, 1);
+      localStorage.setItem('customLinks', JSON.stringify(links));
+      renderLinks();
+    };
+    item.appendChild(deleteBtn);
+    linksGrid.appendChild(item);
+  });
+}
+renderLinks();
+
+document.getElementById('add-link-btn').addEventListener('click', () => {
+  const name = document.getElementById('new-link-name').value;
+  const url = document.getElementById('new-link-url').value;
+  if (name && url) {
+    links.push({ name, url });
+    localStorage.setItem('customLinks', JSON.stringify(links));
+    renderLinks();
+    document.getElementById('new-link-name').value = '';
+    document.getElementById('new-link-url').value = '';
   }
 });
 
-// ===== Theme =====
-function setTheme(t) {
-  document.body.className = t;
-  localStorage.setItem("theme", t);
-}
-document.body.className = localStorage.getItem("theme") || "dark";
+// Dark/Light Mode
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+if (prefersDark) document.body.classList.add('dark');
 
-// ===== Background =====
-bgUpload.onchange = e => {
-  const r = new FileReader();
-  r.onload = () => {
-    document.body.style.backgroundImage = `url(${r.result})`;
-    localStorage.setItem("bg", r.result);
-  };
-  r.readAsDataURL(e.target.files[0]);
-};
-if (localStorage.getItem("bg"))
-  document.body.style.backgroundImage = `url(${localStorage.getItem("bg")})`;
+document.getElementById('toggle-mode').addEventListener('click', () => {
+  document.body.classList.toggle('dark');
+});
 
-// ===== Settings =====
-settingsBtn.onclick = () =>
-  settings.classList.toggle("hidden");
+// Custom Background and Effects
+document.getElementById('set-bg-btn').addEventListener('click', () => {
+  const url = document.getElementById('bg-url').value;
+  if (url) document.body.style.backgroundImage = `url(${url})`;
+});
 
-// ===== Sites =====
-const apps = document.getElementById("apps");
-const addModal = document.getElementById("addModal");
-
-let sites = JSON.parse(localStorage.getItem("sites") || "[]");
-
-function renderSites() {
-  apps.querySelectorAll(".site").forEach(e => e.remove());
-
-  sites.forEach((site, i) => {
-    const div = document.createElement("div");
-    div.className = "app glass site";
-    div.draggable = true;
-    div.dataset.index = i;
-
-    div.innerHTML = `
-      <img class="icon">
-      <span>${site.name}</span>
-    `;
-
-    const domain = new URL(site.url).hostname;
-    div.querySelector(".icon").src =
-      `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
-
-    div.onclick = () => location.href = site.url;
-
-    // Drag events
-    div.addEventListener("dragstart", () => {
-      div.classList.add("dragging");
-    });
-
-    div.addEventListener("dragend", () => {
-      div.classList.remove("dragging");
-      saveOrder();
-    });
-
-    apps.insertBefore(div, addBtn);
-  });
-
-  enableDrag();
-}
-
-function enableDrag() {
-  const draggables = document.querySelectorAll(".site");
-  draggables.forEach(item => {
-    item.addEventListener("dragover", e => {
-      e.preventDefault();
-      const dragging = document.querySelector(".dragging");
-      if (dragging && item !== dragging) {
-        apps.insertBefore(dragging, item);
-      }
-    });
-  });
-}
-
-function saveOrder() {
-  const newOrder = [];
-  document.querySelectorAll(".site").forEach(siteEl => {
-    const name = siteEl.querySelector("span").textContent;
-    const site = sites.find(s => s.name === name);
-    if (site) newOrder.push(site);
-  });
-  sites = newOrder;
-  localStorage.setItem("sites", JSON.stringify(sites));
-}
-
-// Add site
-addBtn.onclick = () => addModal.classList.remove("hidden");
-addModal.onclick = e => {
-  if (e.target === addModal) addModal.classList.add("hidden");
-};
-
-addSiteBtn.onclick = () => {
-  if (!siteName.value || !siteUrl.value) return;
-
-  sites.push({ name: siteName.value, url: siteUrl.value });
-  localStorage.setItem("sites", JSON.stringify(sites));
-
-  siteName.value = siteUrl.value = "";
-  addModal.classList.add("hidden");
-  renderSites();
-};
-
-renderSites();
-
-// ===== Weather =====
-const weather = document.getElementById("weather");
-const API_KEY = "PUT_YOUR_API_KEY";
-
-navigator.geolocation.getCurrentPosition(
-  pos => {
-    const { latitude, longitude } = pos.coords;
-    fetch(
-      `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${API_KEY}`
-    )
-      .then(r => r.json())
-      .then(d => {
-        weather.textContent =
-          `${d.name} • ${Math.round(d.main.temp)}°C • ${d.weather[0].main}`;
-      });
-  },
-  () => weather.textContent = "Location disabled"
-);
+document.getElementById('apply-effect-btn').addEventListener('click', () => {
+  const effect = document.getElementById('effect-select').value;
+  document.getElementById('vanta-bg').style.filter = effect;
+});
