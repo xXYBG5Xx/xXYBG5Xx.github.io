@@ -1,136 +1,36 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>الصفحة الرئيسية — مخصصة</title>
-  <link rel="stylesheet" href="assets/styles.css">
-  <meta name="theme-color" content="#0b1220">
+    <meta charset="UTF-8">
+    <title>واجهتي الخاصة</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <div id="bg-container">
-    <canvas id="bg-canvas"></canvas>
-    <div id="bg-image-overlay"></div>
-  </div>
+<body class="dark-mode"> <div class="animated-bg"></div>
 
-  <main class="app">
-    <header class="topbar">
-      <div class="left">
-        <button id="btn-settings" class="icon-btn" title="الإعدادات">⚙️</button>
-      </div>
-      <div class="center">
-        <div id="clock" class="clock">--:--</div>
-        <div id="date" class="date">----</div>
-      </div>
-      <div class="right">
-        <div id="weather" class="weather">
-          <span class="temp">--°</span>
-          <span class="cond">--</span>
+    <div class="container">
+        <header>
+            <div id="clock">00:00:00</div>
+            <div id="weather">جاري تحميل الطقس... 🌤️</div>
+        </header>
+
+        <section class="search-section">
+            <form action="https://www.google.com/search" method="GET">
+                <input type="text" name="q" placeholder="ابحث في الإنترنت أو اكتب عنواناً..." class="search-bar">
+            </form>
+        </section>
+
+        <div class="shortcuts-grid" id="shortcutsGrid">
+            <button class="add-btn" onclick="addShortcut()">+</button>
         </div>
-      </div>
-    </header>
 
-    <section class="search-card">
-      <div class="logo">موقعي</div>
-      <form id="search-form" class="search-form" autocomplete="off">
-        <input id="search-input" type="search" placeholder="ابحث في الويب..." />
-        <select id="engine">
-          <option value="google">جوجل</option>
-          <option value="bing">بينج</option>
-          <option value="ddg">DuckDuckGo</option>
-        </select>
-        <button type="submit" class="search-btn">بحث</button>
-      </form>
-
-      <div class="shortcuts" id="shortcuts">
-        <!-- shortcuts injected here -->
-      </div>
-      <div class="shortcuts-controls">
-        <button id="add-shortcut">إضافة صفحة</button>
-      </div>
-    </section>
-  </main>
-
-  <!-- Settings modal -->
-  <div id="settings-modal" class="modal hidden" role="dialog" aria-hidden="true">
-    <div class="modal-panel">
-      <h2>الإعدادات</h2>
-      <label>الوضع:
-        <select id="theme-select">
-          <option value="auto">تلقائي</option>
-          <option value="light">فاتح</option>
-          <option value="dark">داكن</option>
-        </select>
-      </label>
-
-      <label>محرك البحث الافتراضي:
-        <select id="default-engine">
-          <option value="google">جوجل</option>
-          <option value="bing">بينج</option>
-          <option value="ddg">DuckDuckGo</option>
-        </select>
-      </label>
-
-      <fieldset>
-        <legend>خلفية</legend>
-        <label>رفع صورة:
-          <input id="bg-file" type="file" accept="image/*">
-        </label>
-        <label>أو رابط صورة:
-          <input id="bg-url" type="url" placeholder="https://...">
-          <button id="set-bg-url">اضف</button>
-        </label>
-        <label>Blur:
-          <input id="bg-blur" type="range" min="0" max="20" value="6">
-          <span id="bg-blur-val">6px</span>
-        </label>
-        <label>تعتيم (opacity):
-          <input id="bg-opacity" type="range" min="0" max="1" step="0.05" value="0.5">
-          <span id="bg-opacity-val">0.5</span>
-        </label>
-      </fieldset>
-
-      <fieldset>
-        <legend>الطقس</legend>
-        <label>مفتاح OpenWeatherMap (API):
-          <input id="owm-key" type="text" placeholder="ضع مفتاح API هنا">
-        </label>
-        <button id="get-weather">تحديث الطقس الآن</button>
-      </fieldset>
-
-      <fieldset>
-        <legend>الخلفية التفاعلية</legend>
-        <label><input id="particles-toggle" type="checkbox"> تفعيل جسيمات تفاعلية</label>
-        <label>كثافة الجسيمات:
-          <input id="particles-count" type="range" min="10" max="200" value="80">
-          <span id="particles-count-val">80</span>
-        </label>
-      </fieldset>
-
-      <div class="modal-actions">
-        <button id="save-settings">حفظ</button>
-        <button id="close-settings">إغلاق</button>
-      </div>
+        <div class="settings-panel">
+            <button onclick="toggleDarkMode()">🌓 تبديل النمط</button>
+            <input type="file" id="bgUpload" accept="image/*" onchange="changeBg(event)">
+            <label>تأثير البلور (Blur):</label>
+            <input type="range" min="0" max="20" value="0" oninput="applyBlur(this.value)">
+        </div>
     </div>
-  </div>
 
-  <!-- Add shortcut modal -->
-  <div id="add-modal" class="modal hidden" role="dialog" aria-hidden="true">
-    <div class="modal-panel">
-      <h3>إضافة صفحة</h3>
-      <label>العنوان:
-        <input id="sc-title" type="text" placeholder="مثلاً: يوتيوب">
-      </label>
-      <label>الرابط:
-        <input id="sc-url" type="url" placeholder="https://...">
-      </label>
-      <div class="modal-actions">
-        <button id="save-shortcut">حفظ</button>
-        <button id="cancel-shortcut">إلغاء</button>
-      </div>
-    </div>
-  </div>
-
-  <script src="assets/script.js" defer></script>
+    <script src="script.js"></script>
 </body>
 </html>
