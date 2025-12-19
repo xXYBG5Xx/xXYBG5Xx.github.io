@@ -1,36 +1,52 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
-    <meta charset="UTF-8">
-    <title>واجهتي الخاصة</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>One Line Heart + T</title>
+<style>
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #111;
+  }
+</style>
 </head>
-<body class="dark-mode"> <div class="animated-bg"></div>
+<body>
 
-    <div class="container">
-        <header>
-            <div id="clock">00:00:00</div>
-            <div id="weather">جاري تحميل الطقس... 🌤️</div>
-        </header>
+<canvas id="c" width="600" height="300"></canvas>
 
-        <section class="search-section">
-            <form action="https://www.google.com/search" method="GET">
-                <input type="text" name="q" placeholder="ابحث في الإنترنت أو اكتب عنواناً..." class="search-bar">
-            </form>
-        </section>
+<script>
+const c = document.getElementById("c");
+const ctx = c.getContext("2d");
 
-        <div class="shortcuts-grid" id="shortcutsGrid">
-            <button class="add-btn" onclick="addShortcut()">+</button>
-        </div>
+ctx.strokeStyle = "#ff4d6d";
+ctx.lineWidth = 4;
+ctx.lineCap = "round";
+ctx.lineJoin = "round";
 
-        <div class="settings-panel">
-            <button onclick="toggleDarkMode()">🌓 تبديل النمط</button>
-            <input type="file" id="bgUpload" accept="image/*" onchange="changeBg(event)">
-            <label>تأثير البلور (Blur):</label>
-            <input type="range" min="0" max="20" value="0" oninput="applyBlur(this.value)">
-        </div>
-    </div>
+ctx.beginPath();
 
-    <script src="script.js"></script>
+// نقطة البداية
+ctx.moveTo(150, 160);
+
+// ❤️ القلب (مسار واحد)
+ctx.bezierCurveTo(120, 120, 80, 140, 100, 180);
+ctx.bezierCurveTo(130, 230, 150, 240, 150, 260);
+ctx.bezierCurveTo(150, 240, 170, 230, 200, 180);
+ctx.bezierCurveTo(220, 140, 180, 120, 150, 160);
+
+// ➜ الانتقال بدون قطع الخط
+ctx.lineTo(260, 160);
+
+// 🔤 حرف T (بنفس الخط)
+ctx.lineTo(340, 160); // الخط العلوي
+ctx.lineTo(300, 160);
+ctx.lineTo(300, 260); // الخط العمودي
+
+ctx.stroke();
+</script>
+
 </body>
 </html>
