@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Zen Start</title>
@@ -10,30 +10,35 @@
 <button id="settingsBtn">⚙️</button>
 
 <div id="settings" class="hidden glass">
-  <h3>الإعدادات</h3>
+  <h3>Settings</h3>
 
   <div class="row">
-    <button onclick="setTheme('dark')">🌙 داكن</button>
-    <button onclick="setTheme('light')">☀️ فاتح</button>
+    <button onclick="setTheme('dark')">🌙 Dark</button>
+    <button onclick="setTheme('light')">☀️ Light</button>
   </div>
 
   <label class="upload">
-    🖼️ تغيير الخلفية
+    🖼️ Background
     <input type="file" id="bgUpload" hidden>
   </label>
 </div>
 
-<div class="container">
+<div class="container fade">
 
   <div class="info">
     <div id="time">--:--</div>
-    <div id="weather">جاري تحميل الطقس...</div>
+    <div id="weather">Loading...</div>
   </div>
 
   <div class="search glass">
-    <input id="searchInput" placeholder="ابحث في الإنترنت...">
+    <input
+      id="searchInput"
+      placeholder="Search the web"
+      autocomplete="off"
+    >
   </div>
 
+  <!-- أنت تضيف المواقع هنا -->
   <div class="apps">
     <div class="app glass" data-url="https://google.com">
       <img class="icon">
@@ -43,16 +48,6 @@
     <div class="app glass" data-url="https://youtube.com">
       <img class="icon">
       <span>YouTube</span>
-    </div>
-
-    <div class="app glass" data-url="https://github.com">
-      <img class="icon">
-      <span>GitHub</span>
-    </div>
-
-    <div class="app glass" data-url="https://twitter.com">
-      <img class="icon">
-      <span>Twitter</span>
     </div>
   </div>
 
