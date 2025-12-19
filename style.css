@@ -1,52 +1,96 @@
-:root {
-    --bg-color: #0f0f0f;
-    --glass-bg: rgba(255, 255, 255, 0.1);
-    --text-color: white;
+:root{
+  --bg:#0b1220;
+  --card:#0f1724;
+  --muted:#9aa6b2;
+  --accent:#6ee7b7;
+  --glass: rgba(255,255,255,0.04);
+  --radius:12px;
+  --text:#e6eef6;
 }
 
-body {
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: var(--bg-color);
-    color: var(--text-color);
-    overflow: hidden;
-    height: 100vh;
+[data-theme="light"]{
+  --bg: #f7fafc;
+  --card: #ffffff;
+  --muted: #475569;
+  --accent:#0ea5a4;
+  --glass: rgba(0,0,0,0.04);
+  --text:#0b1220;
 }
 
-/* الخلفية التفاعلية (دوائر متحركة) */
-.animated-bg {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    background: linear-gradient(45deg, #0f0f0f, #1a1a2e);
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: "Segoe UI", Tahoma, system-ui, -apple-system, "Noto Sans Arabic", sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  overflow:hidden;
 }
 
-/* محرك البحث بشكل عصري */
-.search-bar {
-    width: 600px;
-    padding: 15px 25px;
-    border-radius: 30px;
-    border: none;
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    color: white;
-    font-size: 1.2rem;
-    outline: none;
-    transition: 0.3s;
-    border: 1px solid rgba(255,255,255,0.1);
+/* background layers */
+#bg-container{position:fixed;inset:0;z-index:-2;overflow:hidden}
+#bg-canvas{position:absolute;inset:0;width:100%;height:100%}
+#bg-image-overlay{
+  position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(6px) saturate(1.05);
+  opacity:0.5;transition:filter .2s,opacity .2s;mix-blend-mode:overlay;
 }
 
-.search-bar:focus {
-    width: 650px;
-    box-shadow: 0 0 20px rgba(0, 123, 255, 0.5);
+/* main app layout */
+.app{position:relative;height:100vh;display:flex;flex-direction:column;align-items:stretch}
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;padding:14px 20px;
+  background:linear-gradient(180deg, rgba(0,0,0,0.06), transparent);
+  backdrop-filter: blur(6px);
+}
+.topbar .left, .topbar .center, .topbar .right{display:flex;align-items:center}
+.clock{font-size:24px;font-weight:600;margin-inline-start:10px}
+.date{font-size:13px;color:var(--muted);margin-top:2px}
+.icon-btn{background:var(--glass);border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:8px;cursor:pointer}
+
+.search-card{
+  margin:auto;
+  width:min(980px,94vw);
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+  border-radius:14px;
+  padding:28px;
+  display:flex;flex-direction:column;gap:18px;align-items:stretch;
+  box-shadow: 0 6px 30px rgba(2,6,23,0.45);
+  backdrop-filter: blur(8px);
 }
 
-/* شبكة المواقع */
-.shortcuts-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 20px;
-    margin-top: 50px;
-    padding: 0 10%;
+.logo{font-weight:700;font-size:20px;color:var(--accent);align-self:center}
+.search-form{display:flex;gap:10px;align-items:center}
+.search-form input[type="search"]{
+  flex:1;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);
+  background:transparent;color:var(--text);outline:none;font-size:15px;
+}
+.search-form select{padding:10px;border-radius:10px;background:var(--card);border:1px solid rgba(255,255,255,0.04)}
+.search-btn{padding:10px 14px;border-radius:10px;background:var(--accent);border:none;color:#042;cursor:pointer}
+
+.shortcuts{display:flex;flex-wrap:wrap;gap:12px;padding-top:6px}
+.shortcut{
+  width:120px;height:86px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+  border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:8px;align-items:start;justify-content:center;
+  cursor:pointer;border:1px solid rgba(255,255,255,0.03);
+}
+.shortcut img{width:36px;height:36px;border-radius:8px;object-fit:cover}
+.shortcut .title{font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.shortcuts-controls{display:flex;justify-content:flex-end}
+.shortcuts-controls button{padding:8px 12px;border-radius:10px;border:none;background:rgba(255,255,255,0.04);cursor:pointer;color:var(--text)}
+
+/* modals */
+.modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.45);z-index:40}
+.modal.hidden{display:none}
+.modal-panel{width:min(600px,92vw);background:var(--card);padding:18px;border-radius:12px;color:var(--text);box-shadow:0 8px 30px rgba(2,6,23,0.6)}
+.modal-panel h2,h3{margin:0 0 10px 0}
+.modal-panel label{display:block;margin:8px 0;color:var(--muted)}
+.modal-panel input[type="text"], .modal-panel input[type="url"], .modal-panel input[type="file"], .modal-panel select{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);background:transparent;color:var(--text)}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+.modal-actions button{padding:8px 12px;border-radius:8px;border:none;background:var(--accent);cursor:pointer;color:#042}
+
+/* small screens */
+@media (max-width:640px){
+  .search-card{padding:16px}
+  .shortcut{width:100px;height:76px}
 }
