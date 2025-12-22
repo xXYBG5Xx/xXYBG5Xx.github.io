@@ -7,37 +7,48 @@ function updateTime() {
 setInterval(updateTime, 1000);
 updateTime();
 
-// خلفية تفاعلية
+// خلفية فخمة
 const canvas = document.getElementById("bg");
 const ctx = canvas.getContext("2d");
 
 canvas.width = innerWidth;
 canvas.height = innerHeight;
 
-let particles = Array.from({ length: 80 }, () => ({
+let blobs = Array.from({ length: 12 }, () => ({
   x: Math.random() * canvas.width,
   y: Math.random() * canvas.height,
-  vx: (Math.random() - 0.5) * 0.5,
-  vy: (Math.random() - 0.5) * 0.5
+  r: 120 + Math.random() * 150,
+  dx: (Math.random() - 0.5) * 0.4,
+  dy: (Math.random() - 0.5) * 0.4
 }));
 
-function animate() {
+function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  particles.forEach(p => {
-    p.x += p.vx;
-    p.y += p.vy;
 
-    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+  blobs.forEach(b => {
+    b.x += b.dx;
+    b.y += b.dy;
 
+    if (b.x < -200 || b.x > canvas.width + 200) b.dx *= -1;
+    if (b.y < -200 || b.y > canvas.height + 200) b.dy *= -1;
+
+    const grad = ctx.createRadialGradient(
+      b.x, b.y, 0,
+      b.x, b.y, b.r
+    );
+
+    grad.addColorStop(0, "rgba(79,172,254,0.25)");
+    grad.addColorStop(1, "rgba(0,0,0,0)");
+
+    ctx.fillStyle = grad;
     ctx.beginPath();
-    ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(0,0,0,0.2)";
+    ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
     ctx.fill();
   });
-  requestAnimationFrame(animate);
+
+  requestAnimationFrame(draw);
 }
-animate();
+draw();
 
 window.onresize = () => {
   canvas.width = innerWidth;
