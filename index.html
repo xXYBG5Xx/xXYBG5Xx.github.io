@@ -22,36 +22,27 @@
         const rows = Math.floor(canvas.height / fontSize);
         const matrixChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%&*";
 
-        // مصفوفة القلب (سماكة واحدة) مع حرف T (سماكة بكسلين وصغير جداً)
+        // مصفوفة التصميم: 1 إطار قلب، 2 فراغ، 3 حرف T سماكة مضاعفة
         const pixelHeart = [
             [0,0,0,1,1,1,0,0,0,0,0,1,1,1,0,0,0],
-            [0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0],
-            [0,1,0,0,0,0,0,1,0,1,0,0,0,0,0,1,0],
-            [1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
-            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-            [1,0,0,0,0,3,3,3,3,3,3,0,0,0,0,0,1], // حرف T صغير بسماكة بكسلين
-            [1,0,0,0,0,3,3,3,3,3,3,0,0,0,0,0,1],
-            [0,1,0,0,0,0,0,3,3,0,0,0,0,0,0,1,0],
-            [0,0,1,0,0,0,0,3,3,0,0,0,0,0,1,0,0],
-            [0,0,0,1,0,0,0,3,3,0,0,0,1,0,0,0,0],
-            [0,0,0,0,1,0,0,3,3,0,0,1,0,0,0,0,0],
-            [0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0]
+            [0,0,1,2,2,2,1,0,0,0,1,2,2,2,1,0,0],
+            [0,1,2,2,2,2,2,1,0,1,2,2,2,2,2,1,0],
+            [1,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,2,2,2,2,3,3,3,3,3,3,2,2,2,2,2,1],
+            [1,2,2,2,2,3,3,3,3,3,3,2,2,2,2,2,1],
+            [0,1,2,2,2,2,2,3,3,2,2,2,2,2,2,1,0],
+            [0,0,1,2,2,2,2,3,3,2,2,2,2,2,1,0,0],
+            [0,0,0,1,2,2,2,3,3,2,2,2,1,0,0,0,0],
+            [0,0,0,0,1,2,2,3,3,2,2,1,0,0,0,0,0],
+            [0,0,0,0,0,1,2,2,2,2,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,1,2,2,1,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0]
         ];
 
-        // مصفوفة لتخزين الحروف العشوائية لكل بكسل في الشاشة
-        const screenChars = Array(columns).fill(0).map(() => Array(rows).fill(''));
-
-        // تهيئة الحروف العشوائية الأولية
-        for (let x = 0; x < columns; x++) {
-            for (let y = 0; y < rows; y++) {
-                screenChars[x][y] = matrixChars[Math.floor(Math.random() * matrixChars.length)];
-            }
-        }
-
         function draw() {
-            ctx.fillStyle = "black"; // خلفية سوداء صلبة (مافي ذيل)
+            // خلفية سوداء تماماً لمسح أي أثر توهج سابق وتوحيد الوميض
+            ctx.fillStyle = "black";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             const centerX = Math.floor(columns / 2);
@@ -68,38 +59,36 @@
                         type = pixelHeart[hY][hX];
                     }
 
-                    // تحديث الحرف عشوائياً لكل بكسل
-                    screenChars[x][y] = matrixChars[Math.floor(Math.random() * matrixChars.length)];
-                    const char = screenChars[x][y];
+                    if (type === 2) continue; // الفراغ
 
-                    if (type === 1 || type === 3) {
-                        // القلب وحرف T: يلمعان بقوة
-                        ctx.fillStyle = type === 3 ? "#FFF" : "#0F0";
-                        ctx.shadowBlur = 15;
-                        ctx.shadowColor = ctx.fillStyle;
-                    } else {
-                        // باقي الشاشة: حروف باهتة
-                        ctx.fillStyle = "rgba(0, 100, 0, 0.2)"; // أخضر باهت جداً
-                        ctx.shadowBlur = 0;
+                    const isFlash = Math.random() > 0.93; // نفس احتمالية الوميض للكل
+                    const char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+
+                    // توحيد إعدادات الوميض (Shadow) للكل
+                    ctx.shadowBlur = isFlash ? 8 : 0; 
+                    ctx.shadowColor = "currentColor"; // سيأخذ لون الـ fillStyle
+
+                    if (type === 3) { // حرف T
+                        ctx.fillStyle = isFlash ? "#FFFFFF" : "rgba(255, 255, 255, 0.15)";
+                        ctx.font = "bold " + fontSize + "px monospace";
+                    } else if (type === 1) { // القلب
+                        ctx.fillStyle = isFlash ? "#00FF41" : "rgba(0, 150, 0, 0.2)";
+                        ctx.font = "bold " + fontSize + "px monospace";
+                    } else { // الخلفية
+                        ctx.fillStyle = isFlash ? "rgba(0, 255, 70, 0.25)" : "rgba(0, 50, 0, 0.08)";
+                        ctx.font = fontSize + "px monospace";
                     }
-                    
-                    ctx.font = "bold " + fontSize + "px monospace";
+
                     ctx.fillText(char, x * fontSize, y * fontSize);
                 }
             }
         }
 
-        setInterval(draw, 50); // التحكم بسرعة التغيير (التومض)
+            setInterval(draw, 70); // سرعة هادئة ومتناسقة
 
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            // إعادة تهيئة الحروف عند تغيير حجم الشاشة
-            for (let x = 0; x < columns; x++) {
-                for (let y = 0; y < rows; y++) {
-                    screenChars[x][y] = matrixChars[Math.floor(Math.random() * matrixChars.length)];
-                }
-            }
         });
     </script>
 </body>
