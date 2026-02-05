@@ -1,63 +1,54 @@
-import pygame
-import random
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { margin: 0; overflow: hidden; background: black; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <canvas id="m"></canvas>
+    <script>
+        const canvas = document.getElementById('m');
+        const ctx = canvas.getContext('2d');
 
-# إعدادات الشاشة
-pygame.init()
-width, height = 800, 600
-screen = pygame.display.set_mode((width, height))
-pygame.display.set_caption("My Faded Matrix")
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
 
-# الألوان
-black = (0, 0, 0)
-# اخترنا لون أخضر داكن قليلاً لزيادة تأثير البهتان
-matrix_green = (0, 150, 50) 
-font = pygame.font.SysFont("monospace", 20)
+        const words = "0123456789qwertyuiopasdfghjklzxcvbnm";
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+        const drops = [];
 
-# --- التعديل الأساسي هنا ---
-# سنقوم بإنشاء الحروف وجعلها شفافة (باهتة) منذ البداية
-def get_faded_letter():
-    char_list = [str(i) for i in range(10)] + [chr(random.randint(33, 126)) for _ in range(10)]
-    char = random.choice(char_list)
-    render = font.render(char, True, matrix_green)
-    # خفض الشفافية (0 شفاف تماماً، 255 واضح تماماً)
-    # الـ 100 تعطي توازناً بين الوضوح والبهتان
-    render.set_alpha(100) 
-    return render
+        for (let i = 0; i < columns; i++) drops[i] = 1;
 
-# إعداد الأعمدة
-column_count = width // 20
-drops = [random.randint(-height // 20, 0) for _ in range(column_count)]
+        function draw() {
+            // مسح الشاشة بطبقة سوداء شفافة جداً للحفاظ على أثر الحروف
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-clock = pygame.time.Clock()
+            // --- التعديل هنا لجعل الحروف باهتة ---
+            // استخدمنا (0, 255, 0, 0.3) حيث 0.3 هي نسبة الوضوح (باهتة)
+            ctx.fillStyle = 'rgba(0, 255, 70, 0.3)'; 
+            ctx.font = fontSize + 'px monospace';
 
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+            for (let i = 0; i < drops.length; i++) {
+                const text = words[Math.floor(Math.random() * words.length)];
+                
+                // رسم الحرف الباهت الأساسي
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+                // ميزة إضافية: رسم رأس العمود بلون أوضح قليلاً ليعطي عمقاً
+                ctx.fillStyle = 'rgba(0, 255, 70, 0.8)';
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                // إعادة اللون للباهت لبقية الحروف في الحلقة
+                ctx.fillStyle = 'rgba(0, 255, 70, 0.3)';
 
-    # رسم خلفية سوداء (بشفافية أعلى لتقليل أثر الذيل وجعل الحروف تبرز بوضوح أكبر)
-    overlay = pygame.Surface((width, height))
-    overlay.set_alpha(50) 
-    overlay.fill(black)
-    screen.blit(overlay, (0, 0))
-
-    # تحريك ورسم الحروف
-    for i in range(len(drops)):
-        # نولد حرفاً باهتاً في كل مرة للحصول على تنوع
-        char = get_faded_letter()
-        x = i * 20
-        y = drops[i] * 20
-        
-        screen.blit(char, (x, y))
-
-        # إعادة الحرف للأعلى إذا خرج من الشاشة
-        if y > height and random.random() > 0.975:
-            drops[i] = 0
-        
-        drops[i] += 1
-
-    pygame.display.flip()
-    clock.tick(30)
-
-pygame.quit()
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+        }
+        setInterval(draw, 33);
+    </script>
+</body>
+</html>
