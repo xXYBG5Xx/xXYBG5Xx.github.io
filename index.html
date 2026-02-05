@@ -17,84 +17,81 @@
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        const fontSize = 16;
+        const fontSize = 18;
         const columns = Math.floor(canvas.width / fontSize);
         const rainDrops = Array(columns).fill(0);
         const matrixChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%&*";
 
-        // رسمة القلب بأسلوب البكسل (مصفوفة 0 و 1)
+        // مصفوفة القلب (1 = حدود مرئية، 2 = داخل القلب/فراغ، 3 = حرف T)
         const pixelHeart = [
-            [0,1,1,0,1,1,0],
-            [1,1,1,1,1,1,1],
-            [1,1,1,1,1,1,1],
-            [0,1,1,1,1,1,0],
-            [0,0,1,1,1,0,0],
-            [0,0,0,1,0,0,0]
-        ];
-
-        // رسمة حرف T بأسلوب البكسل
-        const pixelT = [
-            [1,1,1,1,1],
-            [0,0,1,0,0],
-            [0,0,1,0,0],
-            [0,0,1,0,0]
+            [0,0,1,1,1,0,0,0,1,1,1,0,0],
+            [0,1,2,2,2,1,0,1,2,2,2,1,0],
+            [1,2,2,3,3,3,3,3,3,3,2,1],
+            [1,2,2,2,2,3,3,3,2,2,2,2,1],
+            [1,2,2,2,2,3,3,3,2,2,2,2,1],
+            [0,1,2,2,2,3,3,3,2,2,2,1,0],
+            [0,0,1,2,2,3,3,3,2,2,1,0,0],
+            [0,0,0,1,2,3,3,3,2,1,0,0,0],
+            [0,0,0,0,1,2,2,2,1,0,0,0,0],
+            [0,0,0,0,0,1,2,1,0,0,0,0,0],
+            [0,0,0,0,0,0,1,0,0,0,0,0,0]
         ];
 
         function draw() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
+            ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             const centerX = Math.floor(columns / 2);
-            const centerY = 15; // مكان القلب في الشاشة
+            const centerY = Math.floor((canvas.height / fontSize) / 3);
 
             for (let x = 0; x < columns; x++) {
                 const yPos = Math.floor(rainDrops[x]);
                 
-                // حساب إحداثيات البكسل بالنسبة للقلب
-                const heartX = x - (centerX - 3);
-                const heartY = yPos - (centerY - 3);
-                
-                // حساب إحداثيات البكسل بالنسبة لحرف T (داخل القلب)
-                const tX = x - (centerX - 2);
-                const tY = yPos - (centerY - 2);
-
-                let isInHeartPixel = false;
-                if (heartY >= 0 && heartY < pixelHeart.length && heartX >= 0 && heartX < pixelHeart[0].length) {
-                    if (pixelHeart[heartY][heartX] === 1) isInHeartPixel = true;
-                }
-
-                let isInTPixel = false;
-                if (tY >= 0 && tY < pixelT.length && tX >= 0 && tX < pixelT[0].length) {
-                    if (pixelT[tY][tX] === 1) isInTPixel = true;
-                }
+                const hOffsetX = 6; 
+                const heartX = x - (centerX - hOffsetX);
+                const heartY = yPos - centerY;
 
                 let char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
                 let color = "#0F0";
                 let shouldDraw = true;
+                let isBold = false;
 
-                if (isInHeartPixel) {
-                    if (isInTPixel) {
-                        color = "#FFFFFF"; // حرف T أبيض بكسل
-                        char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
-                    } else {
-                        shouldDraw = false; // باقي القلب "فراغ"
+                // فحص مكان الحرف بالنسبة للمصفوفة
+                if (heartY >= 0 && heartY < pixelHeart.length && heartX >= 0 && heartX < pixelHeart[0].length) {
+                    const cell = pixelHeart[heartY][heartX];
+                    
+                    if (cell === 1) { 
+                        // رسم حدود القلب (البرواز)
+                        color = "#008800"; // أخضر غامق للحدود عشان يبين الشكل
+                        isBold = true;
+                    } else if (cell === 3) { 
+                        // رسم حرف T داخل القلب
+                        color = "#FFFFFF"; // أبيض مشع
+                        isBold = true;
+                        ctx.shadowBlur = 5;
+                        ctx.shadowColor = "#FFF";
+                    } else if (cell === 2) { 
+                        // منطقة الفراغ داخل القلب
+                        shouldDraw = false; 
                     }
+                } else {
+                    ctx.shadowBlur = 0;
                 }
 
                 if (shouldDraw) {
                     ctx.fillStyle = color;
-                    ctx.font = fontSize + "px monospace";
+                    ctx.font = (isBold ? "bold " : "") + fontSize + "px monospace";
                     ctx.fillText(char, x * fontSize, yPos * fontSize);
                 }
 
-                if (rainDrops[x] * fontSize > canvas.height && Math.random() > 0.975) {
+                if (rainDrops[x] * fontSize > canvas.height && Math.random() > 0.95) {
                     rainDrops[x] = 0;
                 }
-                rainDrops[x] += 0.8;
+                rainDrops[x] += 1.5; // سرعة عالية
             }
         }
 
-        setInterval(draw, 33);
+        setInterval(draw, 30);
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
