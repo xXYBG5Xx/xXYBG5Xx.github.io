@@ -20,16 +20,17 @@
         const fontSize = 16;
         const columns = Math.floor(canvas.width / fontSize);
         const rows = Math.floor(canvas.height / fontSize);
+        const rainDrops = Array(columns).fill(0).map(() => Math.random() * rows);
         const matrixChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%&*";
 
-        // مصفوفة التصميم: 1 إطار قلب، 2 فراغ، 3 حرف T سماكة مضاعفة
+        // مصفوفة التصميم: 1 إطار قلب، 2 فراغ أسود، 3 حرف T سميك
         const pixelHeart = [
             [0,0,0,1,1,1,0,0,0,0,0,1,1,1,0,0,0],
             [0,0,1,2,2,2,1,0,0,0,1,2,2,2,1,0,0],
             [0,1,2,2,2,2,2,1,0,1,2,2,2,2,2,1,0],
             [1,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,1],
             [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
-            [1,2,2,2,2,3,3,3,3,3,3,2,2,2,2,2,1],
+            [1,2,2,2,2,3,3,3,3,3,3,2,2,2,2,2,1], 
             [1,2,2,2,2,3,3,3,3,3,3,2,2,2,2,2,1],
             [0,1,2,2,2,2,2,3,3,2,2,2,2,2,2,1,0],
             [0,0,1,2,2,2,2,3,3,2,2,2,2,2,1,0,0],
@@ -41,7 +42,7 @@
         ];
 
         function draw() {
-            // خلفية سوداء تماماً لمسح أي أثر توهج سابق وتوحيد الوميض
+            // مسح الشاشة بالكامل في كل فريم لتغيير جميع الحروف
             ctx.fillStyle = "black";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -49,6 +50,8 @@
             const centerY = Math.floor(rows / 4);
 
             for (let x = 0; x < columns; x++) {
+                const headY = Math.floor(rainDrops[x]);
+
                 for (let y = 0; y < rows; y++) {
                     const hOffsetX = 8;
                     const hX = x - (centerX - hOffsetX);
@@ -59,32 +62,52 @@
                         type = pixelHeart[hY][hX];
                     }
 
-                    if (type === 2) continue; // الفراغ
+                    // منطقة الفراغ تظل سوداء تماماً
+                    if (type === 2) continue;
 
-                    const isFlash = Math.random() > 0.93; // نفس احتمالية الوميض للكل
+                    // تغيير الحرف في كل فريم لكل خلية في الشاشة
                     const char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+                    
+                    // تحديد منطقة اللمعان (قرب رأس التساقط)
+                    const isGlowing = Math.abs(y - headY) < 6;
 
-                    // توحيد إعدادات الوميض (Shadow) للكل
-                    ctx.shadowBlur = isFlash ? 8 : 0; 
-                    ctx.shadowColor = "currentColor"; // سيأخذ لون الـ fillStyle
-
-                    if (type === 3) { // حرف T
-                        ctx.fillStyle = isFlash ? "#FFFFFF" : "rgba(255, 255, 255, 0.15)";
-                        ctx.font = "bold " + fontSize + "px monospace";
-                    } else if (type === 1) { // القلب
-                        ctx.fillStyle = isFlash ? "#00FF41" : "rgba(0, 150, 0, 0.2)";
-                        ctx.font = "bold " + fontSize + "px monospace";
-                    } else { // الخلفية
-                        ctx.fillStyle = isFlash ? "rgba(0, 255, 70, 0.25)" : "rgba(0, 50, 0, 0.08)";
-                        ctx.font = fontSize + "px monospace";
+                    if (type === 1 || type === 3) {
+                        // القلب و T
+                        if (isGlowing) {
+                            ctx.fillStyle = type === 3 ? "#FFF" : "#0F0";
+                            ctx.shadowBlur = 12;
+                            ctx.shadowColor = ctx.fillStyle;
+                        } else {
+                            // حروف الرسمة الباهتة (شفافة جداً وتتغير في مكانها)
+                            ctx.fillStyle = type === 3 ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 255, 0, 0.05)";
+                            ctx.shadowBlur = 0;
+                        }
+                    } else {
+                        // خلفية الشاشة العامة
+                        if (isGlowing) {
+                            ctx.fillStyle = "rgba(0, 255, 70, 0.3)";
+                            ctx.shadowBlur = 5;
+                        } else {
+                            // الحروف الباهتة جداً التي تتغير باستمرار
+                            ctx.fillStyle = "rgba(0, 50, 0, 0.03)";
+                            ctx.shadowBlur = 0;
+                        }
                     }
 
+                    ctx.font = "bold " + fontSize + "px monospace";
                     ctx.fillText(char, x * fontSize, y * fontSize);
+                }
+
+                // تحريك التساقط
+                rainDrops[x] += 1.3;
+                if (rainDrops[x] > rows) {
+                    rainDrops[x] = -Math.random() * 10; // إعادة من الأعلى بتفاوت عشوائي
                 }
             }
         }
 
-            setInterval(draw, 70); // سرعة هادئة ومتناسقة
+        // سرعة الفريمات (التحديث المستمر)
+        setInterval(draw, 50);
 
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
