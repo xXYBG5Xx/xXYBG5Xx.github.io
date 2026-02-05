@@ -20,10 +20,9 @@
         const fontSize = 16;
         const columns = Math.floor(canvas.width / fontSize);
         const rows = Math.floor(canvas.height / fontSize);
-        const rainDrops = Array(columns).fill(0);
         const matrixChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%&*";
 
-        // مصفوفة القلب: الإطار (1) سماكة بكسل واحد | حرف T (3) سماكة بكسلين وصغير جداً
+        // مصفوفة القلب (سماكة واحدة) مع حرف T (سماكة بكسلين وصغير جداً)
         const pixelHeart = [
             [0,0,0,1,1,1,0,0,0,0,0,1,1,1,0,0,0],
             [0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0],
@@ -41,16 +40,24 @@
             [0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0]
         ];
 
+        // مصفوفة لتخزين الحروف العشوائية لكل بكسل في الشاشة
+        const screenChars = Array(columns).fill(0).map(() => Array(rows).fill(''));
+
+        // تهيئة الحروف العشوائية الأولية
+        for (let x = 0; x < columns; x++) {
+            for (let y = 0; y < rows; y++) {
+                screenChars[x][y] = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+            }
+        }
+
         function draw() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.18)";
+            ctx.fillStyle = "black"; // خلفية سوداء صلبة (مافي ذيل)
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             const centerX = Math.floor(columns / 2);
             const centerY = Math.floor(rows / 4);
 
             for (let x = 0; x < columns; x++) {
-                const yPos = Math.floor(rainDrops[x]);
-                
                 for (let y = 0; y < rows; y++) {
                     const hOffsetX = 8;
                     const hX = x - (centerX - hOffsetX);
@@ -61,42 +68,38 @@
                         type = pixelHeart[hY][hX];
                     }
 
-                    const isGlowing = Math.abs(y - yPos) < 5;
+                    // تحديث الحرف عشوائياً لكل بكسل
+                    screenChars[x][y] = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+                    const char = screenChars[x][y];
 
                     if (type === 1 || type === 3) {
-                        if (isGlowing) {
-                            ctx.fillStyle = type === 3 ? "#FFF" : "#0F0";
-                            ctx.shadowBlur = 18;
-                            ctx.shadowColor = ctx.fillStyle;
-                        } else {
-                            // الحالة الباهتة (تنشاف بوضوح خفيف)
-                            ctx.fillStyle = type === 3 ? "rgba(200, 200, 200, 0.22)" : "rgba(0, 120, 0, 0.25)";
-                            ctx.shadowBlur = 0;
-                        }
-                        const char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
-                        ctx.font = "bold " + fontSize + "px monospace";
-                        ctx.fillText(char, x * fontSize, y * fontSize);
-                    } else if (isGlowing) {
-                        // الماتريكس العادي بالخلفية
-                        ctx.fillStyle = "rgba(0, 255, 0, 0.08)";
+                        // القلب وحرف T: يلمعان بقوة
+                        ctx.fillStyle = type === 3 ? "#FFF" : "#0F0";
+                        ctx.shadowBlur = 15;
+                        ctx.shadowColor = ctx.fillStyle;
+                    } else {
+                        // باقي الشاشة: حروف باهتة
+                        ctx.fillStyle = "rgba(0, 100, 0, 0.2)"; // أخضر باهت جداً
                         ctx.shadowBlur = 0;
-                        const char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
-                        ctx.fillText(char, x * fontSize, y * fontSize);
                     }
+                    
+                    ctx.font = "bold " + fontSize + "px monospace";
+                    ctx.fillText(char, x * fontSize, y * fontSize);
                 }
-
-                if (rainDrops[x] > rows && Math.random() > 0.97) {
-                    rainDrops[x] = 0;
-                }
-                rainDrops[x] += 1.8;
             }
         }
 
-        setInterval(draw, 35);
+        setInterval(draw, 50); // التحكم بسرعة التغيير (التومض)
 
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+            // إعادة تهيئة الحروف عند تغيير حجم الشاشة
+            for (let x = 0; x < columns; x++) {
+                for (let y = 0; y < rows; y++) {
+                    screenChars[x][y] = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+                }
+            }
         });
     </script>
 </body>
