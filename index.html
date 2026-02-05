@@ -17,75 +17,70 @@
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        const fontSize = 16;
+        const fontSize = 18;
         const columns = Math.floor(canvas.width / fontSize);
-        const rows = Math.floor(canvas.height / fontSize);
         const rainDrops = Array(columns).fill(0);
-
-        // رموز الماتريكس
-        const matrixChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const matrixChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%&*";
 
         function draw() {
-            // خلفية سوداء مع شفافية بسيطة لتأثير الذيل
-            ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+            // تأثير التلاشي
+            ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+            const centerX = Math.floor(columns / 2);
+            const centerY = Math.floor((canvas.height / fontSize) / 2);
+
             for (let x = 0; x < columns; x++) {
-                let char = "";
-                let color = "#0F0"; // الافتراضي أخضر ماتريكس
-
-                // 1. تحديد منطقة الإطار (أغصان وورود وورق)
-                const isBorder = x <= 2 || x >= columns - 3 || rainDrops[x] <= 2 || rainDrops[x] >= rows - 2;
+                const yPos = Math.floor(rainDrops[x]);
                 
-                // 2. تحديد منطقة القلب في المنتصف
-                const centerX = Math.floor(columns / 2);
-                const centerY = Math.floor(rows / 2);
-                const dx = (x - centerX) * 0.5; // تعديل النسبة لجعل القلب متناسقاً
-                const dy = (rainDrops[x] - centerY);
-                const isHeart = Math.pow(dx*dx + dy*dy - 25, 3) - Math.pow(dx, 2) * Math.pow(dy, 3) < 0;
+                // 1. حساب منطقة القلب
+                const dx = (x - centerX) * 0.45; 
+                const dy = (yPos - centerY) * -0.12; 
+                const heartFormula = Math.pow(Math.pow(dx, 2) + Math.pow(dy, 2) - 1, 3) - Math.pow(dx, 2) * Math.pow(dy, 3);
+                const isInsideHeart = heartFormula < 0;
 
-                // 3. تحديد موقع حرف T (داخل القلب)
-                const isLetterT = (x === centerX && dy >= -2 && dy <= 2) || (dy === -2 && x >= centerX - 2 && x <= centerX + 2);
+                // 2. تحديد شكل حرف T الكبير (سماكة وشكل)
+                // العارضة العلوية
+                const isTTop = (yPos >= centerY - 4 && yPos <= centerY - 3) && (x >= centerX - 6 && x <= centerX + 6);
+                // الساق العمودية
+                const isTStem = (x >= centerX - 1 && x <= centerX + 1) && (yPos >= centerY - 4 && yPos <= centerY + 7);
+                
+                const isPartOfLargeT = isTTop || isTStem;
 
-                if (isBorder) {
-                    // تشكيل الإطار بالرموز
-                    const frameSymbols = ["Y", "v", "☘", "*", "❀", "W"];
-                    char = frameSymbols[Math.floor(Math.random() * frameSymbols.length)];
-                    
-                    if (char === "Y" || char === "W") color = "#5D4037"; // بني للأغصان
-                    else if (char === "v" || char === "☘") color = "#2E7D32"; // أخضر للورق
-                    else color = "#F06292"; // وردي للورد
-                } 
-                else if (isLetterT) {
-                    // حرف T داخل القلب
-                    char = "T";
-                    color = "#FFFFFF"; // أبيض ليبرز
-                }
-                else if (isHeart) {
-                    // رسم القلب بالرموز
-                    char = "♥";
-                    color = "#D32F2F"; // أحمر للقلب
-                } 
-                else {
-                    // تساقط الماتريكس العادي في المساحات الفارغة
-                    char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+                let drawChar = false;
+                let color = "#0F0"; // أخضر للماتريكس الخارجي
+
+                if (isInsideHeart) {
+                    if (isPartOfLargeT) {
+                        // داخل القلب وفي حدود حرف T: ارسم حروف عشوائية
+                        drawChar = true;
+                        color = "#FFFFFF"; // حرف T بلون أبيض ليكون مميزاً داخل الفراغ
+                    } else {
+                        // داخل القلب ولكن خارج جسم حرف T: اترك الفراغ أسود
+                        drawChar = false;
+                    }
+                } else {
+                    // خارج القلب: ارسم الماتريكس الطبيعي
+                    drawChar = true;
                     color = "#0F0";
                 }
 
-                // رسم الحرف المختار
-                ctx.fillStyle = color;
-                ctx.font = fontSize + "px monospace";
-                ctx.fillText(char, x * fontSize, rainDrops[x] * fontSize);
+                if (drawChar) {
+                    const text = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+                    ctx.fillStyle = color;
+                    ctx.font = fontSize + "px monospace";
+                    ctx.fillText(text, x * fontSize, yPos * fontSize);
+                }
 
-                // حركة التساقط
+                // حركة السقوط
                 if (rainDrops[x] * fontSize > canvas.height && Math.random() > 0.975) {
                     rainDrops[x] = 0;
                 }
-                rainDrops[x]++;
+                rainDrops[x] += 0.8;
             }
         }
 
-        setInterval(draw, 50);
+        setInterval(draw, 33);
 
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
