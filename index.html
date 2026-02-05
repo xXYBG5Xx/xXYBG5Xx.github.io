@@ -17,82 +17,83 @@
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        const fontSize = 18;
+        const fontSize = 16;
         const columns = Math.floor(canvas.width / fontSize);
+        const rows = Math.floor(canvas.height / fontSize);
         const rainDrops = Array(columns).fill(0);
         const matrixChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%&*";
 
-        // مصفوفة القلب مكبرة "حبة حلوين" مع حرف T متناظر (سماكة 2 بكسل للكل)
-        // 1: إطار القلب، 2: فراغ، 3: حرف T
+        // مصفوفة القلب: الإطار (1) سماكة بكسل واحد | حرف T (3) سماكة بكسلين وصغير جداً
         const pixelHeart = [
-            [0,0,1,1,1,1,0,0,0,1,1,1,1,0,0],
-            [0,1,2,2,2,2,1,0,1,2,2,2,2,1,0],
-            [1,2,2,2,2,2,2,1,2,2,2,2,2,2,1],
-            [1,2,3,3,3,3,3,3,3,3,3,3,3,2,1],
-            [1,2,3,3,3,3,3,3,3,3,3,3,3,2,1],
-            [1,2,2,2,2,2,3,3,3,2,2,2,2,2,1],
-            [0,1,2,2,2,2,3,3,3,2,2,2,2,1,0],
-            [0,0,1,2,2,2,3,3,3,2,2,2,1,0,0],
-            [0,0,0,1,2,2,3,3,3,2,2,1,0,0,0],
-            [0,0,0,0,1,2,3,3,3,2,1,0,0,0,0],
-            [0,0,0,0,0,1,2,2,2,1,0,0,0,0,0],
-            [0,0,0,0,0,0,1,2,1,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,1,0,0,0,0,0,0,0]
+            [0,0,0,1,1,1,0,0,0,0,0,1,1,1,0,0,0],
+            [0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0],
+            [0,1,0,0,0,0,0,1,0,1,0,0,0,0,0,1,0],
+            [1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,0,0,0,0,3,3,3,3,3,3,0,0,0,0,0,1], // حرف T صغير بسماكة بكسلين
+            [1,0,0,0,0,3,3,3,3,3,3,0,0,0,0,0,1],
+            [0,1,0,0,0,0,0,3,3,0,0,0,0,0,0,1,0],
+            [0,0,1,0,0,0,0,3,3,0,0,0,0,0,1,0,0],
+            [0,0,0,1,0,0,0,3,3,0,0,0,1,0,0,0,0],
+            [0,0,0,0,1,0,0,3,3,0,0,1,0,0,0,0,0],
+            [0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0]
         ];
 
         function draw() {
-            // تقليل الشفافية قليلاً لجعل أثر الحروف (الذيل) أطول وأوضح
-            ctx.fillStyle = "rgba(0, 0, 0, 0.12)";
+            ctx.fillStyle = "rgba(0, 0, 0, 0.18)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             const centerX = Math.floor(columns / 2);
-            const centerY = Math.floor((canvas.height / fontSize) / 4);
+            const centerY = Math.floor(rows / 4);
 
             for (let x = 0; x < columns; x++) {
                 const yPos = Math.floor(rainDrops[x]);
                 
-                const hOffsetX = 7; // لتوسيط القلب المكبر
-                const heartX = x - (centerX - hOffsetX);
-                const heartY = yPos - centerY;
+                for (let y = 0; y < rows; y++) {
+                    const hOffsetX = 8;
+                    const hX = x - (centerX - hOffsetX);
+                    const hY = y - centerY;
 
-                let char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
-                let color = "#0F0";
-                let shouldDraw = true;
-                let glow = 0;
-
-                if (heartY >= 0 && heartY < pixelHeart.length && heartX >= 0 && heartX < pixelHeart[0].length) {
-                    const cell = pixelHeart[heartY][heartX];
-                    
-                    if (cell === 1) { 
-                        color = "#00FF41"; // أخضر ساطع للإطار
-                        glow = 15;
-                    } else if (cell === 3) { 
-                        color = "#FFFFFF"; // أبيض ناصع لحرف T
-                        glow = 20;
-                    } else if (cell === 2) { 
-                        shouldDraw = false; // فراغ القلب
+                    let type = 0; 
+                    if (hY >= 0 && hY < pixelHeart.length && hX >= 0 && hX < pixelHeart[0].length) {
+                        type = pixelHeart[hY][hX];
                     }
-                } else {
-                    glow = 0;
+
+                    const isGlowing = Math.abs(y - yPos) < 5;
+
+                    if (type === 1 || type === 3) {
+                        if (isGlowing) {
+                            ctx.fillStyle = type === 3 ? "#FFF" : "#0F0";
+                            ctx.shadowBlur = 18;
+                            ctx.shadowColor = ctx.fillStyle;
+                        } else {
+                            // الحالة الباهتة (تنشاف بوضوح خفيف)
+                            ctx.fillStyle = type === 3 ? "rgba(200, 200, 200, 0.22)" : "rgba(0, 120, 0, 0.25)";
+                            ctx.shadowBlur = 0;
+                        }
+                        const char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+                        ctx.font = "bold " + fontSize + "px monospace";
+                        ctx.fillText(char, x * fontSize, y * fontSize);
+                    } else if (isGlowing) {
+                        // الماتريكس العادي بالخلفية
+                        ctx.fillStyle = "rgba(0, 255, 0, 0.08)";
+                        ctx.shadowBlur = 0;
+                        const char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+                        ctx.fillText(char, x * fontSize, y * fontSize);
+                    }
                 }
 
-                if (shouldDraw) {
-                    ctx.shadowBlur = glow;
-                    ctx.shadowColor = color;
-                    ctx.fillStyle = color;
-                    ctx.font = (glow > 0 ? "bold " : "") + fontSize + "px monospace";
-                    ctx.fillText(char, x * fontSize, yPos * fontSize);
-                }
-
-                // تساقط سريع
-                if (rainDrops[x] * fontSize > canvas.height && Math.random() > 0.95) {
+                if (rainDrops[x] > rows && Math.random() > 0.97) {
                     rainDrops[x] = 0;
                 }
-                rainDrops[x] += 1.4;
+                rainDrops[x] += 1.8;
             }
         }
 
-        setInterval(draw, 30);
+        setInterval(draw, 35);
+
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
