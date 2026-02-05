@@ -12,60 +12,64 @@
         const canvas = document.getElementById('m');
         const ctx = canvas.getContext('2d');
 
-        let columns, drops;
+        let columns = 0;
+        let drops = [];
         const fontSize = 16;
         const words = "0123456789qwertyuiopasdfghjklzxcvbnmｦｱｳｴｵｶｷｸｹｺｻｼｽｾｿ";
 
-        // وظيفة لضبط حجم الكانفاس وحساب الأعمدة بناءً على حجم الشاشة
         function setupCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             
-            // حساب عدد الأعمدة بناءً على العرض الجديد
-            columns = Math.floor(canvas.width / fontSize);
-            drops = [];
-            // البدء من أماكن عشوائية في الأعلى ليعطي مظهرًا طبيعيًا عند إعادة التشغيل
-            for (let i = 0; i < columns; i++) {
-                drops[i] = Math.random() * -100; 
+            const newColumns = Math.floor(canvas.width / fontSize);
+            
+            // إذا زاد حجم الشاشة، أضف أعمدة جديدة فقط دون التأثير على القديمة
+            if (newColumns > columns) {
+                for (let i = columns; i < newColumns; i++) {
+                    // جعل العمود الجديد يبدأ من مكان عشوائي في الأعلى ليتناغم مع البقية
+                    drops[i] = Math.random() * -100;
+                }
+            } 
+            // إذا صغر حجم الشاشة، قلص المصفوفة فقط
+            else if (newColumns < columns) {
+                drops = drops.slice(0, newColumns);
             }
+            
+            columns = newColumns;
         }
 
-        // استدعاء الضبط لأول مرة
         setupCanvas();
 
-        // تحديث الحجم تلقائياً عند تغيير حجم نافذة المتصفح
+        // التحديث عند تغيير الحجم الآن أصبح "مستمراً" ولا يصفر العداد
         window.addEventListener('resize', setupCanvas);
 
         function draw() {
-            // طبقة سوداء شفافة جداً لخلق تأثير الذيل
             ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // إعداد الخط واللون الباهت
             ctx.font = fontSize + 'px monospace';
 
             for (let i = 0; i < drops.length; i++) {
-                // اختيار حرف عشوائي تماماً في كل إطار
                 const text = words[Math.floor(Math.random() * words.length)];
-                
                 const x = i * fontSize;
                 const y = drops[i] * fontSize;
 
-                // رسم الحرف بلون أخضر باهت وواضح
-                ctx.fillStyle = 'rgba(0, 255, 70, 0.35)'; 
+                // الحروف الخلفية (باهتة جداً)
+                ctx.fillStyle = 'rgba(0, 255, 70, 0.2)'; 
                 ctx.fillText(text, x, y);
 
-                // إعادة الحرف للأعلى إذا خرج من الشاشة مع لمسة عشوائية للتوقيت
+                // رأس العمود (واضح وباهت قليلاً ليبرز الحركة)
+                ctx.fillStyle = 'rgba(0, 255, 70, 0.7)';
+                ctx.fillText(text, x, y);
+
                 if (y > canvas.height && Math.random() > 0.975) {
                     drops[i] = 0;
                 }
 
-                // تحريك العمود للأسفل
                 drops[i]++;
             }
         }
 
-        // سرعة التحديث (33 مللي ثانية تعطي تقريباً 30 إطار في الثانية)
         setInterval(draw, 33);
     </script>
 </body>
