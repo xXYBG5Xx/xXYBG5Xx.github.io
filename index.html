@@ -17,35 +17,75 @@
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        // إضافة حروف إنجليزية + أرقام + رموز خاصة
-        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?";
-        const fontSize = 17; 
-        const columns = canvas.width / fontSize;
+        const fontSize = 16;
+        const columns = Math.floor(canvas.width / fontSize);
+        const rows = Math.floor(canvas.height / fontSize);
+        const rainDrops = Array(columns).fill(0);
 
-        const rainDrops = [];
-        for (let x = 0; x < columns; x++) {
-            rainDrops[x] = 1;
-        }
+        // رموز الماتريكس
+        const matrixChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-        const draw = () => {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+        function draw() {
+            // خلفية سوداء مع شفافية بسيطة لتأثير الذيل
+            ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            ctx.fillStyle = '#0F0'; 
-            ctx.font = fontSize + 'px monospace';
+            for (let x = 0; x < columns; x++) {
+                let char = "";
+                let color = "#0F0"; // الافتراضي أخضر ماتريكس
 
-            for (let i = 0; i < rainDrops.length; i++) {
-                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
-                ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+                // 1. تحديد منطقة الإطار (أغصان وورود وورق)
+                const isBorder = x <= 2 || x >= columns - 3 || rainDrops[x] <= 2 || rainDrops[x] >= rows - 2;
+                
+                // 2. تحديد منطقة القلب في المنتصف
+                const centerX = Math.floor(columns / 2);
+                const centerY = Math.floor(rows / 2);
+                const dx = (x - centerX) * 0.5; // تعديل النسبة لجعل القلب متناسقاً
+                const dy = (rainDrops[x] - centerY);
+                const isHeart = Math.pow(dx*dx + dy*dy - 25, 3) - Math.pow(dx, 2) * Math.pow(dy, 3) < 0;
 
-                if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    rainDrops[i] = 0;
+                // 3. تحديد موقع حرف T (داخل القلب)
+                const isLetterT = (x === centerX && dy >= -2 && dy <= 2) || (dy === -2 && x >= centerX - 2 && x <= centerX + 2);
+
+                if (isBorder) {
+                    // تشكيل الإطار بالرموز
+                    const frameSymbols = ["Y", "v", "☘", "*", "❀", "W"];
+                    char = frameSymbols[Math.floor(Math.random() * frameSymbols.length)];
+                    
+                    if (char === "Y" || char === "W") color = "#5D4037"; // بني للأغصان
+                    else if (char === "v" || char === "☘") color = "#2E7D32"; // أخضر للورق
+                    else color = "#F06292"; // وردي للورد
+                } 
+                else if (isLetterT) {
+                    // حرف T داخل القلب
+                    char = "T";
+                    color = "#FFFFFF"; // أبيض ليبرز
                 }
-                rainDrops[i]++;
-            }
-        };
+                else if (isHeart) {
+                    // رسم القلب بالرموز
+                    char = "♥";
+                    color = "#D32F2F"; // أحمر للقلب
+                } 
+                else {
+                    // تساقط الماتريكس العادي في المساحات الفارغة
+                    char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+                    color = "#0F0";
+                }
 
-        setInterval(draw, 33);
+                // رسم الحرف المختار
+                ctx.fillStyle = color;
+                ctx.font = fontSize + "px monospace";
+                ctx.fillText(char, x * fontSize, rainDrops[x] * fontSize);
+
+                // حركة التساقط
+                if (rainDrops[x] * fontSize > canvas.height && Math.random() > 0.975) {
+                    rainDrops[x] = 0;
+                }
+                rainDrops[x]++;
+            }
+        }
+
+        setInterval(draw, 50);
 
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
