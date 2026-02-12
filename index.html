@@ -8,7 +8,7 @@
         :root { --matrix: #00ff41; --danger: #ff0033; --bg: #050505; }
         body { background-color: var(--bg); color: var(--matrix); font-family: 'Tahoma', sans-serif; margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; direction: rtl; }
         
-        /* النوافذ التنبيهية (بداية وفشل) */
+        /* النوافذ التنبيهية */
         .modal-box { border: 2px solid var(--danger); padding: 40px; text-align: center; background: #000; box-shadow: 0 0 40px var(--danger); z-index: 100; max-width: 500px; position: absolute; }
         #fail-box { display: none; border-color: #ffaa00; box-shadow: 0 0 40px #ffaa00; }
         
@@ -64,7 +64,7 @@
 
         <div id="final-screen">
             <h1 style="color:white;">🔓 تمت السيطرة بنجاح</h1>
-            <p style="font-size: 1.2em;">تم استعادة كافة البيانات المجهولة. كل عام وأنتِ بخير!</p>
+            <p style="font-size: 1.2em;">تم استعادة كافة البيانات المجهولة.</p>
             <img src="myphoto.jpg" alt="Final Reveal">
         </div>
     </div>
@@ -124,8 +124,10 @@
             else if (step === 2 && cmd === 'تثبيت_الاتصال') {
                 clearInterval(countdown);
                 const timerLine = document.getElementById('timer-line');
-                if(timerLine) timerLine.style.color = 'var(--matrix)';
-                if(timerLine) timerLine.classList.remove('glitch-text');
+                if(timerLine) {
+                    timerLine.style.color = 'var(--matrix)';
+                    timerLine.classList.remove('glitch-text');
+                }
                 
                 await write("نجاح! تم الحفاظ على استقرار الجلسة.");
                 await write("جاري البحث عن الملفات...");
