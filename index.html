@@ -3,11 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تنبيه أمني - نظام مغلق</title>
+    <title>TERMINAL_ACCESS_GRANTED</title>
     <style>
+        :root {
+            --terminal-green: #00ff41;
+            --bg-black: #0a0a0a;
+        }
+
         body {
-            background-color: #0a0a0a;
-            color: #00FF41;
+            background-color: var(--bg-black);
+            color: var(--terminal-green);
             font-family: 'Courier New', Courier, monospace;
             margin: 0;
             height: 100vh;
@@ -15,213 +20,247 @@
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            padding: 15px;
+            text-shadow: 0 0 5px var(--terminal-green);
         }
 
-        /* حاوية التحذير */
-        #warning-box {
-            border: 1px solid #00FF41;
-            padding: 25px;
-            text-align: center;
-            background: #000;
-            width: 100%;
-            max-width: 400px;
+        /* تأثير الشاشة القديمة */
+        body::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 100;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
         }
 
-        .btn-group {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        button {
-            padding: 10px 25px;
-            font-family: inherit;
-            cursor: pointer;
-            border: 1px solid #00FF41;
-            background: transparent;
-            color: #00FF41;
-            transition: 0.3s;
-        }
-
-        button:hover {
-            background: #00FF41;
-            color: #000;
-        }
-
-        /* الترمينال */
-        #terminal {
-            display: none;
-            width: 100%;
-            max-width: 700px;
+        /* حاوية الترمينال */
+        .terminal-window {
+            width: 95%;
+            max-width: 800px;
             height: 80vh;
-            border: 1px solid #333;
-            background: #000;
-            padding: 15px;
+            background: rgba(0, 20, 0, 0.9);
+            border: 1px solid var(--terminal-green);
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* شريط العنوان العلوي */
+        .terminal-header {
+            background: var(--terminal-green);
+            color: black;
+            padding: 5px 10px;
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .terminal-body {
+            flex: 1;
+            padding: 20px;
             overflow-y: auto;
+            display: flex;
             flex-direction: column;
         }
 
-        .line { margin-bottom: 5px; font-size: 15px; line-height: 1.4; }
-        .input-line { display: flex; align-items: center; margin-top: 10px; }
-        
-        #user-input {
+        .line { margin-bottom: 10px; opacity: 0; animation: fadeIn 0.3s forwards; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 18px;
+            background: var(--terminal-green);
+            animation: blink 0.8s infinite;
+            vertical-align: middle;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        input {
             background: transparent;
             border: none;
-            color: #fff;
+            color: white;
             outline: none;
-            flex: 1;
             font-family: inherit;
-            font-size: 15px;
+            font-size: 16px;
+            width: 100%;
+            caret-color: var(--terminal-green);
         }
 
-        /* شريط التحميل */
-        #progress-container {
-            display: none;
-            width: 80%;
-            max-width: 400px;
-            border: 1px solid #00FF41;
+        /* أزرار التحذير */
+        .btn-box {
+            border: 1px solid red;
+            padding: 20px;
+            text-align: center;
+            margin: auto;
         }
+        .btn-hack {
+            background: transparent;
+            border: 1px solid var(--terminal-green);
+            color: var(--terminal-green);
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .btn-hack:hover {
+            background: var(--terminal-green);
+            color: black;
+        }
+
         #progress-bar {
             width: 0%;
-            height: 25px;
-            background: #00FF41;
-            text-align: center;
-            color: #000;
-            font-weight: bold;
-            line-height: 25px;
+            background: var(--terminal-green);
+            height: 20px;
+            margin-top: 10px;
+            transition: width 0.1s;
         }
 
-        /* الشاشة النهائية */
-        #final-screen {
+        .final-content {
             display: none;
             text-align: center;
-            color: #fff;
-            width: 100%;
-            max-height: 100vh;
-            overflow-y: auto;
+            animation: glitch 1s infinite;
         }
 
-        .final-media img, .final-media video {
-            max-width: 100%;
-            width: 400px;
-            border: 1px solid #333;
-            margin-top: 20px;
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
         }
+
+        img { max-width: 100%; border: 1px solid var(--terminal-green); margin-top: 20px; }
     </style>
 </head>
 <body>
 
-    <div id="warning-box">
-        <h2 style="color: #00FF41;">[تحذير أمني]</h2>
-        <p>محاولة وصول غير مصرح بها لملفات النظام. هل ترغب في محاولة الاختراق؟</p>
-        <div class="btn-group">
-            <button onclick="startTerminal()">تأكيد (Yes)</button>
-            <button onclick="denyAccess()">إلغاء (No)</button>
+<div class="terminal-window">
+    <div class="terminal-header">
+        <span>SECURITY_CONSOLE_V.2.6</span>
+        <span>[X] [_] [O]</span>
+    </div>
+    
+    <div class="terminal-body" id="display">
+        <div id="init-screen">
+            <div class="line" style="color: red;">[!] تحذير: تم رصد محاولة دخول غير قانونية.</div>
+            <div class="line">النظام مشفر بالكامل. هل ترغبين في فك التشفير؟</div>
+            <div class="btn-group" style="margin-top: 20px;">
+                <button class="btn-hack" onclick="initHack()">نعم (فك التشفير)</button>
+                <button class="btn-hack" style="border-color: red; color: red;" onclick="alert('لا يمكن التراجع!')">لا (خروج)</button>
+            </div>
+        </div>
+
+        <div id="hack-process" style="display: none;">
+            <div id="history"></div>
+            <div class="input-line" id="prompt-line" style="display: none;">
+                <span>root@heart_os:~$ </span>
+                <input type="text" id="command-line" autofocus autocomplete="off">
+            </div>
+        </div>
+
+        <div id="loading-zone" style="display: none; margin-top: 20px;">
+            <div class="line" id="load-msg">جاري تحميل البيانات...</div>
+            <div style="width: 100%; border: 1px solid var(--terminal-green); height: 22px;">
+                <div id="progress-bar"></div>
+            </div>
+        </div>
+
+        <div id="final-screen" class="final-content">
+            <h1 style="font-size: 24px;">[تم الاختراق بنجاح]</h1>
+            <p>كل عام وأنتِ بخير.. تم استخراج ملفات الذاكرة بنجاح.</p>
+            <img src="https://via.placeholder.com/400x300/000/00ff41?text=DATA_FOUND" alt="Birthday Data">
         </div>
     </div>
+</div>
 
-    <div id="terminal">
-        <div id="history"></div>
-        <div class="input-line" id="input-area">
-            <span>root@system:~$</span>
-            <input type="text" id="user-input" autofocus autocomplete="off">
-        </div>
-    </div>
+<script>
+    const history = document.getElementById('history');
+    const cmdInput = document.getElementById('command-line');
+    const display = document.getElementById('display');
 
-    <div id="progress-container">
-        <div id="progress-bar">0%</div>
-    </div>
-
-    <div id="final-screen">
-        <h1 style="color: #00FF41;">تم استخراج الملفات بنجاح</h1>
-        <p>عيد ميلاد سعيد. تم الوصول إلى كافة الذكريات والمرفقات.</p>
-        <div class="final-media">
-            <img src="https://via.placeholder.com/400x500/111/00FF41?text=Your+Photo+Here" alt="ملف مستخرج">
-        </div>
-    </div>
-
-    <script>
-        const history = document.getElementById('history');
-        const userInput = document.getElementById('user-input');
-        const terminal = document.getElementById('terminal');
-        const warningBox = document.getElementById('warning-box');
-        const progressContainer = document.getElementById('progress-container');
-        const progressBar = document.getElementById('progress-bar');
-        const finalScreen = document.getElementById('final-screen');
-
-        function denyAccess() {
-            alert("لا يمكن إلغاء العملية الآن. اضغطي 'تأكيد'.");
-        }
-
-        function startTerminal() {
-            warningBox.style.display = 'none';
-            terminal.style.display = 'flex';
-            addLine("جاري فحص المنافذ...");
-            setTimeout(() => addLine("تم فتح الاتصال بشبكة Love_Server..."), 500);
-            setTimeout(() => addLine("اكتبي أمر 'هكر' لتشغيل السكربت."), 1000);
-            userInput.focus();
-        }
-
-        userInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                const cmd = this.value.trim();
-                if (cmd === "") return;
-                addLine("root@system:~$ " + cmd);
-                this.value = '';
-
-                if (cmd === "هكر") {
-                    runHack();
-                } else {
-                    addLine("خطأ: أمر غير معروف.");
-                }
-            }
-        });
-
-        function addLine(text) {
-            const div = document.createElement('div');
-            div.className = 'line';
-            div.innerHTML = text;
-            history.appendChild(div);
-            terminal.scrollTop = terminal.scrollHeight;
-        }
-
-        function runHack() {
-            document.getElementById('input-area').style.display = 'none';
-            const steps = [
-                "تجاوز جدار الحماية...",
-                "استخراج مفاتيح التشفير...",
-                "تحميل الصور من السيرفر...",
-                "تمت العملية بنجاح."
-            ];
-            steps.forEach((s, i) => {
-                setTimeout(() => addLine("> " + s), (i + 1) * 700);
-            });
+    function addLine(text, delay = 0, color = 'var(--terminal-green)') {
+        return new Promise(resolve => {
             setTimeout(() => {
-                terminal.style.display = 'none';
-                progressContainer.style.display = 'block';
-                load();
-            }, 4000);
-        }
+                const div = document.createElement('div');
+                div.className = 'line';
+                div.style.color = color;
+                div.innerHTML = text;
+                history.appendChild(div);
+                display.scrollTop = display.scrollHeight;
+                resolve();
+            }, delay);
+        });
+    }
 
-        function load() {
-            let w = 0;
-            let interval = setInterval(() => {
-                if (w >= 100) {
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        progressContainer.style.display = 'none';
-                        finalScreen.style.display = 'block';
-                        document.body.style.overflow = 'auto';
-                    }, 500);
-                } else {
-                    w += 2;
-                    progressBar.style.width = w + '%';
-                    progressBar.innerHTML = w + '%';
-                }
-            }, 60);
+    async function initHack() {
+        document.getElementById('init-screen').style.display = 'none';
+        document.getElementById('hack-process').style.display = 'block';
+        
+        await addLine("[*] جاري الاتصال بالخادم الرئيسي...");
+        await addLine("[*] كسر بروتوكول الحماية SSL...", 800);
+        await addLine("[!] تنبيه: النظام يطلب كلمة مرور الدخول.", 1000, 'yellow');
+        await addLine("اكتبي أمر 'هكر' لتجاوز كلمة المرور:", 500);
+        
+        document.getElementById('prompt-line').style.display = 'flex';
+        cmdInput.focus();
+    }
+
+    cmdInput.addEventListener('keydown', async function(e) {
+        if (e.key === 'Enter') {
+            const cmd = this.value.trim();
+            this.value = '';
+            document.getElementById('prompt-line').style.display = 'none';
+            
+            await addLine("root@heart_os:~$ " + cmd);
+            
+            if (cmd === "هكر") {
+                runFinalHack();
+            } else {
+                await addLine("خطأ: أمر غير معروف. جاري إعادة التهيئة...", 500, 'red');
+                document.getElementById('prompt-line').style.display = 'flex';
+                cmdInput.focus();
+            }
         }
-    </script>
+    });
+
+    async function runFinalHack() {
+        await addLine("> جاري تجاوز قاعدة بيانات 'الذكريات'...");
+        await addLine("> استخراج ملفات الصور المستهدفة...", 700);
+        await addLine("> تم العثور على ملف: Birthday_Gift.exe", 1000);
+        
+        setTimeout(() => {
+            document.getElementById('hack-process').style.display = 'none';
+            document.getElementById('loading-zone').style.display = 'block';
+            startLoading();
+        }, 2000);
+    }
+
+    function startLoading() {
+        let width = 0;
+        let bar = document.getElementById('progress-bar');
+        let interval = setInterval(() => {
+            if (width >= 100) {
+                clearInterval(interval);
+                showFinal();
+            } else {
+                width++;
+                bar.style.width = width + '%';
+            }
+        }, 50);
+    }
+
+    function showFinal() {
+        document.getElementById('loading-zone').style.display = 'none';
+        document.getElementById('final-screen').style.display = 'block';
+        document.body.style.overflow = 'auto';
+    }
+</script>
+
 </body>
 </html>
