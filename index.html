@@ -3,253 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NETWORK_INTRUSION_DETECTED</title>
+    <title>نظام_الاختراق_المركزي</title>
     <style>
-        :root {
-            --matrix-color: #00ff41;
-            --matrix-glow: 0 0 10px #00ff41, 0 0 20px #00ff41;
-            --bg-black: #050505;
-        }
+        :root { --matrix: #00ff41; --danger: #ff0033; --bg: #050505; }
+        body { background-color: var(--bg); color: var(--matrix); font-family: 'Tahoma', 'Courier New', monospace; margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; direction: rtl; }
+        
+        .terminal { display: none; width: 95%; max-width: 850px; height: 85vh; border: 1px solid var(--matrix); background: rgba(0,0,0,0.95); padding: 20px; flex-direction: column; position: relative; box-shadow: 0 0 25px rgba(0,255,65,0.2); }
+        .log { flex: 1; overflow-y: auto; font-size: 15px; line-height: 1.6; margin-bottom: 15px; border-bottom: 1px solid #1a1a1a; }
+        .input-area { display: flex; align-items: center; padding-top: 10px; }
+        input { background: transparent; border: none; color: yellow; outline: none; flex: 1; font-family: inherit; font-size: 18px; padding-right: 10px; }
+        
+        #warning-box { border: 2px solid var(--danger); padding: 40px; text-align: center; background: #000; box-shadow: 0 0 40px var(--danger); z-index: 100; max-width: 500px; }
+        .btn-red { background: transparent; border: 1px solid var(--danger); color: var(--danger); padding: 12px 25px; cursor: pointer; font-weight: bold; margin-top: 20px; font-family: inherit; }
+        .btn-red:hover { background: var(--danger); color: #fff; box-shadow: 0 0 15px var(--danger); }
 
-        body {
-            background-color: var(--bg-black);
-            color: var(--matrix-color);
-            font-family: 'Consolas', 'Courier New', monospace;
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
+        #loading-zone { display: none; margin-top: 20px; text-align: center; }
+        .bar-container { width: 100%; border: 1px solid var(--matrix); height: 22px; margin-top: 10px; position: relative; }
+        .bar-fill { width: 0%; height: 100%; background: var(--matrix); box-shadow: 0 0 15px var(--matrix); transition: width 0.3s; }
 
-        /* تأثير الأرقام الباهتة في الخلفية (شبه الماتريكس) */
-        .bg-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(0, 255, 65, 0.05) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(0, 255, 65, 0.05) 1px, transparent 1px);
-            background-size: 20px 20px;
-            z-index: -1;
-        }
-
-        /* نافذة التحذير الجديدة */
-        #warning-modal {
-            background: rgba(0, 0, 0, 0.9);
-            border: 2px solid #ff0000;
-            padding: 40px;
-            text-align: center;
-            box-shadow: 0 0 30px rgba(255, 0, 0, 0.4);
-            max-width: 500px;
-            z-index: 1000;
-        }
-
-        #warning-modal h2 {
-            color: #ff0000;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-top: 0;
-            text-shadow: 0 0 10px #ff0000;
-        }
-
-        .btn-matrix {
-            background: transparent;
-            border: 1px solid var(--matrix-color);
-            color: var(--matrix-color);
-            padding: 10px 30px;
-            cursor: pointer;
-            font-family: inherit;
-            margin: 10px;
-            transition: 0.3s;
-            text-transform: uppercase;
-        }
-
-        .btn-matrix:hover {
-            background: var(--matrix-color);
-            color: black;
-            box-shadow: var(--matrix-glow);
-        }
-
-        /* نافذة الترمينال */
-        .terminal-container {
-            display: none;
-            width: 90%;
-            max-width: 900px;
-            height: 80vh;
-            border: 1px solid var(--matrix-color);
-            background: rgba(0, 0, 0, 0.85);
-            padding: 20px;
-            box-shadow: var(--matrix-glow);
-            flex-direction: column;
-        }
-
-        .terminal-log {
-            flex: 1;
-            overflow-y: auto;
-            margin-bottom: 10px;
-            scrollbar-width: thin;
-            scrollbar-color: var(--matrix-color) black;
-        }
-
-        .input-area {
-            display: flex;
-            border-top: 1px solid rgba(0, 255, 65, 0.2);
-            padding-top: 10px;
-        }
-
-        input {
-            background: transparent;
-            border: none;
-            color: #fff;
-            outline: none;
-            flex: 1;
-            font-family: inherit;
-            font-size: 18px;
-        }
-
-        .line { margin-bottom: 5px; animation: textAppear 0.1s forwards; }
-        @keyframes textAppear { from { opacity: 0; } to { opacity: 1; } }
-
-        #progress-bar-container {
-            display: none;
-            width: 100%;
-            border: 1px solid var(--matrix-color);
-            height: 25px;
-            margin-top: 20px;
-        }
-
-        #progress-bar {
-            width: 0%;
-            height: 100%;
-            background: var(--matrix-color);
-            box-shadow: var(--matrix-glow);
-        }
-
-        .final-reveal {
-            display: none;
-            text-align: center;
-        }
-
-        img {
-            max-width: 100%;
-            width: 400px;
-            border: 1px solid var(--matrix-color);
-            filter: grayscale(20%) contrast(120%);
-            margin-top: 20px;
-        }
+        .glitch-text { animation: flash 0.3s infinite; color: var(--danger) !important; font-weight: bold; }
+        @keyframes flash { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
+        
+        #final-screen { display: none; text-align: center; animation: fadeIn 2s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        img { max-width: 100%; width: 380px; border: 2px solid var(--matrix); margin-top: 20px; border-radius: 12px; box-shadow: 0 0 20px var(--matrix); }
+        .highlight { color: yellow; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div class="bg-overlay"></div>
-
-    <div id="warning-modal">
-        <h2>⚠️ اختراق للنظام اكتُشف</h2>
-        <p>جهاز غير معروف يحاول الوصول إلى "قاعدة بيانات العمر". <br> هل تسمح بالولوج وتخطي بروتوكول الحماية؟</p>
-        <div class="btn-group">
-            <button class="btn-matrix" onclick="activateTerminal()">تأكيد الدخول</button>
-            <button class="btn-matrix" style="border-color: #ff0000; color: #ff0000;" onclick="alert('النظام لا يقبل الرفض في هذه المرحلة')">إلغاء الأمر</button>
-        </div>
+    <div id="warning-box">
+        <h1 class="glitch-text">⚠️ تم رصد اختراق نشط</h1>
+        <p>نظام الحماية المركزي اكتشف محاولة وصول لملفات "الذكرى السنوية".</p>
+        <button class="btn-red" onclick="startHack()">بدء التجاوز اليدوي</button>
     </div>
 
-    <div class="terminal-container" id="main-terminal">
-        <div class="terminal-log" id="log"></div>
+    <div class="terminal" id="terminal">
+        <div class="log" id="log"></div>
         
-        <div id="loading-box" style="display: none;">
-            <div id="progress-bar-container">
-                <div id="progress-bar"></div>
-            </div>
-            <p id="status-text" style="text-align: center;">جاري سحب الملفات المشفرة...</p>
+        <div id="loading-zone">
+            <div id="status">جاري سحب تشفير الصور...</div>
+            <div class="bar-container"><div id="bar" class="bar-fill"></div></div>
         </div>
 
-        <div class="input-area" id="input-line" style="display: none;">
-            <span>GUEST@MATRIX:~$ </span>
-            <input type="text" id="user-cmd" autofocus autocomplete="off">
+        <div class="input-area" id="prompt">
+            <span>مدير_النظام@الماتريكس:~$ </span>
+            <input type="text" id="input" autofocus autocomplete="off">
         </div>
 
-        <div id="final-view" class="final-reveal">
-            <h1 style="font-size: 2.5rem; letter-spacing: 5px;">ACCESS GRANTED</h1>
-            <p>تم فك تشفير البيانات بنجاح. عيد ميلاد سعيد!</p>
-            <img src="https://via.placeholder.com/400x300/000/00ff41?text=SECRET_FILE_01" alt="الملف المستخرج">
+        <div id="final-screen">
+            <h1 style="color:white; text-shadow: 0 0 10px var(--matrix);">🔓 تمت السيطرة بنجاح</h1>
+            <p style="font-size: 1.2em;">تم فك تشفير البيانات بالكامل.. كل عام وأنتِ بخير!</p>
+            <img src="myphoto.jpg" alt="Gift Image">
         </div>
     </div>
 
     <script>
         const log = document.getElementById('log');
-        const cmdInput = document.getElementById('user-cmd');
-        const terminal = document.getElementById('main-terminal');
-        const warning = document.getElementById('warning-modal');
+        const input = document.getElementById('input');
+        const bar = document.getElementById('bar');
+        const statusText = document.getElementById('status');
+        let step = 0;
 
-        async function addLog(text, delay = 500) {
-            return new Promise(resolve => {
+        async function write(text, color = 'var(--matrix)', isGlitch = false) {
+            return new Promise(r => {
                 setTimeout(() => {
-                    const div = document.createElement('div');
-                    div.className = 'line';
-                    div.innerHTML = `> ${text}`;
-                    log.appendChild(div);
+                    const d = document.createElement('div');
+                    d.style.color = color;
+                    if(isGlitch) d.className = 'glitch-text';
+                    d.innerHTML = `> ${text}`;
+                    log.appendChild(d);
                     log.scrollTop = log.scrollHeight;
-                    resolve();
-                }, delay);
+                    r();
+                }, 500);
             });
         }
 
-        async function activateTerminal() {
-            warning.style.display = 'none';
-            terminal.style.display = 'flex';
-            
-            await addLog("جاري تهيئة بيئة الماتريكس...");
-            await addLog("الاتصال بـ NODE_778... ناجح");
-            await addLog("تحذير: جدار الحماية يحاول الصد", 800);
-            await addLog("اكتبي أمر 'هكر' لتجاوز البروتوكول:", 1000);
-            
-            document.getElementById('input-line').style.display = 'flex';
-            cmdInput.focus();
+        function startHack() {
+            document.getElementById('warning-box').style.display = 'none';
+            document.getElementById('terminal').style.display = 'flex';
+            initSteps();
         }
 
-        cmdInput.addEventListener('keydown', async function(e) {
+        async function initSteps() {
+            await write("جاري فحص جدار الحماية...");
+            await write("تم العثور على ثغرة في النظام الفرعي.");
+            await write("اكتبي أمر <span class='highlight'>'تجاوز_الأمان'</span> للبدء:");
+            step = 1;
+        }
+
+        input.addEventListener('keydown', async (e) => {
             if (e.key === 'Enter') {
-                const val = this.value.trim();
-                this.value = '';
-                
-                if (val === "هكر") {
-                    document.getElementById('input-line').style.display = 'none';
-                    await addLog(`بدء تنفيذ السكربت: ${val}`);
-                    runSequence();
-                } else {
-                    await addLog("خطأ: الأمر غير معترف به. حاولي مجدداً.", 200);
-                }
+                const val = input.value.trim();
+                input.value = '';
+                handleStep(val);
             }
         });
 
-        async function runSequence() {
-            await addLog("جاري كسر تشفير AES-256...");
-            await addLog("استخراج حزم الصور...", 600);
-            await addLog("تم الوصول إلى المجلد الهدف.", 800);
-            
-            setTimeout(() => {
-                document.getElementById('loading-box').style.display = 'block';
-                document.getElementById('progress-bar-container').style.display = 'block';
-                startLoading();
-            }, 1000);
+        async function handleStep(cmd) {
+            if (step === 1 && cmd === 'تجاوز_الأمان') {
+                await write(`تم تنفيذ الأمر: ${cmd}`);
+                await write("!!! تنبيه: النظام يحاول طردك الآن !!!", 'red', true);
+                await write("اكتبي بسرعة <span class='highlight'>'تثبيت_الاتصال'</span> لمنع الإغلاق:");
+                step = 2;
+            } 
+            else if (step === 2 && cmd === 'تثبيت_الاتصال') {
+                await write("نجاح! تم تثبيت الجلسة الرقمية.");
+                await write("جاري البحث عن مجلد 'الصور المشفرة'...");
+                await write("النظام يطلب تصريح الوصول النهائي.");
+                await write("اكتبي الكود السري <span class='highlight'>'سحب_البيانات'</span>:");
+                step = 3;
+            }
+            else if (step === 3 && cmd === 'سحب_البيانات') {
+                await write("تم قبول الكود. جاري بدء المرحلة النهائية...");
+                document.getElementById('prompt').style.display = 'none';
+                document.getElementById('loading-zone').style.display = 'block';
+                runFinalLoading();
+            }
+            else {
+                await write("خطأ: النظام لم يتعرف على الأمر! حاولي مجدداً.", 'red');
+            }
         }
 
-        function startLoading() {
+        async function runFinalLoading() {
             let p = 0;
-            let bar = document.getElementById('progress-bar');
+            const messages = [
+                "كسر تشفير AES-256...",
+                "استخراج حزم البيانات العاطفية...",
+                "تجاوز حماية روبلكس القديمة...",
+                "تحميل الصور الشخصية...",
+                "تم الاختراق بنجاح!"
+            ];
+
+            let msgIndex = 0;
             let interval = setInterval(() => {
-                p += 2;
+                p += 1;
                 bar.style.width = p + '%';
+                
+                if (p % 20 === 0 && msgIndex < messages.length) {
+                    statusText.innerText = messages[msgIndex];
+                    msgIndex++;
+                }
+
                 if (p >= 100) {
                     clearInterval(interval);
-                    showFinal();
+                    setTimeout(() => {
+                        log.style.display = 'none';
+                        document.getElementById('loading-zone').style.display = 'none';
+                        document.getElementById('final-screen').style.display = 'block';
+                    }, 800);
                 }
-            }, 50);
-        }
-
-        function showFinal() {
-            log.style.display = 'none';
-            document.getElementById('loading-box').style.display = 'none';
-            document.getElementById('final-view').style.display = 'block';
+            }, 60); // سرعة الشريط
         }
     </script>
 </body>
