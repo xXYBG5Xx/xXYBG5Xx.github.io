@@ -1,76 +1,227 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar" dir="rtl">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تنبيه أمني - نظام مغلق</title>
     <style>
-        body { margin: 0; overflow: hidden; background: black; }
-        canvas { display: block; }
+        body {
+            background-color: #0a0a0a;
+            color: #00FF41;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            padding: 15px;
+        }
+
+        /* حاوية التحذير */
+        #warning-box {
+            border: 1px solid #00FF41;
+            padding: 25px;
+            text-align: center;
+            background: #000;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 25px;
+            font-family: inherit;
+            cursor: pointer;
+            border: 1px solid #00FF41;
+            background: transparent;
+            color: #00FF41;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #00FF41;
+            color: #000;
+        }
+
+        /* الترمينال */
+        #terminal {
+            display: none;
+            width: 100%;
+            max-width: 700px;
+            height: 80vh;
+            border: 1px solid #333;
+            background: #000;
+            padding: 15px;
+            overflow-y: auto;
+            flex-direction: column;
+        }
+
+        .line { margin-bottom: 5px; font-size: 15px; line-height: 1.4; }
+        .input-line { display: flex; align-items: center; margin-top: 10px; }
+        
+        #user-input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            outline: none;
+            flex: 1;
+            font-family: inherit;
+            font-size: 15px;
+        }
+
+        /* شريط التحميل */
+        #progress-container {
+            display: none;
+            width: 80%;
+            max-width: 400px;
+            border: 1px solid #00FF41;
+        }
+        #progress-bar {
+            width: 0%;
+            height: 25px;
+            background: #00FF41;
+            text-align: center;
+            color: #000;
+            font-weight: bold;
+            line-height: 25px;
+        }
+
+        /* الشاشة النهائية */
+        #final-screen {
+            display: none;
+            text-align: center;
+            color: #fff;
+            width: 100%;
+            max-height: 100vh;
+            overflow-y: auto;
+        }
+
+        .final-media img, .final-media video {
+            max-width: 100%;
+            width: 400px;
+            border: 1px solid #333;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
-    <canvas id="m"></canvas>
+
+    <div id="warning-box">
+        <h2 style="color: #00FF41;">[تحذير أمني]</h2>
+        <p>محاولة وصول غير مصرح بها لملفات النظام. هل ترغب في محاولة الاختراق؟</p>
+        <div class="btn-group">
+            <button onclick="startTerminal()">تأكيد (Yes)</button>
+            <button onclick="denyAccess()">إلغاء (No)</button>
+        </div>
+    </div>
+
+    <div id="terminal">
+        <div id="history"></div>
+        <div class="input-line" id="input-area">
+            <span>root@system:~$</span>
+            <input type="text" id="user-input" autofocus autocomplete="off">
+        </div>
+    </div>
+
+    <div id="progress-container">
+        <div id="progress-bar">0%</div>
+    </div>
+
+    <div id="final-screen">
+        <h1 style="color: #00FF41;">تم استخراج الملفات بنجاح</h1>
+        <p>عيد ميلاد سعيد. تم الوصول إلى كافة الذكريات والمرفقات.</p>
+        <div class="final-media">
+            <img src="https://via.placeholder.com/400x500/111/00FF41?text=Your+Photo+Here" alt="ملف مستخرج">
+        </div>
+    </div>
+
     <script>
-        const canvas = document.getElementById('m');
-        const ctx = canvas.getContext('2d');
+        const history = document.getElementById('history');
+        const userInput = document.getElementById('user-input');
+        const terminal = document.getElementById('terminal');
+        const warningBox = document.getElementById('warning-box');
+        const progressContainer = document.getElementById('progress-container');
+        const progressBar = document.getElementById('progress-bar');
+        const finalScreen = document.getElementById('final-screen');
 
-        let columns = 0;
-        let drops = [];
-        const fontSize = 16;
-        const words = "0123456789qwertyuiopasdfghjklzxcvbnmｦｱｳｴｵｶｷｸｹｺｻｼｽｾｿ";
-
-        function setupCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            
-            const newColumns = Math.floor(canvas.width / fontSize);
-            
-            // إذا زاد حجم الشاشة، أضف أعمدة جديدة فقط دون التأثير على القديمة
-            if (newColumns > columns) {
-                for (let i = columns; i < newColumns; i++) {
-                    // جعل العمود الجديد يبدأ من مكان عشوائي في الأعلى ليتناغم مع البقية
-                    drops[i] = Math.random() * -100;
-                }
-            } 
-            // إذا صغر حجم الشاشة، قلص المصفوفة فقط
-            else if (newColumns < columns) {
-                drops = drops.slice(0, newColumns);
-            }
-            
-            columns = newColumns;
+        function denyAccess() {
+            alert("لا يمكن إلغاء العملية الآن. اضغطي 'تأكيد'.");
         }
 
-        setupCanvas();
-
-        // التحديث عند تغيير الحجم الآن أصبح "مستمراً" ولا يصفر العداد
-        window.addEventListener('resize', setupCanvas);
-
-        function draw() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.font = fontSize + 'px monospace';
-
-            for (let i = 0; i < drops.length; i++) {
-                const text = words[Math.floor(Math.random() * words.length)];
-                const x = i * fontSize;
-                const y = drops[i] * fontSize;
-
-                // الحروف الخلفية (باهتة جداً)
-                ctx.fillStyle = 'rgba(0, 255, 70, 0.2)'; 
-                ctx.fillText(text, x, y);
-
-                // رأس العمود (واضح وباهت قليلاً ليبرز الحركة)
-                ctx.fillStyle = 'rgba(0, 255, 70, 0.7)';
-                ctx.fillText(text, x, y);
-
-                if (y > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
-
-                drops[i]++;
-            }
+        function startTerminal() {
+            warningBox.style.display = 'none';
+            terminal.style.display = 'flex';
+            addLine("جاري فحص المنافذ...");
+            setTimeout(() => addLine("تم فتح الاتصال بشبكة Love_Server..."), 500);
+            setTimeout(() => addLine("اكتبي أمر 'هكر' لتشغيل السكربت."), 1000);
+            userInput.focus();
         }
 
-        setInterval(draw, 33);
+        userInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const cmd = this.value.trim();
+                if (cmd === "") return;
+                addLine("root@system:~$ " + cmd);
+                this.value = '';
+
+                if (cmd === "هكر") {
+                    runHack();
+                } else {
+                    addLine("خطأ: أمر غير معروف.");
+                }
+            }
+        });
+
+        function addLine(text) {
+            const div = document.createElement('div');
+            div.className = 'line';
+            div.innerHTML = text;
+            history.appendChild(div);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        function runHack() {
+            document.getElementById('input-area').style.display = 'none';
+            const steps = [
+                "تجاوز جدار الحماية...",
+                "استخراج مفاتيح التشفير...",
+                "تحميل الصور من السيرفر...",
+                "تمت العملية بنجاح."
+            ];
+            steps.forEach((s, i) => {
+                setTimeout(() => addLine("> " + s), (i + 1) * 700);
+            });
+            setTimeout(() => {
+                terminal.style.display = 'none';
+                progressContainer.style.display = 'block';
+                load();
+            }, 4000);
+        }
+
+        function load() {
+            let w = 0;
+            let interval = setInterval(() => {
+                if (w >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        progressContainer.style.display = 'none';
+                        finalScreen.style.display = 'block';
+                        document.body.style.overflow = 'auto';
+                    }, 500);
+                } else {
+                    w += 2;
+                    progressBar.style.width = w + '%';
+                    progressBar.innerHTML = w + '%';
+                }
+            }, 60);
+        }
     </script>
 </body>
 </html>
