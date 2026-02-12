@@ -6,7 +6,7 @@
     <title>نظام_الاختراق_المركزي</title>
     <style>
         :root { --matrix: #00ff41; --danger: #ff0033; --bg: #050505; }
-        body { background-color: var(--bg); color: var(--matrix); font-family: 'Tahoma', 'Courier New', monospace; margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; direction: rtl; }
+        body { background-color: var(--bg); color: var(--matrix); font-family: 'Tahoma', sans-serif; margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; direction: rtl; }
         
         .terminal { display: none; width: 95%; max-width: 850px; height: 85vh; border: 1px solid var(--matrix); background: rgba(0,0,0,0.95); padding: 20px; flex-direction: column; position: relative; box-shadow: 0 0 25px rgba(0,255,65,0.2); }
         .log { flex: 1; overflow-y: auto; font-size: 15px; line-height: 1.6; margin-bottom: 15px; border-bottom: 1px solid #1a1a1a; }
@@ -15,10 +15,10 @@
         
         #warning-box { border: 2px solid var(--danger); padding: 40px; text-align: center; background: #000; box-shadow: 0 0 40px var(--danger); z-index: 100; max-width: 500px; }
         .btn-red { background: transparent; border: 1px solid var(--danger); color: var(--danger); padding: 12px 25px; cursor: pointer; font-weight: bold; margin-top: 20px; font-family: inherit; }
-        .btn-red:hover { background: var(--danger); color: #fff; box-shadow: 0 0 15px var(--danger); }
+        .btn-red:hover { background: var(--danger); color: #fff; }
 
         #loading-zone { display: none; margin-top: 20px; text-align: center; }
-        .bar-container { width: 100%; border: 1px solid var(--matrix); height: 22px; margin-top: 10px; position: relative; }
+        .bar-container { width: 100%; border: 1px solid var(--matrix); height: 22px; margin-top: 10px; }
         .bar-fill { width: 0%; height: 100%; background: var(--matrix); box-shadow: 0 0 15px var(--matrix); transition: width 0.3s; }
 
         .glitch-text { animation: flash 0.3s infinite; color: var(--danger) !important; font-weight: bold; }
@@ -26,15 +26,16 @@
         
         #final-screen { display: none; text-align: center; animation: fadeIn 2s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        img { max-width: 100%; width: 380px; border: 2px solid var(--matrix); margin-top: 20px; border-radius: 12px; box-shadow: 0 0 20px var(--matrix); }
+        img { max-width: 100%; width: 380px; border: 2px solid var(--matrix); margin-top: 20px; border-radius: 12px; }
         .highlight { color: yellow; font-weight: bold; }
+        #timer { color: #ff0000; font-size: 20px; font-weight: bold; margin-right: 10px; }
     </style>
 </head>
 <body>
 
     <div id="warning-box">
-        <h1 class="glitch-text">⚠️ تم رصد اختراق نشط</h1>
-        <p>نظام الحماية المركزي اكتشف محاولة وصول لملفات "الذكرى السنوية".</p>
+        <h1 class="glitch-text">⚠️ تم رصد خرق للنظام</h1>
+        <p>محاولة وصول غير مصرح بها لقاعدة البيانات المجهولة. سيتم تسجيل كافة الحركات الرقمية.</p>
         <button class="btn-red" onclick="startHack()">بدء التجاوز اليدوي</button>
     </div>
 
@@ -42,19 +43,20 @@
         <div class="log" id="log"></div>
         
         <div id="loading-zone">
-            <div id="status">جاري سحب تشفير الصور...</div>
+            <div id="status">جاري سحب التشفير...</div>
             <div class="bar-container"><div id="bar" class="bar-fill"></div></div>
         </div>
 
         <div class="input-area" id="prompt">
-            <span>مدير_النظام@الماتريكس:~$ </span>
+            <span id="timer"></span>
+            <span>ROOT@ADMIN:~$ </span>
             <input type="text" id="input" autofocus autocomplete="off">
         </div>
 
         <div id="final-screen">
-            <h1 style="color:white; text-shadow: 0 0 10px var(--matrix);">🔓 تمت السيطرة بنجاح</h1>
-            <p style="font-size: 1.2em;">تم فك تشفير البيانات بالكامل.. كل عام وأنتِ بخير!</p>
-            <img src="myphoto.jpg" alt="Gift Image">
+            <h1 style="color:white;">🔓 تمت السيطرة بنجاح</h1>
+            <p style="font-size: 1.2em;">تم استعادة كافة البيانات المجهولة. كل عام وأنتِ بخير!</p>
+            <img src="myphoto.jpg" alt="Final Reveal">
         </div>
     </div>
 
@@ -63,7 +65,9 @@
         const input = document.getElementById('input');
         const bar = document.getElementById('bar');
         const statusText = document.getElementById('status');
+        const timerDisplay = document.getElementById('timer');
         let step = 0;
+        let countdown;
 
         async function write(text, color = 'var(--matrix)', isGlitch = false) {
             return new Promise(r => {
@@ -86,8 +90,7 @@
         }
 
         async function initSteps() {
-            await write("جاري فحص جدار الحماية...");
-            await write("تم العثور على ثغرة في النظام الفرعي.");
+            await write("جاري فحص المنافذ المفتوحة...");
             await write("اكتبي أمر <span class='highlight'>'تجاوز_الأمان'</span> للبدء:");
             step = 1;
         }
@@ -102,49 +105,62 @@
 
         async function handleStep(cmd) {
             if (step === 1 && cmd === 'تجاوز_الأمان') {
-                await write(`تم تنفيذ الأمر: ${cmd}`);
-                await write("!!! تنبيه: النظام يحاول طردك الآن !!!", 'red', true);
-                await write("اكتبي بسرعة <span class='highlight'>'تثبيت_الاتصال'</span> لمنع الإغلاق:");
+                await write("تم التجاوز. تحذير: النظام رصد موقعك!");
+                await write("!!! جاري إغلاق السيرفر... اقطعي العملية الآن !!!", 'red', true);
+                await write("أدخلي أمر <span class='highlight'>'تثبيت_الاتصال'</span> خلال 10 ثوانٍ:");
+                startTimer(10);
                 step = 2;
             } 
             else if (step === 2 && cmd === 'تثبيت_الاتصال') {
-                await write("نجاح! تم تثبيت الجلسة الرقمية.");
-                await write("جاري البحث عن مجلد 'الصور المشفرة'...");
-                await write("النظام يطلب تصريح الوصول النهائي.");
-                await write("اكتبي الكود السري <span class='highlight'>'سحب_البيانات'</span>:");
+                clearInterval(countdown);
+                timerDisplay.innerText = "";
+                await write("نجاح! تم الحفاظ على استقرار الجلسة.");
+                await write("جاري البحث عن الملفات...");
+                await write("اكتبي الكود النهائي <span class='highlight'>'سحب_البيانات'</span>:");
                 step = 3;
             }
             else if (step === 3 && cmd === 'سحب_البيانات') {
-                await write("تم قبول الكود. جاري بدء المرحلة النهائية...");
                 document.getElementById('prompt').style.display = 'none';
                 document.getElementById('loading-zone').style.display = 'block';
                 runFinalLoading();
             }
-            else {
-                await write("خطأ: النظام لم يتعرف على الأمر! حاولي مجدداً.", 'red');
+            else if (step !== 0) {
+                await write("فشل: الأمر غير صحيح!", 'red');
             }
+        }
+
+        function startTimer(seconds) {
+            let timeLeft = seconds;
+            timerDisplay.innerText = timeLeft;
+            countdown = setInterval(async () => {
+                timeLeft--;
+                timerDisplay.innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(countdown);
+                    await write("!!! فشلت المهمة: تم قطع الاتصال من قبل النظام !!!", 'red', true);
+                    setTimeout(() => { location.reload(); }, 2000);
+                }
+            }, 1000);
         }
 
         async function runFinalLoading() {
             let p = 0;
             const messages = [
-                "كسر تشفير AES-256...",
-                "استخراج حزم البيانات العاطفية...",
-                "تجاوز حماية روبلكس القديمة...",
-                "تحميل الصور الشخصية...",
-                "تم الاختراق بنجاح!"
+                "كسر بروتوكول الهوية المجهولة...",
+                "تفكيك التشفير الطبقي...",
+                "استرجاع حزم البيانات المفقودة...",
+                "تجميع ملفات مجهولة الهوية...",
+                "اكتمل الاستخراج!"
             ];
 
             let msgIndex = 0;
             let interval = setInterval(() => {
                 p += 1;
                 bar.style.width = p + '%';
-                
                 if (p % 20 === 0 && msgIndex < messages.length) {
                     statusText.innerText = messages[msgIndex];
                     msgIndex++;
                 }
-
                 if (p >= 100) {
                     clearInterval(interval);
                     setTimeout(() => {
@@ -153,7 +169,7 @@
                         document.getElementById('final-screen').style.display = 'block';
                     }, 800);
                 }
-            }, 60); // سرعة الشريط
+            }, 70);
         }
     </script>
 </body>
