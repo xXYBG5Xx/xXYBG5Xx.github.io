@@ -8,15 +8,20 @@
         :root { --matrix: #00ff41; --danger: #ff0033; --bg: #050505; }
         body { background-color: var(--bg); color: var(--matrix); font-family: 'Tahoma', sans-serif; margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; direction: rtl; }
         
+        /* النوافذ التنبيهية (بداية وفشل) */
+        .modal-box { border: 2px solid var(--danger); padding: 40px; text-align: center; background: #000; box-shadow: 0 0 40px var(--danger); z-index: 100; max-width: 500px; position: absolute; }
+        #fail-box { display: none; border-color: #ffaa00; box-shadow: 0 0 40px #ffaa00; }
+        
+        .btn-red { background: transparent; border: 1px solid var(--danger); color: var(--danger); padding: 12px 25px; cursor: pointer; font-weight: bold; margin-top: 20px; font-family: inherit; }
+        .btn-red:hover { background: var(--danger); color: #fff; }
+
+        /* الترمينال */
         .terminal { display: none; width: 95%; max-width: 850px; height: 85vh; border: 1px solid var(--matrix); background: rgba(0,0,0,0.95); padding: 20px; flex-direction: column; position: relative; box-shadow: 0 0 25px rgba(0,255,65,0.2); }
         .log { flex: 1; overflow-y: auto; font-size: 15px; line-height: 1.6; margin-bottom: 15px; border-bottom: 1px solid #1a1a1a; }
         .input-area { display: flex; align-items: center; padding-top: 10px; }
         input { background: transparent; border: none; color: yellow; outline: none; flex: 1; font-family: inherit; font-size: 18px; padding-right: 10px; }
         
-        #warning-box { border: 2px solid var(--danger); padding: 40px; text-align: center; background: #000; box-shadow: 0 0 40px var(--danger); z-index: 100; max-width: 500px; }
-        .btn-red { background: transparent; border: 1px solid var(--danger); color: var(--danger); padding: 12px 25px; cursor: pointer; font-weight: bold; margin-top: 20px; font-family: inherit; }
-        .btn-red:hover { background: var(--danger); color: #fff; }
-
+        /* شريط التحميل */
         #loading-zone { display: none; margin-top: 20px; text-align: center; }
         .bar-container { width: 100%; border: 1px solid var(--matrix); height: 22px; margin-top: 10px; }
         .bar-fill { width: 0%; height: 100%; background: var(--matrix); box-shadow: 0 0 15px var(--matrix); transition: width 0.3s; }
@@ -28,15 +33,20 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         img { max-width: 100%; width: 380px; border: 2px solid var(--matrix); margin-top: 20px; border-radius: 12px; }
         .highlight { color: yellow; font-weight: bold; }
-        #timer { color: #ff0000; font-size: 20px; font-weight: bold; margin-right: 10px; }
     </style>
 </head>
 <body>
 
-    <div id="warning-box">
+    <div id="warning-box" class="modal-box">
         <h1 class="glitch-text">⚠️ تم رصد خرق للنظام</h1>
         <p>محاولة وصول غير مصرح بها لقاعدة البيانات المجهولة. سيتم تسجيل كافة الحركات الرقمية.</p>
         <button class="btn-red" onclick="startHack()">بدء التجاوز اليدوي</button>
+    </div>
+
+    <div id="fail-box" class="modal-box">
+        <h1 style="color: #ffaa00;">❌ فشل الاختراق</h1>
+        <p>تم كشف موقعك الجغرافي وقطع الاتصال من قبل النظام المركزي. حاول مرة أخرى قبل تعقب الـ IP.</p>
+        <button class="btn-red" style="border-color: #ffaa00; color: #ffaa00;" onclick="location.reload()">إعادة المحاولة</button>
     </div>
 
     <div class="terminal" id="terminal">
@@ -48,7 +58,6 @@
         </div>
 
         <div class="input-area" id="prompt">
-            <span id="timer"></span>
             <span>ROOT@ADMIN:~$ </span>
             <input type="text" id="input" autofocus autocomplete="off">
         </div>
@@ -65,16 +74,17 @@
         const input = document.getElementById('input');
         const bar = document.getElementById('bar');
         const statusText = document.getElementById('status');
-        const timerDisplay = document.getElementById('timer');
         let step = 0;
         let countdown;
+        let timeLeft = 10;
 
-        async function write(text, color = 'var(--matrix)', isGlitch = false) {
+        async function write(text, color = 'var(--matrix)', isGlitch = false, id = null) {
             return new Promise(r => {
                 setTimeout(() => {
                     const d = document.createElement('div');
                     d.style.color = color;
                     if(isGlitch) d.className = 'glitch-text';
+                    if(id) d.id = id;
                     d.innerHTML = `> ${text}`;
                     log.appendChild(d);
                     log.scrollTop = log.scrollHeight;
@@ -106,14 +116,17 @@
         async function handleStep(cmd) {
             if (step === 1 && cmd === 'تجاوز_الأمان') {
                 await write("تم التجاوز. تحذير: النظام رصد موقعك!");
-                await write("!!! جاري إغلاق السيرفر... اقطعي العملية الآن !!!", 'red', true);
-                await write("أدخلي أمر <span class='highlight'>'تثبيت_الاتصال'</span> خلال 10 ثوانٍ:");
-                startTimer(10);
+                await write("جاري إغلاق السيرفر... الوقت المتبقي: <span id='timer-num'>10</span> ثوانٍ", 'red', true, 'timer-line');
+                await write("أدخلي أمر <span class='highlight'>'تثبيت_الاتصال'</span> فوراً:");
+                startCountdown();
                 step = 2;
             } 
             else if (step === 2 && cmd === 'تثبيت_الاتصال') {
                 clearInterval(countdown);
-                timerDisplay.innerText = "";
+                const timerLine = document.getElementById('timer-line');
+                if(timerLine) timerLine.style.color = 'var(--matrix)';
+                if(timerLine) timerLine.classList.remove('glitch-text');
+                
                 await write("نجاح! تم الحفاظ على استقرار الجلسة.");
                 await write("جاري البحث عن الملفات...");
                 await write("اكتبي الكود النهائي <span class='highlight'>'سحب_البيانات'</span>:");
@@ -129,18 +142,23 @@
             }
         }
 
-        function startTimer(seconds) {
-            let timeLeft = seconds;
-            timerDisplay.innerText = timeLeft;
-            countdown = setInterval(async () => {
+        function startCountdown() {
+            timeLeft = 10;
+            countdown = setInterval(() => {
                 timeLeft--;
-                timerDisplay.innerText = timeLeft;
+                const timerNum = document.getElementById('timer-num');
+                if (timerNum) timerNum.innerText = timeLeft;
+
                 if (timeLeft <= 0) {
                     clearInterval(countdown);
-                    await write("!!! فشلت المهمة: تم قطع الاتصال من قبل النظام !!!", 'red', true);
-                    setTimeout(() => { location.reload(); }, 2000);
+                    triggerFail();
                 }
             }, 1000);
+        }
+
+        function triggerFail() {
+            document.getElementById('terminal').style.display = 'none';
+            document.getElementById('fail-box').style.display = 'block';
         }
 
         async function runFinalLoading() {
