@@ -2,50 +2,145 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>نظام_الاختراق_المركزي</title>
     <style>
         :root { --matrix: #00ff41; --danger: #ff0033; --bg: #050505; }
-        body { background-color: var(--bg); color: var(--matrix); font-family: 'Tahoma', sans-serif; margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; direction: rtl; }
         
-        /* النوافذ التنبيهية */
-        .modal-box { border: 2px solid var(--danger); padding: 40px; text-align: center; background: #000; box-shadow: 0 0 40px var(--danger); z-index: 100; max-width: 500px; position: absolute; }
-        #fail-box { display: none; border-color: #ffaa00; box-shadow: 0 0 40px #ffaa00; }
-        
-        .btn-red { background: transparent; border: 1px solid var(--danger); color: var(--danger); padding: 12px 25px; cursor: pointer; font-weight: bold; margin-top: 20px; font-family: inherit; }
-        .btn-red:hover { background: var(--danger); color: #fff; }
+        * { box-sizing: border-box; }
 
-        /* الترمينال */
-        .terminal { display: none; width: 95%; max-width: 850px; height: 85vh; border: 1px solid var(--matrix); background: rgba(0,0,0,0.95); padding: 20px; flex-direction: column; position: relative; box-shadow: 0 0 25px rgba(0,255,65,0.2); }
-        .log { flex: 1; overflow-y: auto; font-size: 15px; line-height: 1.6; margin-bottom: 15px; border-bottom: 1px solid #1a1a1a; }
-        .input-area { display: flex; align-items: center; padding-top: 10px; }
-        input { background: transparent; border: none; color: yellow; outline: none; flex: 1; font-family: inherit; font-size: 18px; padding-right: 10px; }
+        body { 
+            background-color: var(--bg); 
+            color: var(--matrix); 
+            font-family: 'Tahoma', sans-serif; 
+            margin: 0; 
+            height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            overflow: hidden; 
+            direction: rtl; 
+        }
+        
+        /* النوافذ التنبيهية - متجاوبة */
+        .modal-box { 
+            border: 2px solid var(--danger); 
+            padding: 20px; 
+            text-align: center; 
+            background: #000; 
+            box-shadow: 0 0 30px var(--danger); 
+            z-index: 100; 
+            width: 90%; 
+            max-width: 500px; 
+            position: absolute; 
+        }
+        
+        #fail-box { display: none; border-color: #ffaa00; box-shadow: 0 0 30px #ffaa00; }
+        
+        .btn-red { 
+            background: transparent; 
+            border: 1px solid var(--danger); 
+            color: var(--danger); 
+            padding: 10px 20px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            margin-top: 15px; 
+            font-family: inherit; 
+            width: 100%;
+        }
+
+        /* الترمينال - متجاوب */
+        .terminal { 
+            display: none; 
+            width: 95%; 
+            max-width: 850px; 
+            height: 90vh; 
+            border: 1px solid var(--matrix); 
+            background: rgba(0,0,0,0.95); 
+            padding: 15px; 
+            flex-direction: column; 
+            position: relative; 
+            box-shadow: 0 0 20px rgba(0,255,65,0.2); 
+        }
+
+        .log { 
+            flex: 1; 
+            overflow-y: auto; 
+            font-size: 14px; /* حجم أصغر للجوال */
+            line-height: 1.5; 
+            margin-bottom: 10px; 
+            border-bottom: 1px solid #1a1a1a; 
+            word-wrap: break-word;
+        }
+
+        .input-area { 
+            display: flex; 
+            flex-wrap: wrap; /* للسماح بالنزول لسطر جديد في الشاشات الصغيرة جداً */
+            align-items: center; 
+            padding-top: 5px; 
+        }
+
+        .prompt-label {
+            color: var(--matrix);
+            font-size: 14px;
+            margin-left: 5px;
+            white-space: nowrap;
+        }
+
+        input { 
+            background: transparent; 
+            border: none; 
+            color: yellow; 
+            outline: none; 
+            flex: 1; 
+            font-family: inherit; 
+            font-size: 16px; /* حجم مناسب للمس في الجوال */
+            min-width: 150px;
+        }
         
         /* شريط التحميل */
-        #loading-zone { display: none; margin-top: 20px; text-align: center; }
-        .bar-container { width: 100%; border: 1px solid var(--matrix); height: 22px; margin-top: 10px; }
-        .bar-fill { width: 0%; height: 100%; background: var(--matrix); box-shadow: 0 0 15px var(--matrix); transition: width 0.3s; }
+        #loading-zone { display: none; margin-top: 10px; text-align: center; }
+        .bar-container { width: 100%; border: 1px solid var(--matrix); height: 18px; margin-top: 5px; }
+        .bar-fill { width: 0%; height: 100%; background: var(--matrix); transition: width 0.3s; }
 
         .glitch-text { animation: flash 0.3s infinite; color: var(--danger) !important; font-weight: bold; }
         @keyframes flash { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
         
-        #final-screen { display: none; text-align: center; animation: fadeIn 2s; }
+        #final-screen { display: none; text-align: center; animation: fadeIn 2s; overflow-y: auto;}
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        img { max-width: 100%; width: 380px; border: 2px solid var(--matrix); margin-top: 20px; border-radius: 12px; }
+        
+        img { 
+            max-width: 100%; 
+            height: auto;
+            width: 300px; 
+            border: 2px solid var(--matrix); 
+            margin-top: 15px; 
+            border-radius: 8px; 
+        }
+
         .highlight { color: yellow; font-weight: bold; }
+
+        /* تعديلات خاصة بالشاشات الصغيرة (الجوال) */
+        @media (max-width: 480px) {
+            .log { font-size: 12px; }
+            .prompt-label { font-size: 12px; }
+            input { font-size: 14px; }
+            h1 { font-size: 18px; }
+            p { font-size: 14px; }
+        }
     </style>
 </head>
 <body>
 
     <div id="warning-box" class="modal-box">
         <h1 class="glitch-text">⚠️ تم رصد خرق للنظام</h1>
-        <p>محاولة وصول غير مصرح بها لقاعدة البيانات المجهولة. سيتم تسجيل كافة الحركات الرقمية.</p>
+        <p>محاولة وصول غير مصرح بها لقاعدة البيانات المجهولة.</p>
         <button class="btn-red" onclick="startHack()">بدء التجاوز اليدوي</button>
     </div>
 
     <div id="fail-box" class="modal-box">
         <h1 style="color: #ffaa00;">❌ فشل الاختراق</h1>
-        <p>تم كشف موقعك الجغرافي وقطع الاتصال من قبل النظام المركزي. حاول مرة أخرى قبل تعقب الـ IP.</p>
+        <p>تم كشف موقعك. حاول مرة أخرى.</p>
         <button class="btn-red" style="border-color: #ffaa00; color: #ffaa00;" onclick="location.reload()">إعادة المحاولة</button>
     </div>
 
@@ -53,18 +148,18 @@
         <div class="log" id="log"></div>
         
         <div id="loading-zone">
-            <div id="status">جاري سحب التشفير...</div>
+            <div id="status" style="font-size: 12px;">جاري سحب التشفير...</div>
             <div class="bar-container"><div id="bar" class="bar-fill"></div></div>
         </div>
 
         <div class="input-area" id="prompt">
-            <span>ROOT@ADMIN:~$ </span>
-            <input type="text" id="input" autofocus autocomplete="off">
+            <span class="prompt-label">ROOT@ADMIN:~$</span>
+            <input type="text" id="input" autofocus autocomplete="off" spellcheck="false">
         </div>
 
         <div id="final-screen">
-            <h1 style="color:white;">🔓 تمت السيطرة بنجاح</h1>
-            <p style="font-size: 1.2em;">تم استعادة كافة البيانات المجهولة.</p>
+            <h1 style="color:white; font-size: 20px;">🔓 تمت السيطرة بنجاح</h1>
+            <p>تم استعادة كافة البيانات المجهولة.</p>
             <img src="myphoto.jpg" alt="Final Reveal">
         </div>
     </div>
@@ -89,19 +184,20 @@
                     log.appendChild(d);
                     log.scrollTop = log.scrollHeight;
                     r();
-                }, 500);
+                }, 400);
             });
         }
 
         function startHack() {
             document.getElementById('warning-box').style.display = 'none';
             document.getElementById('terminal').style.display = 'flex';
+            input.focus();
             initSteps();
         }
 
         async function initSteps() {
-            await write("جاري فحص المنافذ المفتوحة...");
-            await write("اكتبي أمر <span class='highlight'>'تجاوز_الأمان'</span> للبدء:");
+            await write("جاري فحص المنافذ...");
+            await write("أدخلي: <span class='highlight'>تجاوز_الأمان</span>");
             step = 1;
         }
 
@@ -115,23 +211,19 @@
 
         async function handleStep(cmd) {
             if (step === 1 && cmd === 'تجاوز_الأمان') {
-                await write("تم التجاوز. تحذير: النظام رصد موقعك!");
-                await write("جاري إغلاق السيرفر... الوقت المتبقي: <span id='timer-num'>10</span> ثوانٍ", 'red', true, 'timer-line');
-                await write("أدخلي أمر <span class='highlight'>'تثبيت_الاتصال'</span> فوراً:");
+                await write("تم التجاوز. النظام رصد موقعك!", 'red');
+                await write("الوقت المتبقي: <span id='timer-num'>10</span> ثوانٍ", 'red', true, 'timer-line');
+                await write("أدخلي: <span class='highlight'>تثبيت_الاتصال</span>");
                 startCountdown();
                 step = 2;
             } 
             else if (step === 2 && cmd === 'تثبيت_الاتصال') {
                 clearInterval(countdown);
                 const timerLine = document.getElementById('timer-line');
-                if(timerLine) {
-                    timerLine.style.color = 'var(--matrix)';
-                    timerLine.classList.remove('glitch-text');
-                }
-                
-                await write("نجاح! تم الحفاظ على استقرار الجلسة.");
+                if(timerLine) { timerLine.style.color = 'var(--matrix)'; timerLine.classList.remove('glitch-text'); }
+                await write("نجاح! تم تثبيت الجلسة.");
                 await write("جاري البحث عن الملفات...");
-                await write("اكتبي الكود النهائي <span class='highlight'>'سحب_البيانات'</span>:");
+                await write("أدخلي: <span class='highlight'>سحب_البيانات</span>");
                 step = 3;
             }
             else if (step === 3 && cmd === 'سحب_البيانات') {
@@ -140,7 +232,7 @@
                 runFinalLoading();
             }
             else if (step !== 0) {
-                await write("فشل: الأمر غير صحيح!", 'red');
+                await write("فشل: أمر خاطئ!", 'red');
             }
         }
 
@@ -150,11 +242,7 @@
                 timeLeft--;
                 const timerNum = document.getElementById('timer-num');
                 if (timerNum) timerNum.innerText = timeLeft;
-
-                if (timeLeft <= 0) {
-                    clearInterval(countdown);
-                    triggerFail();
-                }
+                if (timeLeft <= 0) { clearInterval(countdown); triggerFail(); }
             }, 1000);
         }
 
@@ -165,31 +253,21 @@
 
         async function runFinalLoading() {
             let p = 0;
-            const messages = [
-                "كسر بروتوكول الهوية المجهولة...",
-                "تفكيك التشفير الطبقي...",
-                "استرجاع حزم البيانات المفقودة...",
-                "تجميع ملفات مجهولة الهوية...",
-                "اكتمل الاستخراج!"
-            ];
-
+            const messages = ["كسر التشفير...", "تفكيك البروتوكول...", "استرجاع الحزم...", "تجميع الملفات...", "اكتمل!"];
             let msgIndex = 0;
             let interval = setInterval(() => {
-                p += 1;
+                p += 2;
                 bar.style.width = p + '%';
-                if (p % 20 === 0 && msgIndex < messages.length) {
-                    statusText.innerText = messages[msgIndex];
-                    msgIndex++;
-                }
+                if (p % 20 === 0 && msgIndex < messages.length) { statusText.innerText = messages[msgIndex]; msgIndex++; }
                 if (p >= 100) {
                     clearInterval(interval);
                     setTimeout(() => {
                         log.style.display = 'none';
                         document.getElementById('loading-zone').style.display = 'none';
                         document.getElementById('final-screen').style.display = 'block';
-                    }, 800);
+                    }, 500);
                 }
-            }, 70);
+            }, 50);
         }
     </script>
 </body>
