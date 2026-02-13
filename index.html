@@ -3,143 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>S.Y.S.T.E.M_H.A.C.K</title>
+    <title>S.Y.S.T.E.M_COLLECTIONS</title>
     <style>
         :root { --matrix: #00ff41; --danger: #ff0033; --bg: #050505; --command: #ffff00; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body, html { background-color: var(--bg); color: var(--matrix); font-family: monospace; margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; }
 
-        /* النوافذ التنبيهية */
-        .modal-box { 
-            border: 2px solid var(--danger); padding: 25px; text-align: center; background: #000; 
-            box-shadow: 0 0 20px var(--danger); z-index: 1000; width: 90%; position: absolute;
-            top: 50%; left: 50%; transform: translate(-50%, -50%); display: none;
-        }
-        #pass-box { border-color: var(--matrix); box-shadow: 0 0 20px var(--matrix); }
+        /* شاشات الحماية */
+        .modal-box { border: 2px solid var(--danger); padding: 25px; text-align: center; background: #000; box-shadow: 0 0 20px var(--danger); z-index: 5000; width: 90%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; }
         .btn-style { background: transparent; border: 1px solid var(--matrix); color: var(--matrix); padding: 12px; cursor: pointer; width: 100%; margin-top: 10px; font-weight: bold; }
-        .btn-red { border-color: var(--danger); color: var(--danger); }
-        .pass-input { background: #111; border: 1px solid #333; color: yellow; width: 100%; padding: 12px; text-align: center; margin-top: 10px; font-size: 16px; }
-
-        /* منطقة السجلات والترمينال */
+        
+        /* الترمينال */
         .system-container { display: flex; flex-direction: column; height: 100vh; padding: 15px; }
-        #log { flex: 1; overflow-y: auto; font-size: 14px; line-height: 1.6; padding-bottom: 100px; }
+        #log { flex: 1; overflow-y: auto; font-size: 13px; line-height: 1.6; padding-bottom: 80px; }
+        #prompt { position: fixed; bottom: 0; left: 0; right: 0; background: #000; padding: 15px; display: none; border-top: 1px solid #222; z-index: 999; }
+        #command-input { background: transparent; border: none; color: white; outline: none; flex: 1; font-size: 16px; }
 
-        /* منطقة الإدخال الثابتة في الأسفل */
-        #prompt { 
-            position: fixed; bottom: 0; left: 0; right: 0; background: #000;
-            padding: 15px; display: none; align-items: center; border-top: 1px solid #222; z-index: 999;
-        }
-        #command-input { background: transparent; border: none; color: white; outline: none; flex: 1; font-size: 16px; padding-right: 5px; }
+        /* مدير الملفات (المجموعات) */
+        #file-explorer { display: none; position: fixed; top: 10px; left: 10px; right: 10px; bottom: 10px; background: #000; border: 2px solid var(--matrix); z-index: 3000; padding: 15px; flex-direction: column; }
+        .explorer-header { border-bottom: 1px solid var(--matrix); padding-bottom: 10px; margin-bottom: 15px; font-size: 12px; color: yellow; }
+        .explorer-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; overflow-y: auto; }
+        .file-item { display: flex; flex-direction: column; align-items: center; border: 1px solid #222; padding: 15px; border-radius: 5px; background: #0a0a0a; }
+        .folder-icon { font-size: 35px; margin-bottom: 8px; }
+        .folder-name { font-size: 12px; text-align: center; color: #fff; }
 
-        /* شريط التحميل - معدل للجوال */
-        #loading-zone { 
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 85%; background: #000; padding: 20px; border: 1px solid var(--matrix); 
-            text-align: center; z-index: 2000; box-shadow: 0 0 30px var(--matrix);
-        }
-        .bar-container { width: 100%; border: 1px solid var(--matrix); height: 25px; margin-top: 10px; background: #111; }
-        .bar-fill { width: 0%; height: 100%; background: var(--matrix); transition: width 0.1s linear; }
+        /* نافذة عرض "المجموعة" */
+        #memory-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 6000; padding: 20px; flex-direction: column; align-items: center; justify-content: center; overflow-y: auto; }
+        #memory-text { color: #fff; text-align: center; margin: 15px 0; font-size: 15px; line-height: 1.5; border-right: 2px solid var(--matrix); padding: 0 10px; }
+        #memory-img { max-width: 100%; max-height: 55%; border: 1px solid var(--matrix); border-radius: 8px; box-shadow: 0 0 15px var(--matrix); }
 
-        /* التنسيقات العامة */
+        #loading-zone { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; background: #000; padding: 20px; border: 1px solid var(--matrix); z-index: 2000; }
+        .bar-container { width: 100%; border: 1px solid var(--matrix); height: 18px; margin-top: 10px; }
+        .bar-fill { width: 0%; height: 100%; background: var(--matrix); }
         .highlight { color: var(--command); font-weight: bold; }
-        .glitch { animation: flash 0.3s infinite; color: var(--danger) !important; }
-        @keyframes flash { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
-        #final-screen { display: none; text-align: center; width: 100%; height: 100%; overflow-y: auto; padding: 20px; }
-        img { max-width: 100%; width: 300px; border: 2px solid var(--matrix); margin-top: 20px; border-radius: 10px; }
-        .hint-text { font-size: 12px; color: #777; cursor: pointer; display: block; margin-top: 15px; text-decoration: underline; }
     </style>
 </head>
 <body>
 
     <div id="warning-box" class="modal-box" style="display: block;">
-        <h2 class="glitch">⚠️ تم رصد خرق</h2>
-        <p>محاولة وصول مجهولة. تم تفعيل نظام الحماية.</p>
-        <button class="btn-style btn-red" onclick="showPassBox()">تجاوز يدوي</button>
+        <h2 style="color:var(--danger)">⚠️ تم رصد محاولة اختراق</h2>
+        <button class="btn-style" style="color:var(--danger); border-color:var(--danger);" onclick="showPassBox()">تجاوز يدوي</button>
     </div>
 
     <div id="pass-box" class="modal-box">
-        <h2>قفل مشفر</h2>
-        <p>أدخلي رمز الوصول:</p>
-        <input type="text" id="pass-input" class="pass-input" placeholder="الرمز السري..." autocomplete="off">
-        <button class="btn-style" onclick="checkPass()">دخول</button>
-        <span class="hint-text" onclick="alert('تلميح: الحرف الأول من اسمينا مع علامة & والباقي للأبد بالإنجليزي')">نسيت كلمة المرور؟</span>
-    </div>
-
-    <div id="fail-box" class="modal-box">
-        <h2 style="color: #ffaa00;">❌ فشل الاختراق</h2>
-        <button class="btn-style btn-red" onclick="location.reload()">إعادة المحاولة</button>
+        <h2>قفل التشفير</h2>
+        <input type="text" id="pass-input" style="background:#111; border:1px solid #333; color:yellow; width:100%; padding:12px; text-align:center;" placeholder="أدخلي الرمز..." autocomplete="off">
+        <button class="btn-style" onclick="checkPass()">فتح النظام</button>
+        <span style="font-size:10px; margin-top:10px; display:block; color:#555;" onclick="alert('تلميح: الحرف الأول من اسمينا & والباقي للأبد بالإنجليزي')">نسيت الرمز؟</span>
     </div>
 
     <div class="system-container">
         <div id="log"></div>
-
         <div id="loading-zone">
-            <div id="status" style="color: yellow;">جاري سحب الملفات...</div>
+            <div id="status" style="color: yellow; font-size: 12px;">جاري فك تشفير حزم البيانات...</div>
             <div class="bar-container"><div id="bar" class="bar-fill"></div></div>
         </div>
-
         <div id="prompt">
             <span style="color:var(--matrix); margin-left:5px;">$~:</span>
-            <input type="text" id="command-input" autofocus autocomplete="off" spellcheck="false">
+            <input type="text" id="command-input" autofocus autocomplete="off">
         </div>
+    </div>
 
-        <div id="final-screen">
-            <h1 style="color:white;">🔓 تم الاسترجاع</h1>
-            <p>تم استعادة كافة البيانات المجهولة بنجاح.</p>
-            <img src="myphoto.jpg" alt="Reveal">
+    <div id="file-explorer">
+        <div class="explorer-header">/DATA/EXTRACTED_GROUPS/</div>
+        <div id="zip-content" style="text-align:center; padding:20px;">
+            <div style="font-size:50px;">📦</div>
+            <p id="zip-status">Secret_Memories.zip</p>
+            <button class="btn-style" id="extract-btn" onclick="startExtraction()">استخراج المجموعات</button>
+            <div id="extract-bar-cont" style="display:none; width:100%; margin-top:10px;">
+                <div class="bar-container"><div id="extract-bar-fill" class="bar-fill"></div></div>
+            </div>
         </div>
+        <div id="explorer-grid" class="explorer-grid" style="display:none;"></div>
+    </div>
+
+    <div id="memory-view">
+        <h3 id="memory-title" style="color: var(--command); margin: 0;"></h3>
+        <p id="memory-text"></p>
+        <img id="memory-img" src="" alt="Memory">
+        <button class="btn-style" style="width:120px; margin-top:20px;" onclick="document.getElementById('memory-view').style.display='none'">إغلاق المجموعة</button>
     </div>
 
     <script>
         const log = document.getElementById('log');
         const cmdInput = document.getElementById('command-input');
         const passInput = document.getElementById('pass-input');
-        const bar = document.getElementById('bar');
         let step = 0;
-        let countdown;
 
-        function showPassBox() {
-            document.getElementById('warning-box').style.display = 'none';
-            document.getElementById('pass-box').style.display = 'block';
-        }
+        // --- مصفوفة المجموعات: عدل هنا الصور والكلام ---
+        const groups = [
+            { id: 1, title: "مجموعة: البدايات", text: "أول صورة لنا.. كنت أجهل أن هذا الشخص سيكون كل حياتي ❤️", img: "photo1.jpg" },
+            { id: 2, title: "مجموعة: الضحك", text: "هنا كنا نضحك من قلبنا، تذكرين ايش صار؟ 😂", img: "photo2.jpg" },
+            { id: 3, title: "مجموعة: وعودنا", text: "وعدنا بعض نظل سوا، وهذا الملف شاهد على وعدنا 🔒", img: "photo3.jpg" },
+            { id: 4, title: "مجموعة: تفاصيلنا", text: "أحب أبسط الأشياء اللي تجمعنا.. حتى لو كانت مجرد كلمة", img: "photo4.jpg" },
+            { id: 5, title: "مجموعة: المستقبل", text: "القادم أجمل معك، يا كل دنيتي ❤️ Y&T", img: "myphoto.jpg" }
+        ];
 
+        function showPassBox() { document.getElementById('warning-box').style.display = 'none'; document.getElementById('pass-box').style.display = 'block'; }
+        
         function checkPass() {
             if (passInput.value === 'Y&T@forever') {
                 document.getElementById('pass-box').style.display = 'none';
                 document.getElementById('prompt').style.display = 'flex';
-                startHack();
-            } else {
-                alert("رمز خاطئ!");
-                passInput.value = '';
-            }
+                initHack();
+            } else { alert("رمز خاطئ!"); passInput.value = ''; }
         }
 
-        async function write(text, color = 'var(--matrix)', isGlitch = false, id = null) {
-            return new Promise(r => {
-                setTimeout(() => {
-                    const d = document.createElement('div');
-                    d.style.color = color;
-                    if(isGlitch) d.className = 'glitch';
-                    if(id) d.id = id;
-                    d.innerHTML = `> ${text}`;
-                    log.appendChild(d);
-                    log.scrollTop = log.scrollHeight;
-                    r();
-                }, 400);
-            });
+        async function write(text, color = 'var(--matrix)', delay = 400) {
+            return new Promise(r => { setTimeout(() => {
+                const d = document.createElement('div'); d.style.color = color;
+                d.innerHTML = `> ${text}`; log.appendChild(d); log.scrollTop = log.scrollHeight; r();
+            }, delay); });
         }
 
-        function startHack() {
-            initSteps();
-        }
-
-        async function initSteps() {
-            await write("تم فك قفل البوابة..");
-            await write("أدخلي الأمر: <span class='highlight'>تجاوز_الأمان</span>");
+        async function initHack() {
+            await write("تم الدخول للنظام الأساسي..");
+            await write("أدخلي: <span class='highlight'>تجاوز_الأمان</span>");
             step = 1;
         }
 
-        cmdInput.addEventListener('keydown', async (e) => {
+        cmdInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 const val = cmdInput.value.trim();
                 cmdInput.value = '';
@@ -149,53 +132,56 @@
 
         async function handleStep(cmd) {
             if (step === 1 && cmd === 'تجاوز_الأمان') {
-                await write("تحذير: النظام يحاول طردك!", 'red', true);
-                await write("الوقت المتبقي: <span id='timer-num'>10</span>ث", 'red', false, 'timer-line');
-                await write("أدخلي بسرعة: <span class='highlight'>تثبيت_الاتصال</span>");
-                startCountdown();
+                await write("!!! تحذير: رصد محاولة وصول !!!", 'red');
+                await write("أدخلي: <span class='highlight'>تثبيت_الاتصال</span>");
                 step = 2;
             } 
             else if (step === 2 && cmd === 'تثبيت_الاتصال') {
-                clearInterval(countdown);
-                if(document.getElementById('timer-line')) document.getElementById('timer-line').style.color = 'var(--matrix)';
-                await write("تم تثبيت الجلسة.");
-                await write("أدخلي الأمر النهائي: <span class='highlight'>سحب_البيانات</span>");
+                await write("تم التثبيت. جاري استدعاء المجموعات المخفية..");
+                await write("أدخلي: <span class='highlight'>سحب_البيانات</span>");
                 step = 3;
             }
             else if (step === 3 && cmd === 'سحب_البيانات') {
                 document.getElementById('prompt').style.display = 'none';
-                document.getElementById('log').style.opacity = '0.3'; // تعتيم الخلفية
                 document.getElementById('loading-zone').style.display = 'block';
-                runFinalLoading();
+                runLoading();
             }
         }
 
-        function startCountdown() {
-            let timeLeft = 10;
-            countdown = setInterval(() => {
-                timeLeft--;
-                if(document.getElementById('timer-num')) document.getElementById('timer-num').innerText = timeLeft;
-                if (timeLeft <= 0) { clearInterval(countdown); triggerFail(); }
-            }, 1000);
-        }
-
-        function triggerFail() {
-            document.querySelector('.system-container').style.display = 'none';
-            document.getElementById('fail-box').style.display = 'block';
-        }
-
-        function runFinalLoading() {
+        function runLoading() {
             let p = 0;
-            let interval = setInterval(() => {
-                p += 0.5; 
-                bar.style.width = p + '%';
-                if (p >= 100) {
-                    clearInterval(interval);
-                    document.getElementById('log').style.display = 'none';
-                    document.getElementById('loading-zone').style.display = 'none';
-                    document.getElementById('final-screen').style.display = 'block';
-                }
-            }, 100); 
+            let int = setInterval(() => {
+                p += 1; document.getElementById('bar').style.width = p + '%';
+                if (p >= 100) { clearInterval(int); document.getElementById('file-explorer').style.display = 'flex'; }
+            }, 40);
+        }
+
+        function startExtraction() {
+            document.getElementById('extract-btn').style.display = 'none';
+            document.getElementById('extract-bar-cont').style.display = 'block';
+            let p = 0;
+            let int = setInterval(() => {
+                p += 2; document.getElementById('extract-bar-fill').style.width = p + '%';
+                document.getElementById('zip-status').innerText = `جاري الاستخراج: ${p}%`;
+                if (p >= 100) { clearInterval(int); document.getElementById('zip-content').style.display = 'none'; showGroups(); }
+            }, 30);
+        }
+
+        function showGroups() {
+            const grid = document.getElementById('explorer-grid');
+            grid.style.display = 'grid';
+            groups.forEach(g => {
+                const item = document.createElement('div');
+                item.className = 'file-item';
+                item.innerHTML = `<span class="folder-icon">📁</span><span class="folder-name">${g.title}</span>`;
+                item.onclick = () => {
+                    document.getElementById('memory-title').innerText = g.title;
+                    document.getElementById('memory-text').innerText = g.text;
+                    document.getElementById('memory-img').src = g.img;
+                    document.getElementById('memory-view').style.display = 'flex';
+                };
+                grid.appendChild(item);
+            });
         }
     </script>
 </body>
