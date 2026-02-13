@@ -5,86 +5,88 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>S.Y.S.T.E.M_H.A.C.K</title>
     <style>
-        :root { --matrix: #00ff41; --danger: #ff0033; --bg: #050505; }
+        :root { --matrix: #00ff41; --danger: #ff0033; --bg: #050505; --command: #ffff00; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body, html { background-color: var(--bg); color: var(--matrix); font-family: monospace; margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; }
 
-        /* شاشة التحذير والباسورد */
+        /* النوافذ التنبيهية */
         .modal-box { 
             border: 2px solid var(--danger); padding: 25px; text-align: center; background: #000; 
-            box-shadow: 0 0 20px var(--danger); z-index: 1000; width: 85%; position: absolute;
+            box-shadow: 0 0 20px var(--danger); z-index: 1000; width: 90%; position: absolute;
             top: 50%; left: 50%; transform: translate(-50%, -50%); display: none;
         }
-
         #pass-box { border-color: var(--matrix); box-shadow: 0 0 20px var(--matrix); }
-        
-        .btn-style { background: transparent; border: 1px solid var(--matrix); color: var(--matrix); padding: 10px; cursor: pointer; width: 100%; margin-top: 10px; font-family: inherit; }
+        .btn-style { background: transparent; border: 1px solid var(--matrix); color: var(--matrix); padding: 12px; cursor: pointer; width: 100%; margin-top: 10px; font-weight: bold; }
         .btn-red { border-color: var(--danger); color: var(--danger); }
-        
-        input.pass-input { background: #111; border: 1px solid #333; color: #00ff41; width: 100%; padding: 10px; text-align: center; margin-top: 10px; font-size: 16px; }
+        .pass-input { background: #111; border: 1px solid #333; color: yellow; width: 100%; padding: 12px; text-align: center; margin-top: 10px; font-size: 16px; }
 
-        /* الترمينال */
-        .system-container { display: flex; flex-direction: column; height: 100vh; padding: 10px; }
-        .log { flex: 1; overflow-y: auto; font-size: 13px; line-height: 1.6; padding-bottom: 150px; scroll-behavior: smooth; }
+        /* منطقة السجلات والترمينال */
+        .system-container { display: flex; flex-direction: column; height: 100vh; padding: 15px; }
+        #log { flex: 1; overflow-y: auto; font-size: 14px; line-height: 1.6; padding-bottom: 100px; }
 
-        /* منطقة الإدخال الثابتة */
-        .input-area { 
-            position: fixed; bottom: 0; left: 0; right: 0; background: #0a0a0a;
-            padding: 15px 10px; display: none; align-items: center; border-top: 1px solid #222; z-index: 999;
+        /* منطقة الإدخال الثابتة في الأسفل */
+        #prompt { 
+            position: fixed; bottom: 0; left: 0; right: 0; background: #000;
+            padding: 15px; display: none; align-items: center; border-top: 1px solid #222; z-index: 999;
         }
-        input#command-input { background: transparent; border: none; color: yellow; outline: none; flex: 1; font-size: 16px; padding-right: 5px; }
+        #command-input { background: transparent; border: none; color: white; outline: none; flex: 1; font-size: 16px; padding-right: 5px; }
 
-        #loading-zone { display: none; padding: 10px; text-align: center; }
-        .bar-container { width: 100%; border: 1px solid var(--matrix); height: 15px; margin-top: 5px; }
+        /* شريط التحميل - معدل للجوال */
+        #loading-zone { 
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 85%; background: #000; padding: 20px; border: 1px solid var(--matrix); 
+            text-align: center; z-index: 2000; box-shadow: 0 0 30px var(--matrix);
+        }
+        .bar-container { width: 100%; border: 1px solid var(--matrix); height: 25px; margin-top: 10px; background: #111; }
         .bar-fill { width: 0%; height: 100%; background: var(--matrix); transition: width 0.1s linear; }
 
-        .hint-text { font-size: 11px; color: #666; cursor: pointer; text-decoration: underline; margin-top: 10px; display: block; }
+        /* التنسيقات العامة */
+        .highlight { color: var(--command); font-weight: bold; }
         .glitch { animation: flash 0.3s infinite; color: var(--danger) !important; }
         @keyframes flash { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
-        
-        #final-screen { display: none; text-align: center; padding: 20px; }
-        img { max-width: 100%; width: 280px; border: 2px solid var(--matrix); margin-top: 15px; border-radius: 8px; }
+        #final-screen { display: none; text-align: center; width: 100%; height: 100%; overflow-y: auto; padding: 20px; }
+        img { max-width: 100%; width: 300px; border: 2px solid var(--matrix); margin-top: 20px; border-radius: 10px; }
+        .hint-text { font-size: 12px; color: #777; cursor: pointer; display: block; margin-top: 15px; text-decoration: underline; }
     </style>
 </head>
 <body>
 
     <div id="warning-box" class="modal-box" style="display: block;">
-        <h2 class="glitch">⚠️ رصد خرق للنظام</h2>
-        <p>محاولة وصول مجهولة. تم تفعيل بروتوكول الحماية.</p>
+        <h2 class="glitch">⚠️ تم رصد خرق</h2>
+        <p>محاولة وصول مجهولة. تم تفعيل نظام الحماية.</p>
         <button class="btn-style btn-red" onclick="showPassBox()">تجاوز يدوي</button>
     </div>
 
     <div id="pass-box" class="modal-box">
-        <h2 style="color: var(--matrix);">قفل مشفر</h2>
-        <p style="font-size: 12px;">أدخلي رمز الوصول (المرتبطة بنا دائماً):</p>
+        <h2>قفل مشفر</h2>
+        <p>أدخلي رمز الوصول:</p>
         <input type="text" id="pass-input" class="pass-input" placeholder="الرمز السري..." autocomplete="off">
         <button class="btn-style" onclick="checkPass()">دخول</button>
-        <span class="hint-text" onclick="showHint()">نسيت كلمة المرور؟</span>
+        <span class="hint-text" onclick="alert('تلميح: الحرف الأول من اسمينا مع علامة & والباقي للأبد بالإنجليزي')">نسيت كلمة المرور؟</span>
     </div>
 
     <div id="fail-box" class="modal-box">
         <h2 style="color: #ffaa00;">❌ فشل الاختراق</h2>
-        <p>تم كشف موقعك. اقطع الاتصال فوراً.</p>
         <button class="btn-style btn-red" onclick="location.reload()">إعادة المحاولة</button>
     </div>
 
     <div class="system-container">
-        <div class="log" id="log"></div>
+        <div id="log"></div>
 
         <div id="loading-zone">
-            <div id="status" style="font-size: 12px;">جاري سحب الملفات...</div>
+            <div id="status" style="color: yellow;">جاري سحب الملفات...</div>
             <div class="bar-container"><div id="bar" class="bar-fill"></div></div>
         </div>
 
-        <div class="input-area" id="prompt">
-            <span style="font-size: 12px; margin-left: 5px;">$~:</span>
+        <div id="prompt">
+            <span style="color:var(--matrix); margin-left:5px;">$~:</span>
             <input type="text" id="command-input" autofocus autocomplete="off" spellcheck="false">
         </div>
 
         <div id="final-screen">
-            <h2 style="color:white;">🔓 تم الاسترجاع</h2>
+            <h1 style="color:white;">🔓 تم الاسترجاع</h1>
             <p>تم استعادة كافة البيانات المجهولة بنجاح.</p>
-            <img src="myphoto.jpg" alt="Final Reveal">
+            <img src="myphoto.jpg" alt="Reveal">
         </div>
     </div>
 
@@ -92,6 +94,7 @@
         const log = document.getElementById('log');
         const cmdInput = document.getElementById('command-input');
         const passInput = document.getElementById('pass-input');
+        const bar = document.getElementById('bar');
         let step = 0;
         let countdown;
 
@@ -100,17 +103,13 @@
             document.getElementById('pass-box').style.display = 'block';
         }
 
-        function showHint() {
-            alert("تلميح: الحرف الأول من اسمينا مع علامة & والباقي للابد بالانجليزي");
-        }
-
         function checkPass() {
             if (passInput.value === 'Y&T@forever') {
                 document.getElementById('pass-box').style.display = 'none';
                 document.getElementById('prompt').style.display = 'flex';
                 startHack();
             } else {
-                alert("رمز خاطئ! سيتم إبلاغ الإدارة.");
+                alert("رمز خاطئ!");
                 passInput.value = '';
             }
         }
@@ -124,7 +123,7 @@
                     if(id) d.id = id;
                     d.innerHTML = `> ${text}`;
                     log.appendChild(d);
-                    log.scrollTop = log.scrollHeight; // النزول التلقائي للجوال
+                    log.scrollTop = log.scrollHeight;
                     r();
                 }, 400);
             });
@@ -135,8 +134,8 @@
         }
 
         async function initSteps() {
-            await write("تم فك قفل البوابة.. جاري الفحص...");
-            await write("أدخلي: تجاوز_الأمان");
+            await write("تم فك قفل البوابة..");
+            await write("أدخلي الأمر: <span class='highlight'>تجاوز_الأمان</span>");
             step = 1;
         }
 
@@ -150,22 +149,22 @@
 
         async function handleStep(cmd) {
             if (step === 1 && cmd === 'تجاوز_الأمان') {
-                await write("!!! تحذير: النظام يحاول طردك !!!", 'red', true);
+                await write("تحذير: النظام يحاول طردك!", 'red', true);
                 await write("الوقت المتبقي: <span id='timer-num'>10</span>ث", 'red', false, 'timer-line');
-                await write("أدخلي بسرعة: تثبيت_الاتصال");
+                await write("أدخلي بسرعة: <span class='highlight'>تثبيت_الاتصال</span>");
                 startCountdown();
                 step = 2;
             } 
             else if (step === 2 && cmd === 'تثبيت_الاتصال') {
                 clearInterval(countdown);
                 if(document.getElementById('timer-line')) document.getElementById('timer-line').style.color = 'var(--matrix)';
-                await write("نجاح! تم تثبيت الجلسة المجهولة.");
-                await write("جاري البحث عن الملفات...");
-                await write("أدخلي: سحب_البيانات");
+                await write("تم تثبيت الجلسة.");
+                await write("أدخلي الأمر النهائي: <span class='highlight'>سحب_البيانات</span>");
                 step = 3;
             }
             else if (step === 3 && cmd === 'سحب_البيانات') {
                 document.getElementById('prompt').style.display = 'none';
+                document.getElementById('log').style.opacity = '0.3'; // تعتيم الخلفية
                 document.getElementById('loading-zone').style.display = 'block';
                 runFinalLoading();
             }
@@ -185,19 +184,18 @@
             document.getElementById('fail-box').style.display = 'block';
         }
 
-        async function runFinalLoading() {
+        function runFinalLoading() {
             let p = 0;
-            let bar = document.getElementById('bar');
             let interval = setInterval(() => {
                 p += 0.5; 
                 bar.style.width = p + '%';
                 if (p >= 100) {
                     clearInterval(interval);
-                    log.style.display = 'none';
+                    document.getElementById('log').style.display = 'none';
                     document.getElementById('loading-zone').style.display = 'none';
                     document.getElementById('final-screen').style.display = 'block';
                 }
-            }, 150); // تحميل بطيء ومثير
+            }, 100); 
         }
     </script>
 </body>
