@@ -6,65 +6,134 @@
     <title>نظام_الاختراق_المركزي</title>
     <style>
         :root { --matrix: #00ff41; --danger: #ff0033; --bg: #050505; }
-        * { box-sizing: border-box; }
-        body { background-color: var(--bg); color: var(--matrix); font-family: 'Tahoma', sans-serif; margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; direction: rtl; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
+        body, html { 
+            background-color: var(--bg); 
+            color: var(--matrix); 
+            font-family: sans-serif; 
+            margin: 0; 
+            padding: 0;
+            height: 100%; 
+            width: 100%;
+            overflow: hidden; 
+        }
+
+        /* حاوية النظام الرئيسية */
+        .system-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            padding: 10px;
+            position: relative;
+        }
+
         /* النوافذ التنبيهية */
-        .modal-box { border: 2px solid var(--danger); padding: 25px; text-align: center; background: #000; box-shadow: 0 0 30px var(--danger); z-index: 100; width: 90%; max-width: 500px; position: absolute; }
-        #fail-box { display: none; border-color: #ffaa00; box-shadow: 0 0 30px #ffaa00; }
+        .modal-box { 
+            border: 2px solid var(--danger); 
+            padding: 20px; 
+            text-align: center; 
+            background: #000; 
+            box-shadow: 0 0 20px var(--danger); 
+            z-index: 1000; 
+            width: 85%; 
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        #fail-box { display: none; border-color: #ffaa00; box-shadow: 0 0 20px #ffaa00; }
         .btn-red { background: transparent; border: 1px solid var(--danger); color: var(--danger); padding: 12px; cursor: pointer; font-weight: bold; margin-top: 15px; width: 100%; font-family: inherit; }
 
-        /* الترمينال */
-        .terminal { display: none; width: 95%; max-width: 850px; height: 90vh; border: 1px solid var(--matrix); background: rgba(0,0,0,0.95); padding: 15px; flex-direction: column; position: relative; box-shadow: 0 0 20px rgba(0,255,65,0.2); }
-        .log { flex: 1; overflow-y: auto; font-size: 14px; line-height: 1.6; margin-bottom: 10px; border-bottom: 1px solid #1a1a1a; word-wrap: break-word; }
-        .input-area { display: flex; align-items: center; padding-top: 10px; }
-        .prompt-label { color: var(--matrix); font-size: 13px; margin-left: 5px; white-space: nowrap; }
-        input { background: transparent; border: none; color: yellow; outline: none; flex: 1; font-family: inherit; font-size: 16px; min-width: 100px; }
-        
+        /* منطقة السجلات (Terminal Log) */
+        .log { 
+            flex: 1; 
+            overflow-y: auto; 
+            font-size: 13px; 
+            line-height: 1.5; 
+            margin-bottom: 70px; /* مساحة لضمان عدم التداخل مع الإدخال */
+            padding: 10px;
+            border: 1px solid rgba(0, 255, 65, 0.2);
+            background: rgba(0,0,0,0.5);
+        }
+
+        /* منطقة الإدخال الثابتة في الأسفل */
+        .input-area { 
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #000;
+            padding: 15px 10px;
+            display: flex;
+            align-items: center;
+            border-top: 1px solid var(--matrix);
+            z-index: 999;
+        }
+
+        .prompt-label { 
+            color: var(--matrix); 
+            font-size: 12px; 
+            margin-left: 8px; 
+            white-space: nowrap; 
+            font-family: monospace;
+        }
+
+        input { 
+            background: transparent; 
+            border: none; 
+            color: yellow; 
+            outline: none; 
+            flex: 1; 
+            font-size: 16px; /* مهم جداً لمنع الـ Zoom في الآيفون والجوالات */
+            font-family: monospace;
+        }
+
         /* شريط التحميل */
-        #loading-zone { display: none; margin-top: 15px; text-align: center; }
-        .bar-container { width: 100%; border: 1px solid var(--matrix); height: 20px; margin-top: 8px; }
+        #loading-zone { display: none; padding: 10px; text-align: center; width: 100%; }
+        .bar-container { width: 100%; border: 1px solid var(--matrix); height: 15px; margin-top: 5px; }
         .bar-fill { width: 0%; height: 100%; background: var(--matrix); transition: width 0.1s linear; }
 
-        .glitch-text { animation: flash 0.3s infinite; color: var(--danger) !important; font-weight: bold; }
+        .glitch-text { animation: flash 0.3s infinite; color: var(--danger) !important; }
         @keyframes flash { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
         
-        #final-screen { display: none; text-align: center; animation: fadeIn 2s; width: 100%; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        img { max-width: 100%; height: auto; width: 320px; border: 2px solid var(--matrix); margin-top: 15px; border-radius: 10px; }
+        #final-screen { display: none; text-align: center; padding: 20px; overflow-y: auto; height: 100%; }
+        img { max-width: 100%; height: auto; width: 280px; border: 2px solid var(--matrix); margin-top: 15px; border-radius: 8px; }
+        
         .highlight { color: yellow; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div id="warning-box" class="modal-box">
-        <h1 class="glitch-text" style="font-size: 20px;">⚠️ رصد خرق للنظام</h1>
-        <p>محاولة وصول مجهولة لقاعدة البيانات.</p>
-        <button class="btn-red" onclick="startHack()">بدء التجاوز اليدوي</button>
-    </div>
+    <div class="system-container">
+        <div id="warning-box" class="modal-box">
+            <h2 class="glitch-text" style="font-size: 18px; margin: 0 0 10px;">⚠️ رصد خرق للنظام</h2>
+            <p style="font-size: 13px;">محاولة وصول مجهولة للقاعدة.</p>
+            <button class="btn-red" onclick="startHack()">تجاوز يدوي</button>
+        </div>
 
-    <div id="fail-box" class="modal-box">
-        <h1 style="color: #ffaa00; font-size: 20px;">❌ فشل الاختراق</h1>
-        <p>تم قطع الاتصال. حاول مرة أخرى.</p>
-        <button class="btn-red" style="border-color: #ffaa00; color: #ffaa00;" onclick="location.reload()">إعادة المحاولة</button>
-    </div>
+        <div id="fail-box" class="modal-box">
+            <h2 style="color: #ffaa00; font-size: 18px;">❌ فشل الاختراق</h2>
+            <p style="font-size: 13px;">تم قطع الاتصال من المصدر.</p>
+            <button class="btn-red" style="border-color: #ffaa00; color: #ffaa00;" onclick="location.reload()">إعادة</button>
+        </div>
 
-    <div class="terminal" id="terminal">
-        <div class="log" id="log"></div>
-        
+        <div class="log" id="log" style="display: none;"></div>
+
         <div id="loading-zone">
-            <div id="status" style="font-size: 13px;">جاري بدء الاستخراج...</div>
+            <div id="status" style="font-size: 12px; color: yellow;">جاري الاستخراج...</div>
             <div class="bar-container"><div id="bar" class="bar-fill"></div></div>
         </div>
 
-        <div class="input-area" id="prompt">
-            <span class="prompt-label">ROOT@ADMIN:~$</span>
-            <input type="text" id="input" autofocus autocomplete="off" spellcheck="false">
+        <div class="input-area" id="prompt" style="display: none;">
+            <span class="prompt-label">$~:ROOT@ADMIN</span>
+            <input type="text" id="input" autofocus autocomplete="off" spellcheck="false" placeholder="اكتب الأمر هنا...">
         </div>
 
         <div id="final-screen">
-            <h1 style="color:white; font-size: 20px;">🔓 تمت السيطرة بنجاح</h1>
-            <p>تم استعادة كافة البيانات المجهولة.</p>
+            <h2 style="color:white;">🔓 تم الاختراق</h2>
+            <p style="font-size: 14px;">تم استعادة كافة البيانات المجهولة.</p>
             <img src="myphoto.jpg" alt="Final Reveal">
         </div>
     </div>
@@ -76,7 +145,6 @@
         const statusText = document.getElementById('status');
         let step = 0;
         let countdown;
-        let timeLeft = 10;
 
         async function write(text, color = 'var(--matrix)', isGlitch = false, id = null) {
             return new Promise(r => {
@@ -89,13 +157,14 @@
                     log.appendChild(d);
                     log.scrollTop = log.scrollHeight;
                     r();
-                }, 500);
+                }, 400);
             });
         }
 
         function startHack() {
             document.getElementById('warning-box').style.display = 'none';
-            document.getElementById('terminal').style.display = 'flex';
+            document.getElementById('log').style.display = 'block';
+            document.getElementById('prompt').style.display = 'flex';
             input.focus();
             initSteps();
         }
@@ -116,17 +185,16 @@
 
         async function handleStep(cmd) {
             if (step === 1 && cmd === 'تجاوز_الأمان') {
-                await write("تم التجاوز. النظام رصد موقعك!", 'red');
-                await write("الوقت المتبقي: <span id='timer-num'>10</span> ثوانٍ", 'red', true, 'timer-line');
+                await write("تم التجاوز. رصد موقعك!", 'red');
+                await write("إغلاق السيرفر: <span id='timer-num'>10</span>ث", 'red', true, 'timer-line');
                 await write("أدخلي: <span class='highlight'>تثبيت_الاتصال</span>");
                 startCountdown();
                 step = 2;
             } 
             else if (step === 2 && cmd === 'تثبيت_الاتصال') {
                 clearInterval(countdown);
-                const timerLine = document.getElementById('timer-line');
-                if(timerLine) { timerLine.style.color = 'var(--matrix)'; timerLine.classList.remove('glitch-text'); }
-                await write("نجاح! تم تثبيت الجلسة.");
+                document.getElementById('timer-line').style.color = 'var(--matrix)';
+                await write("نجاح! تم التثبيت.");
                 await write("جاري البحث عن الملفات...");
                 await write("أدخلي: <span class='highlight'>سحب_البيانات</span>");
                 step = 3;
@@ -139,50 +207,32 @@
         }
 
         function startCountdown() {
-            timeLeft = 10;
+            let timeLeft = 10;
             countdown = setInterval(() => {
                 timeLeft--;
-                const timerNum = document.getElementById('timer-num');
-                if (timerNum) timerNum.innerText = timeLeft;
+                if(document.getElementById('timer-num')) document.getElementById('timer-num').innerText = timeLeft;
                 if (timeLeft <= 0) { clearInterval(countdown); triggerFail(); }
             }, 1000);
         }
 
         function triggerFail() {
-            document.getElementById('terminal').style.display = 'none';
+            document.querySelector('.system-container').innerHTML = '';
+            document.body.appendChild(document.getElementById('fail-box'));
             document.getElementById('fail-box').style.display = 'block';
         }
 
         async function runFinalLoading() {
             let p = 0;
-            const messages = [
-                "كسر بروتوكول الهوية...",
-                "تفكيك التشفير الطبقي...",
-                "استرجاع حزم البيانات...",
-                "تجميع الملفات النهائية...",
-                "اكتمل الاستخراج!"
-            ];
-
-            let msgIndex = 0;
-            // تم جعل الزيادة (p) أقل والوقت (ms) أطول لجعل التحميل أبطأ بكثير
             let interval = setInterval(() => {
                 p += 0.5; 
                 bar.style.width = p + '%';
-                
-                if (p % 20 === 0 && msgIndex < messages.length) {
-                    statusText.innerText = messages[msgIndex];
-                    msgIndex++;
-                }
-
                 if (p >= 100) {
                     clearInterval(interval);
-                    setTimeout(() => {
-                        log.style.display = 'none';
-                        document.getElementById('loading-zone').style.display = 'none';
-                        document.getElementById('final-screen').style.display = 'block';
-                    }, 1000);
+                    document.getElementById('log').style.display = 'none';
+                    document.getElementById('loading-zone').style.display = 'none';
+                    document.getElementById('final-screen').style.display = 'block';
                 }
-            }, 100); // 100ms تعني تحميل متزن وبطيء
+            }, 80);
         }
     </script>
 </body>
