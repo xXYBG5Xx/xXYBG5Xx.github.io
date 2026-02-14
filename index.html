@@ -49,14 +49,12 @@
         #loading-zone { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-width: 450px; background: #000; padding: 20px; border: 1px solid var(--matrix); z-index: 2000; text-align: center; }
         .bar-container { width: 100%; border: 1px solid var(--matrix); height: 18px; margin-top: 10px; background: #111; }
         .bar-fill { width: 0%; height: 100%; background: var(--matrix); transition: width 0.1s; }
-        .glitch { animation: flash 0.3s infinite; color: var(--danger); }
-        @keyframes flash { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
     </style>
 </head>
 <body>
 
     <div id="warning-box" class="modal-box" style="display: block;">
-        <h2 class="glitch">⚠️ اختراق خارجي</h2>
+        <h2 style="color:var(--danger)">⚠️ اختراق خارجي</h2>
         <p>تم إكتشافك من قبل النظام الرجاء محاولة التجاوز اليدوي!!!</p>
         <button class="btn-style" style="border-color: var(--danger); color: var(--danger);" onclick="showPassBox()">تجاوز يدوي</button>
     </div>
@@ -65,7 +63,7 @@
         <h2>أدخل رمز التشفير</h2>
         <input type="text" id="pass-input" class="pass-input" placeholder="الرمز السري..." autocomplete="off">
         <button class="btn-style" onclick="checkPass()">فك القفل</button>
-        <span id="hint-text" style="font-size:11px; color:#555; display:block; margin-top:15px; cursor:pointer;" onclick="alert('تلميح: الحرف الأول من اسمينا & والباقي للأبد بالإنجليزي')">نسيت الرمز؟</span>
+        <span style="font-size:11px; color:#555; display:block; margin-top:15px; cursor:pointer;" onclick="alert('تلميح: الحرف الأول من اسمينا & والباقي للأبد بالإنجليزي')">نسيت الرمز؟</span>
     </div>
 
     <div id="confirm-box" class="modal-box">
@@ -108,28 +106,21 @@
         const GH_USER = "xXYBG5Xx"; 
         const GH_REPO = "xXYBG5Xx.github.io"; 
 
-        const loveQuotes = [
-            "أنتِ أجمل صدفة في حياتي.. ❤️",
-            "كل صورة هنا تحكي حكاية حبنا.. ✨",
-            "يا بختي فيكِ ويا حظ قلبي.. 🔒",
-            "ضحكتك هي اللي تحلي أيامي.. 😊",
-            "عسى ربي لا يحرمني منكِ للأبد.. ♾️",
-            "أحبك في كل ثانية ألف مرة.. 💕",
-            "أنتِ مو بس حبيبتي، أنتِ عالمي.. 🌍",
-            "كل لحظة معكِ هي ذكرى ما تنسى.. 📸",
-            "دائماً بقلبي وبالي وبكل صوري.. ✨",
-            "وجودك هو الأمان اللي كنت أدور عليه.. ❤️",
-            "بين كل هالناس، قلبي اختارك أنتِ.. 💎",
-            "ما فيه كلام يوصف ربع حبي لكِ.. 🌹",
-            "أنتِ النور اللي يضوي عتمة دنيتي.. 🌟",
-            "محد غيرك يملي عيني وقلبي.. ✅",
-            "كل يوم يمر أحبك فيه أكثر من اللي قبله.. 📈",
-            "معكِ عرفت معنى السعادة الحقيقية.. 💗",
-            "أنتِ ملكة قلبي وكل تفكيري.. ✨",
-            "الله يخليكِ لي عمر ودهر.. 🙌",
-            "جمالك مو بس ملامح، جمالك روح.. 🦋",
-            "ما أبدل لحظة معكِ بكنوز العالم.. 💰"
+        // القائمة المحدثة بـ 30 جملة
+        let originalQuotes = [
+            "أنتِ أجمل صدفة في حياتي.. ❤️", "كل صورة هنا تحكي حكاية حبنا.. ✨", "يا بختي فيكِ ويا حظ قلبي.. 🔒",
+            "ضحكتك هي اللي تحلي أيامي.. 😊", "عسى ربي لا يحرمني منكِ للأبد.. ♾️", "أحبك في كل ثانية ألف مرة.. 💕",
+            "أنتِ مو بس حبيبتي، أنتِ عالمي.. 🌍", "كل لحظة معكِ هي ذكرى ما تنسى.. 📸", "دائماً بقلبي وبالي وبكل صوري.. ✨",
+            "وجودك هو الأمان اللي كنت أدور عليه.. ❤️", "بين كل هالناس، قلبي اختارك أنتِ.. 💎", "ما فيه كلام يوصف ربع حبي لكِ.. 🌹",
+            "أنتِ النور اللي يضوي عتمة دنيتي.. 🌟", "محد غيرك يملي عيني وقلبي.. ✅", "كل يوم يمر أحبك فيه أكثر من اللي قبله.. 📈",
+            "معكِ عرفت معنى السعادة الحقيقية.. 💗", "أنتِ ملكة قلبي وكل تفكيري.. ✨", "الله يخليكِ لي عمر ودهر.. 🙌",
+            "جمالك مو بس ملامح، جمالك روح.. 🦋", "ما أبدل لحظة معكِ بكنوز العالم.. 💰", "في عيونك أشوف مستقبلي كله.. 🔭",
+            "قربك هو دواي وضحكتك هي شفاي.. 💊", "أنتِ النبض اللي يحيي قلبي.. ❤️‍🔥", "لو تمنيت شيء، أتمنى قربك للأبد.. ✨",
+            "أنتِ الغالية اللي ما لها بديل.. 🥇", "بكل لغات العالم.. أحبك.. 🗺️", "معكِ الوقت يمر كنّه ثواني.. ⏳",
+            "أنتِ أجمل بيانات دخلت نظامي.. 💾", "حبك هو الشفرة اللي ما أبي أفكها.. 🔐", "أنتِ وطني وأهلي وكل ناسي.. 🏠"
         ];
+
+        let availableQuotes = [...originalQuotes]; // نسخة للعمل عليها ومنع التكرار
 
         const log = document.getElementById('log');
         const cmdInput = document.getElementById('command-input');
@@ -185,7 +176,7 @@
         async function handleStep(cmd) {
             if (step === 1 && cmd === 'تجاوز_الأمان') {
                 await write("!!! تحذير: رصد اختراق !!!", 'red');
-                await write("الوقت المتبقي: <span id='timer-num' style='font-weight:bold;'>10</span>ث", 'red', 200);
+                await write("الوقت المتبقي: <span id='timer-num'>10</span>ث", 'red', 200);
                 await write("أدخلي بسرعة: <span style='color:yellow'>تثبيت_الاتصال</span>", 'var(--matrix)', 400);
                 startCountdown();
                 step = 2;
@@ -233,6 +224,16 @@
             }, 30);
         }
 
+        function getUniqueQuote() {
+            if (availableQuotes.length === 0) {
+                availableQuotes = [...originalQuotes]; // إعادة الملء إذا خلصت الجمل
+            }
+            const randomIndex = Math.floor(Math.random() * availableQuotes.length);
+            const quote = availableQuotes[randomIndex];
+            availableQuotes.splice(randomIndex, 1); // حذف الجملة المختارة لعدم التكرار
+            return quote;
+        }
+
         function showGroups() {
             const grid = document.getElementById('explorer-grid');
             grid.style.display = 'grid'; grid.innerHTML = '';
@@ -245,17 +246,22 @@
                     document.getElementById('memory-text').innerText = g.text;
                     const container = document.getElementById('images-container');
                     container.innerHTML = '';
-                    const filtered = allGitHubImages.filter(img => img.name.toUpperCase().startsWith(g.filter));
                     
+                    // تصفير القائمة المتاحة عند فتح مجلد جديد لضمان تنوع الجمل في كل مرة
+                    availableQuotes = [...originalQuotes];
+
+                    const filtered = allGitHubImages.filter(img => img.name.toUpperCase().startsWith(g.filter));
                     filtered.forEach(imgObj => {
                         const card = document.createElement('div');
                         card.className = 'image-card';
                         const img = document.createElement('img');
                         img.src = imgObj.download_url;
                         img.className = 'memory-img-item';
+                        
                         const caption = document.createElement('div');
                         caption.className = 'love-caption';
-                        caption.innerText = loveQuotes[Math.floor(Math.random() * loveQuotes.length)];
+                        caption.innerText = getUniqueQuote(); // وظيفة منع التكرار
+                        
                         card.appendChild(img);
                         card.appendChild(caption);
                         container.appendChild(card);
