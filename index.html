@@ -79,7 +79,7 @@
         </div>
         <div id="prompt">
             <span style="color:var(--matrix); margin-left:5px;">$~:</span>
-            <input type="text" id="command-input" autofocus autocomplete="off">
+            <input type="text" id="command-input" autocomplete="off">
         </div>
     </div>
 
@@ -127,7 +127,6 @@
 
         let availableQuotes = [...originalQuotes];
 
-        // نظام التلميحات الجديد (دفعة واحدة)
         function showAllHints() {
             const allHints = 
                 "⚠️ ملفات التلميح المشفرة:\n\n" +
@@ -187,13 +186,18 @@
         }
 
         cmdInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') { handleStep(cmdInput.value.trim()); cmdInput.value = ''; }
+            if (e.key === 'Enter') { 
+                const val = cmdInput.value.trim();
+                cmdInput.value = '';
+                cmdInput.blur(); // إغلاق الكيبورد فوراً بعد الإرسال
+                handleStep(val); 
+            }
         });
 
         async function handleStep(cmd) {
             if (step === 1 && cmd === 'تجاوز_الأمان') {
                 await write("!!! تحذير: رصد اختراق !!!", 'red');
-                await write("الوقت المتبقي: <span id='timer-num'>10</span>ث", 'red', 200);
+                await write("الوقت المتبقي: <span id='timer-num'>15</span>ث", 'red', 200);
                 await write("أدخلي بسرعة: <span style='color:yellow'>تثبيت_الاتصال</span>", 'var(--matrix)', 400);
                 startCountdown();
                 step = 2;
@@ -210,7 +214,7 @@
         }
 
         function startCountdown() {
-            let t = 10;
+            let t = 15; // تم تعديل الوقت إلى 15 ثانية
             countdown = setInterval(() => {
                 t--; 
                 let el = document.getElementById('timer-num');
