@@ -63,7 +63,7 @@
         <h2>أدخل رمز التشفير</h2>
         <input type="text" id="pass-input" class="pass-input" placeholder="الرمز السري..." autocomplete="off">
         <button class="btn-style" onclick="checkPass()">فك القفل</button>
-        <span style="font-size:11px; color:#555; display:block; margin-top:15px; cursor:pointer;" onclick="alert('تلميح: الحرف الأول من اسمينا & والباقي للأبد بالإنجليزي')">نسيت الرمز؟</span>
+        <span id="hint-link" style="font-size:11px; color:#555; display:block; margin-top:15px; cursor:pointer;" onclick="showAllHints()">نسيت الرمز؟</span>
     </div>
 
     <div id="confirm-box" class="modal-box">
@@ -105,7 +105,6 @@
         const GH_USER = "xXYBG5Xx"; 
         const GH_REPO = "xXYBG5Xx.github.io"; 
 
-        // 50 جملة حب فريدة
         let originalQuotes = [
             "أنتِ أجمل صدفة في حياتي.. ❤️", "كل صورة هنا تحكي حكاية حبنا.. ✨", "يا بختي فيكِ ويا حظ قلبي.. 🔒",
             "ضحكتك هي اللي تحلي أيامي.. 😊", "عسى ربي لا يحرمني منكِ للأبد.. ♾️", "أحبك في كل ثانية ألف مرة.. 💕",
@@ -127,6 +126,18 @@
         ];
 
         let availableQuotes = [...originalQuotes];
+
+        // نظام التلميحات الجديد (دفعة واحدة)
+        function showAllHints() {
+            const allHints = 
+                "⚠️ ملفات التلميح المشفرة:\n\n" +
+                "1- الحرف (Y)\n" +
+                "2- الرمز (&)\n" +
+                "3- الحرف (T)\n" +
+                "4- الرمز (@)\n" +
+                "5- الكلمة (forever)";
+            alert(allHints);
+        }
 
         const log = document.getElementById('log');
         const cmdInput = document.getElementById('command-input');
