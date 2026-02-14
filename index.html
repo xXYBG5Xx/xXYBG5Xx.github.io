@@ -27,7 +27,7 @@
         .images-list-container { display: flex; flex-direction: column; gap: 40px; width: 100%; align-items: center; padding-bottom: 120px; }
         
         .image-card { display: flex; flex-direction: column; align-items: center; width: 100%; }
-        .memory-img-item { 
+        .memory-img-item, .memory-video-item { 
             max-width: 95%; 
             max-height: 80vh; 
             width: auto; height: auto; 
@@ -143,7 +143,7 @@
         const passInput = document.getElementById('pass-input');
         let step = 0;
         let countdown;
-        let allGitHubImages = [];
+        let allGitHubFiles = [];
 
         const groups = [
             { title: "ROOT_RI", filter: "RI" },
@@ -153,14 +153,15 @@
             { title: "ROOT_MY", filter: "MY" }
         ];
 
-        async function fetchImages() {
+        async function fetchFiles() {
             try {
                 const res = await fetch(`https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/`);
                 const data = await res.json();
-                allGitHubImages = data.filter(f => /\.(jpe?g|png|gif|webp)$/i.test(f.name));
+                // دعم الصور والفيديوهات
+                allGitHubFiles = data.filter(f => /\.(jpe?g|png|gif|webp|mp4|webm|ogv)$/i.test(f.name));
             } catch (e) { console.error("API Error"); }
         }
-        fetchImages();
+        fetchFiles();
 
         function showPassBox() { document.getElementById('warning-box').style.display = 'none'; document.getElementById('pass-box').style.display = 'block'; }
         
@@ -189,7 +190,7 @@
             if (e.key === 'Enter') { 
                 const val = cmdInput.value.trim();
                 cmdInput.value = '';
-                cmdInput.blur(); // إغلاق الكيبورد فوراً بعد الإرسال
+                cmdInput.blur(); 
                 handleStep(val); 
             }
         });
@@ -214,7 +215,7 @@
         }
 
         function startCountdown() {
-            let t = 15; // تم تعديل الوقت إلى 15 ثانية
+            let t = 15; 
             countdown = setInterval(() => {
                 t--; 
                 let el = document.getElementById('timer-num');
@@ -267,19 +268,30 @@
                     const container = document.getElementById('images-container');
                     container.innerHTML = '';
                     
-                    const filtered = allGitHubImages.filter(img => img.name.toUpperCase().startsWith(g.filter));
-                    filtered.forEach(imgObj => {
+                    const filtered = allGitHubFiles.filter(file => file.name.toUpperCase().startsWith(g.filter));
+                    filtered.forEach(fileObj => {
                         const card = document.createElement('div');
                         card.className = 'image-card';
-                        const img = document.createElement('img');
-                        img.src = imgObj.download_url;
-                        img.className = 'memory-img-item';
+                        
+                        const isVideo = /\.(mp4|webm|ogv)$/i.test(fileObj.name);
+                        let mediaElement;
+
+                        if (isVideo) {
+                            mediaElement = document.createElement('video');
+                            mediaElement.src = fileObj.download_url;
+                            mediaElement.className = 'memory-video-item';
+                            mediaElement.controls = true;
+                        } else {
+                            mediaElement = document.createElement('img');
+                            mediaElement.src = fileObj.download_url;
+                            mediaElement.className = 'memory-img-item';
+                        }
                         
                         const caption = document.createElement('div');
                         caption.className = 'love-caption';
                         caption.innerText = getGlobalUniqueQuote(); 
                         
-                        card.appendChild(img);
+                        card.appendChild(mediaElement);
                         card.appendChild(caption);
                         container.appendChild(card);
                     });
