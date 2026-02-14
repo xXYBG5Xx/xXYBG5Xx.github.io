@@ -25,12 +25,14 @@
         .explorer-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; overflow-y: auto; }
         .file-item { display: flex; flex-direction: column; align-items: center; border: 1px solid #222; padding: 12px; border-radius: 5px; background: #0a0a0a; cursor: pointer; }
 
-        /* تعديل شاشة العرض لعرض الصور تحت بعض مع سكرول */
+        /* شاشة عرض المجلد مع خاصية السكرول والترتيب الطولي */
         #memory-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 6000; padding: 20px; flex-direction: column; align-items: center; overflow-y: auto; }
-        #memory-text { color: #fff; text-align: center; margin: 15px 0; font-size: 14px; line-height: 1.5; border-right: 2px solid var(--matrix); padding-right: 10px; }
+        #memory-text { color: #fff; text-align: center; margin: 15px 0; font-size: 14px; line-height: 1.5; border-right: 2px solid var(--matrix); padding-right: 10px; width: 100%; }
         
-        .images-list { display: flex; flex-direction: column; gap: 15px; width: 100%; align-items: center; }
-        .memory-img-item { max-width: 100%; border: 1px solid var(--matrix); border-radius: 5px; box-shadow: 0 0 10px var(--matrix); }
+        .images-stack { display: flex; flex-direction: column; gap: 20px; width: 100%; align-items: center; padding-bottom: 40px; }
+        .memory-img-item { max-width: 100%; border: 1px solid var(--matrix); border-radius: 5px; box-shadow: 0 0 10px rgba(0,255,65,0.3); opacity: 0; animation: fadeIn 0.5s forwards; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         #loading-zone { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; background: #000; padding: 20px; border: 1px solid var(--matrix); z-index: 2000; text-align: center; }
         .bar-container { width: 100%; border: 1px solid var(--matrix); height: 18px; margin-top: 10px; background: #111; }
@@ -58,9 +60,8 @@
 
     <div id="confirm-box" class="modal-box">
         <h2 style="color: var(--matrix);">✅ نجح سحب البيانات</h2>
-        <p style="color: white; font-size: 13px;">تم تجميع ملفات سرية بحجم 1.4 GB.</p>
         <button class="btn-style" onclick="goToExplorer()">موافق: فتح مدير الملفات</button>
-        <button class="btn-style btn-red" onclick="location.reload()" style="font-size: 10px;">إلغاء وتدمير البيانات</button>
+        <button class="btn-style btn-red" onclick="location.reload()" style="font-size: 10px;">إلغاء</button>
     </div>
 
     <div class="system-container">
@@ -71,7 +72,7 @@
         </div>
         <div id="prompt">
             <span style="color:var(--matrix); margin-left:5px;">$~:</span>
-            <input type="text" id="command-input" autofocus autocomplete="off" spellcheck="false">
+            <input type="text" id="command-input" autofocus autocomplete="off">
         </div>
     </div>
 
@@ -91,8 +92,8 @@
     <div id="memory-view">
         <h3 id="memory-title" style="color: var(--command); margin-top: 10px;"></h3>
         <p id="memory-text"></p>
-        <div id="images-wrap" class="images-list"></div>
-        <button class="btn-style" style="width:120px; margin: 30px 0;" onclick="document.getElementById('memory-view').style.display='none'">رجوع للمدير</button>
+        <div id="images-container" class="images-stack"></div>
+        <button class="btn-style" style="width:120px; margin-bottom: 20px;" onclick="document.getElementById('memory-view').style.display='none'">رجوع</button>
     </div>
 
     <script>
@@ -102,13 +103,16 @@
         let step = 0;
         let countdown;
 
-        // مصفوفة الصور المعدلة لدعم الصور المتعددة
+        // --- قائمة الصور (أضف أسماء صورك هنا فقط) ---
+        const allImages = ["RI1.jpg", "RI2.jpg", "RI3.jpg", "CI1.jpg", "CI2.jpg", "RLI1.jpg", "FI1.jpg", "MY1.jpeg", "MY2.jpg"];
+
+        // --- تعريف المجلدات والفلتر الخاص بكل واحد ---
         const groups = [
-            { title: "ROOT_RI", text: "أول لحظة جمعتنا.. ❤️", imgs: ["RI1.jpg", "RI2.jpg"] },
-            { title: "ROOT_CI", text: "ضحكنا اللي ما يخلص 😂", imgs: ["CI1.jpg"] },
-            { title: "ROOT_RLI", text: "وعدنا للأبد 🔒", imgs: ["RLI1.jpg"] },
-            { title: "ROOT_FI", text: "جنوننا الخاص..", imgs: ["FI1.jpg"] },
-            { title: "ROOT_MY", text: "أنتِ أجمل بيانات.. Y&T ❤️", imgs: ["MY1.jpeg"] }
+            { title: "ROOT_RI", filter: "RI", text: "أول لحظة جمعتنا.. ❤️" },
+            { title: "ROOT_CI", filter: "CI", text: "ضحكنا اللي ما يخلص 😂" },
+            { title: "ROOT_RLI", filter: "RLI", text: "وعدنا للأبد 🔒" },
+            { title: "ROOT_FI", filter: "FI", text: "جنوننا الخاص.." },
+            { title: "ROOT_MY", filter: "MY", text: "أجمل بيانات.. Y&T ❤️" }
         ];
 
         function showPassBox() { document.getElementById('warning-box').style.display = 'none'; document.getElementById('pass-box').style.display = 'block'; }
@@ -147,7 +151,7 @@
                 step = 2;
             } else if (step === 2 && cmd === 'تثبيت_الاتصال') {
                 clearInterval(countdown);
-                await write("نجاح! تم تثبيت الجلسة بشكل سري.");
+                await write("نجاح! تم تثبيت الجلسة.");
                 await write("أدخلي الأمر: <span class='highlight'>سحب_البيانات</span>");
                 step = 3;
             } else if (step === 3 && cmd === 'سحب_البيانات') {
@@ -176,10 +180,7 @@
             }, 50);
         }
 
-        function goToExplorer() {
-            document.getElementById('confirm-box').style.display = 'none';
-            document.getElementById('file-explorer').style.display = 'flex';
-        }
+        function goToExplorer() { document.getElementById('confirm-box').style.display = 'none'; document.getElementById('file-explorer').style.display = 'flex'; }
 
         function startExtraction() {
             document.getElementById('extract-btn').style.display = 'none';
@@ -188,7 +189,6 @@
             let bar = document.getElementById('extract-bar-fill');
             let int = setInterval(() => {
                 p += 1; bar.style.width = p + '%';
-                document.getElementById('zip-status').innerText = `جاري المعالجة: ${Math.floor(p)}%`;
                 if (p >= 100) { clearInterval(int); document.getElementById('zip-section').style.display = 'none'; showGroups(); }
             }, 40);
         }
@@ -199,19 +199,22 @@
             groups.forEach(g => {
                 const item = document.createElement('div');
                 item.className = 'file-item';
-                item.innerHTML = `<span style="font-size:30px;">📁</span><span style="font-size:11px; color:#fff; margin-top:5px;">${g.title}</span>`;
+                item.innerHTML = `<span style="font-size:30px;">📁</span><span style="font-size:11px; color:#fff;">${g.title}</span>`;
                 item.onclick = () => {
                     document.getElementById('memory-title').innerText = g.title;
                     document.getElementById('memory-text').innerText = g.text;
-                    const wrap = document.getElementById('images-wrap');
-                    wrap.innerHTML = ''; // مسح الصور السابقة
+                    const container = document.getElementById('images-container');
+                    container.innerHTML = '';
                     
-                    // إضافة كل الصور الموجودة في المجلد تحت بعض
-                    g.imgs.forEach(src => {
+                    // فلترة الصور التي تبدأ بكلمة الفلتر المحددة للمجلد
+                    const filtered = allImages.filter(img => img.startsWith(g.filter));
+                    
+                    filtered.forEach((src, index) => {
                         const img = document.createElement('img');
                         img.src = src;
                         img.className = 'memory-img-item';
-                        wrap.appendChild(img);
+                        img.style.animationDelay = (index * 0.1) + 's';
+                        container.appendChild(img);
                     });
                     
                     document.getElementById('memory-view').style.display = 'flex';
