@@ -6,55 +6,78 @@
     <title>S.Y.S.T.E.M_DECRYPTOR_V3</title>
     <style>
         :root { --matrix: #00ff41; --danger: #ff0033; --bg: #050505; --command: #ffff00; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body, html { background-color: var(--bg); color: var(--matrix); font-family: monospace; margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; }
+        * { box-sizing: border-box; }
+        body, html { background-color: var(--bg); color: var(--matrix); font-family: monospace; margin: 0; padding: 0; height: 100%; overflow: hidden; }
 
-        .modal-box { border: 2px solid var(--danger); padding: 25px; text-align: center; background: #000; box-shadow: 0 0 20px var(--danger); z-index: 5000; width: 90%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; }
-        #confirm-box { border-color: var(--matrix); box-shadow: 0 0 25px var(--matrix); }
+        .modal-box { border: 2px solid var(--danger); padding: 25px; text-align: center; background: #000; box-shadow: 0 0 20px var(--danger); z-index: 5000; width: 90%; max-width: 400px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; }
         .btn-style { background: transparent; border: 1px solid var(--matrix); color: var(--matrix); padding: 12px; cursor: pointer; width: 100%; margin-top: 10px; font-weight: bold; font-family: inherit; }
-        .btn-red { border-color: var(--danger); color: var(--danger); }
         .pass-input { background: #111; border: 1px solid #333; color: yellow; width: 100%; padding: 12px; text-align: center; margin-top: 10px; font-size: 16px; }
 
         .system-container { display: flex; flex-direction: column; height: 100vh; padding: 15px; }
-        #log { flex: 1; overflow-y: auto; font-size: 14px; line-height: 1.6; padding-bottom: 100px; scroll-behavior: smooth; }
-        #prompt { position: fixed; bottom: 0; left: 0; right: 0; background: #000; padding: 15px; display: none; align-items: center; border-top: 1px solid #222; z-index: 999; }
+        #log { flex: 1; overflow-y: auto; font-size: 14px; line-height: 1.6; padding-bottom: 100px; }
+        #prompt { position: fixed; bottom: 0; left: 0; right: 0; background: #000; padding: 15px; display: none; align-items: center; border-top: 1px solid #222; }
         #command-input { background: transparent; border: none; color: white; outline: none; flex: 1; font-size: 16px; font-family: monospace; }
 
         #file-explorer { display: none; position: fixed; top: 10px; left: 10px; right: 10px; bottom: 10px; background: #000; border: 2px solid var(--matrix); z-index: 3000; padding: 15px; flex-direction: column; }
-        .explorer-header { border-bottom: 1px solid var(--matrix); padding-bottom: 10px; margin-bottom: 15px; font-size: 12px; color: yellow; }
-        .explorer-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; overflow-y: auto; }
-        .file-item { display: flex; flex-direction: column; align-items: center; border: 1px solid #222; padding: 12px; border-radius: 5px; background: #0a0a0a; cursor: pointer; }
+        .explorer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; overflow-y: auto; }
+        .file-item { display: flex; flex-direction: column; align-items: center; border: 1px solid #222; padding: 12px; cursor: pointer; }
 
-        #memory-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 6000; padding: 20px; flex-direction: column; align-items: center; overflow-y: auto; }
-        #memory-text { color: #fff; text-align: center; margin: 15px 0; font-size: 14px; line-height: 1.5; width: 100%; border-right: 2px solid var(--matrix); padding-right: 10px;}
+        /* --- شاشة عرض المجلد المطورة --- */
+        #memory-view { 
+            display: none; 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            background: #000; 
+            z-index: 6000; 
+            padding: 20px; 
+            flex-direction: column; 
+            align-items: center; 
+            overflow-y: auto; /* سكرول فقط بين صورة وصورة */
+        }
         
-        .images-list-container { display: flex; flex-direction: column; gap: 20px; width: 100%; align-items: center; padding-bottom: 60px; }
-        .memory-img-item { max-width: 100%; border: 1px solid var(--matrix); border-radius: 5px; opacity: 0; animation: imgFadeIn 0.5s forwards; box-shadow: 0 0 15px rgba(0,255,65,0.2); }
+        .images-list-container { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 50px; 
+            width: 100%; 
+            align-items: center; 
+            padding-bottom: 120px; 
+        }
 
-        @keyframes imgFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .memory-img-item { 
+            /* الحل النهائي لمشكلة اللاب توب */
+            max-width: 95%;     /* عرض الصورة */
+            max-height: 80vh;   /* تضمن أن طول الصورة لن يتجاوز 80% من طول شاشة اللاب توب */
+            width: auto; 
+            height: auto; 
+            object-fit: contain; /* تمنع قص الصورة وتجعلها كاملة دائماً */
+            border: 1px solid var(--matrix); 
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
+            border-radius: 8px;
+            opacity: 0; 
+            animation: imgFadeIn 0.8s forwards; 
+        }
 
-        #loading-zone { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; background: #000; padding: 20px; border: 1px solid var(--matrix); z-index: 2000; text-align: center; }
+        @keyframes imgFadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+        #loading-zone { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; max-width: 500px; background: #000; padding: 20px; border: 1px solid var(--matrix); z-index: 2000; text-align: center; }
         .bar-container { width: 100%; border: 1px solid var(--matrix); height: 18px; margin-top: 10px; background: #111; }
         .bar-fill { width: 0%; height: 100%; background: var(--matrix); transition: width 0.1s; }
-
-        .highlight { color: var(--command); font-weight: bold; }
-        .glitch { animation: flash 0.3s infinite; color: var(--danger) !important; }
-        @keyframes flash { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
     </style>
 </head>
 <body>
 
     <div id="warning-box" class="modal-box" style="display: block;">
-        <h2 class="glitch">⚠️ اختراق خارجي</h2>
+        <h2 style="color: var(--danger);">⚠️ اختراق خارجي</h2>
         <p>تم إكتشافك من قبل النظام الرجاء محاولة التجاوز اليدوي!!!</p>
-        <button class="btn-style btn-red" onclick="showPassBox()">تجاوز يدوي</button>
+        <button class="btn-style" style="color: var(--danger); border-color: var(--danger);" onclick="showPassBox()">تجاوز يدوي</button>
     </div>
 
     <div id="pass-box" class="modal-box">
         <h2>أدخل رمز التشفير</h2>
         <input type="text" id="pass-input" class="pass-input" placeholder="الرمز السري..." autocomplete="off">
         <button class="btn-style" onclick="checkPass()">فك القفل</button>
-        <span style="font-size:10px; color:#555; display:block; margin-top:10px; cursor:pointer;" onclick="alert('تلميح: الحرف الأول من اسمينا & والباقي للأبد بالإنجليزي')">نسيت الرمز؟</span>
     </div>
 
     <div id="confirm-box" class="modal-box">
@@ -75,7 +98,7 @@
     </div>
 
     <div id="file-explorer">
-        <div class="explorer-header" style="color:yellow;">/ROOT/STORAGE/GITHUB_MEMORIES/</div>
+        <div class="explorer-header" style="color:yellow; margin-bottom:15px;">/ROOT/STORAGE/GITHUB_MEMORIES/</div>
         <div id="zip-section" style="text-align:center; padding:20px;">
             <div style="font-size:50px; margin-bottom:10px;">📦</div>
             <button class="btn-style" id="extract-btn" onclick="startExtraction()">بدء فك الضغط</button>
@@ -88,13 +111,12 @@
 
     <div id="memory-view">
         <h3 id="memory-title" style="color: var(--command); margin-top: 10px;"></h3>
-        <p id="memory-text"></p>
+        <p id="memory-text" style="color: white; padding: 0 20px;"></p>
         <div id="images-container" class="images-list-container"></div>
-        <button class="btn-style" style="width:120px; margin: 20px 0;" onclick="document.getElementById('memory-view').style.display='none'">رجوع</button>
+        <button class="btn-style" style="width:120px; margin-bottom: 30px;" onclick="document.getElementById('memory-view').style.display='none'">رجوع</button>
     </div>
 
     <script>
-        // إعدادات جيثب الخاصة بك بناءً على الصورة
         const GH_USER = "xXYBG5Xx"; 
         const GH_REPO = "xXYBG5Xx.github.io"; 
 
@@ -113,7 +135,6 @@
             { title: "ROOT_MY", filter: "MY", text: "أنتِ أجمل بيانات.. ❤️" }
         ];
 
-        // جلب الصور آلياً من GitHub
         async function fetchFromGitHub() {
             try {
                 const res = await fetch(`https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/`);
@@ -121,7 +142,7 @@
                 if(Array.isArray(files)) {
                     allGitHubImages = files.filter(f => /\.(jpe?g|png|gif|webp)$/i.test(f.name));
                 }
-            } catch (e) { console.error("خطأ في الاتصال بجيثب"); }
+            } catch (e) { console.error("API Error"); }
         }
         fetchFromGitHub();
 
@@ -144,7 +165,7 @@
 
         async function initHack() {
             await write("بدء عملية كسر التشفير...");
-            await write("أدخلي الأمر: <span class='highlight'>تجاوز_الأمان</span>");
+            await write("أدخلي الأمر: <span style='color:yellow'>تجاوز_الأمان</span>");
             step = 1;
         }
 
@@ -156,12 +177,11 @@
             if (step === 1 && cmd === 'تجاوز_الأمان') {
                 await write("!!! تحذير: رصد اختراق !!!", 'red');
                 await write("الوقت المتبقي: <span id='timer-num'>10</span>ث", 'red', 0);
-                await write("أدخلي بسرعة: <span class='highlight'>تثبيت_الاتصال</span>");
                 startCountdown(); step = 2;
             } else if (step === 2 && cmd === 'تثبيت_الاتصال') {
                 clearInterval(countdown);
                 await write("نجاح! تم تثبيت الجلسة.");
-                await write("أدخلي الأمر: <span class='highlight'>سحب_البيانات</span>");
+                await write("أدخلي الأمر: <span style='color:yellow'>سحب_البيانات</span>");
                 step = 3;
             } else if (step === 3 && cmd === 'سحب_البيانات') {
                 document.getElementById('prompt').style.display = 'none';
@@ -174,7 +194,7 @@
             let t = 10;
             countdown = setInterval(() => {
                 t--; if(document.getElementById('timer-num')) document.getElementById('timer-num').innerText = t;
-                if (t <= 0) { clearInterval(countdown); alert("تم رصدك! فشل الاختراق."); location.reload(); }
+                if (t <= 0) { clearInterval(countdown); alert("فشل!"); location.reload(); }
             }, 1000);
         }
 
@@ -210,11 +230,10 @@
                     document.getElementById('memory-text').innerText = g.text;
                     const container = document.getElementById('images-container');
                     container.innerHTML = '';
-                    
                     const filtered = allGitHubImages.filter(img => img.name.toUpperCase().startsWith(g.filter));
                     filtered.forEach(imgObj => {
                         const img = document.createElement('img');
-                        img.src = imgObj.download_url; // الرابط المباشر من جيثب
+                        img.src = imgObj.download_url;
                         img.className = 'memory-img-item';
                         container.appendChild(img);
                     });
