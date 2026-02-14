@@ -31,7 +31,7 @@
 
         #loading-zone { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; background: #000; padding: 20px; border: 1px solid var(--matrix); z-index: 2000; text-align: center; }
         .bar-container { width: 100%; border: 1px solid var(--matrix); height: 18px; margin-top: 10px; background: #111; }
-        .bar-fill { width: 0%; height: 100%; background: var(--matrix); }
+        .bar-fill { width: 0%; height: 100%; background: var(--matrix); transition: width 0.1s; }
 
         .highlight { color: var(--command); font-weight: bold; }
         .glitch { animation: flash 0.3s infinite; color: var(--danger) !important; }
@@ -60,6 +60,7 @@
         <button class="btn-style" onclick="goToExplorer()">موافق: فتح مدير الملفات</button>
         <button class="btn-style btn-red" onclick="location.reload()" style="font-size: 10px;">إلغاء وتدمير البيانات</button>
     </div>
+
     <div class="system-container">
         <div id="log"></div>
         <div id="loading-zone">
@@ -99,7 +100,6 @@
         let step = 0;
         let countdown;
 
-        // تم تثبيت أسماء المجموعات والروابط كما طلبت في المحادثة
         const groups = [
             { title: "ROOT_RI", text: "أول لحظة جمعتنا.. كانت صدفة غيرت قدري ❤️", img: "RI1.jpg" },
             { title: "ROOT_CI", text: "كمية الضحك اللي في هالصورة تكفي سنة 😂", img: "CI1.jpg" },
@@ -149,4 +149,75 @@
                 await write("أدخلي الأمر: <span class='highlight'>سحب_البيانات</span>");
                 step = 3;
             }
-            else
+            else if (step === 3 && cmd === 'سحب_البيانات') {
+                document.getElementById('prompt').style.display = 'none';
+                document.getElementById('loading-zone').style.display = 'block';
+                runLoading();
+            }
+        }
+
+        function startCountdown() {
+            let timeLeft = 10;
+            countdown = setInterval(() => {
+                timeLeft--;
+                let timer = document.getElementById('timer-num');
+                if(timer) timer.innerText = timeLeft;
+                if (timeLeft <= 0) location.reload();
+            }, 1000);
+        }
+
+        function runLoading() {
+            let p = 0;
+            let bar = document.getElementById('bar');
+            let int = setInterval(() => {
+                p += 0.1; // تحميل بطيء جداً
+                bar.style.width = p + '%';
+                if (p >= 100) { 
+                    clearInterval(int); 
+                    document.getElementById('loading-zone').style.display = 'none';
+                    document.getElementById('confirm-box').style.display = 'block';
+                }
+            }, 50);
+        }
+
+        function goToExplorer() {
+            document.getElementById('confirm-box').style.display = 'none';
+            document.getElementById('file-explorer').style.display = 'flex';
+        }
+
+        function startExtraction() {
+            document.getElementById('extract-btn').style.display = 'none';
+            document.getElementById('extract-bar-cont').style.display = 'block';
+            let p = 0;
+            let bar = document.getElementById('extract-bar-fill');
+            let int = setInterval(() => {
+                p += 0.5; 
+                bar.style.width = p + '%';
+                document.getElementById('zip-status').innerText = `جاري المعالجة: ${Math.floor(p)}%`;
+                if (p >= 100) { 
+                    clearInterval(int); 
+                    document.getElementById('zip-section').style.display = 'none'; 
+                    showGroups(); 
+                }
+            }, 40);
+        }
+
+        function showGroups() {
+            const grid = document.getElementById('explorer-grid');
+            grid.style.display = 'grid';
+            groups.forEach(g => {
+                const item = document.createElement('div');
+                item.className = 'file-item';
+                item.innerHTML = `<span style="font-size:30px;">📁</span><span style="font-size:11px; color:#fff; margin-top:5px;">${g.title}</span>`;
+                item.onclick = () => {
+                    document.getElementById('memory-title').innerText = g.title;
+                    document.getElementById('memory-text').innerText = g.text;
+                    document.getElementById('memory-img').src = g.img;
+                    document.getElementById('memory-view').style.display = 'flex';
+                };
+                grid.appendChild(item);
+            });
+        }
+    </script>
+</body>
+</html>
