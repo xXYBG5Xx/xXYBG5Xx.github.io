@@ -14,10 +14,6 @@
         .btn-style { background: transparent; border: 1px solid var(--matrix); color: var(--matrix); padding: 12px; cursor: pointer; width: 100%; margin-top: 10px; font-weight: bold; font-family: inherit; }
         .btn-red { border-color: var(--danger); color: var(--danger); }
         .pass-input { background: #111; border: 1px solid #333; color: yellow; width: 100%; padding: 12px; text-align: center; margin-top: 10px; font-size: 16px; }
-        
-        /* تنسيق زر نسيت الرمز */
-        .forgot-link { font-size: 11px; color: #555; display: block; margin-top: 15px; cursor: pointer; text-decoration: underline; }
-        .hint-text { color: #888; font-size: 10px; margin-top: 5px; display: none; border: 1px dashed #333; padding: 5px; }
 
         .system-container { display: flex; flex-direction: column; height: 100vh; padding: 15px; }
         #log { flex: 1; overflow-y: auto; font-size: 14px; line-height: 1.6; padding-bottom: 100px; scroll-behavior: smooth; }
@@ -27,27 +23,16 @@
         #file-explorer { display: none; position: fixed; top: 10px; left: 10px; right: 10px; bottom: 10px; background: #000; border: 2px solid var(--matrix); z-index: 3000; padding: 15px; flex-direction: column; }
         .explorer-header { border-bottom: 1px solid var(--matrix); padding-bottom: 10px; margin-bottom: 15px; font-size: 12px; color: yellow; }
         .explorer-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; overflow-y: auto; }
-        .file-item { display: flex; flex-direction: column; align-items: center; border: 1px solid #222; padding: 12px; border-radius: 5px; background: #0a0a0a; cursor: pointer; }
+        .file-item { display: flex; flex-direction: column; align-items: center; border: 1px solid #222; padding: 12px; border-radius: 5px; background: #0a0a0a; }
 
-        /* شاشة عرض المجلد مع خاصية السكرول والترتيب العمودي */
-        #memory-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 6000; padding: 20px; flex-direction: column; align-items: center; overflow-y: auto; scroll-behavior: smooth; }
-        #memory-text { color: #fff; text-align: center; margin: 15px 0; font-size: 14px; line-height: 1.5; border-right: 2px solid var(--matrix); padding-right: 10px; width: 100%; }
+        /* تعديلات شاشة عرض الصور (سكرول + ترتيب طولي + تلاشي) */
+        #memory-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 6000; padding: 20px; flex-direction: column; align-items: center; overflow-y: auto; }
+        #memory-text { color: #fff; text-align: center; margin: 15px 0; font-size: 14px; line-height: 1.5; border-right: 2px solid var(--matrix); padding-right: 10px; }
         
-        #images-container { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 20px; }
-        
-        .memory-img-item { 
-            max-width: 100%; 
-            border: 1px solid var(--matrix); 
-            border-radius: 5px; 
-            opacity: 0; 
-            animation: imgFadeIn 0.8s forwards;
-            box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
-        }
+        .img-list-wrapper { display: flex; flex-direction: column; gap: 15px; width: 100%; align-items: center; }
+        .memory-img-item { max-width: 100%; border: 1px solid var(--matrix); border-radius: 5px; opacity: 0; animation: fadeIn 0.8s forwards; }
 
-        @keyframes imgFadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         #loading-zone { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; background: #000; padding: 20px; border: 1px solid var(--matrix); z-index: 2000; text-align: center; }
         .bar-container { width: 100%; border: 1px solid var(--matrix); height: 18px; margin-top: 10px; background: #111; }
@@ -70,12 +55,12 @@
         <h2>أدخل رمز التشفير</h2>
         <input type="text" id="pass-input" class="pass-input" placeholder="الرمز السري..." autocomplete="off">
         <button class="btn-style" onclick="checkPass()">فك القفل</button>
-        <span class="forgot-link" onclick="toggleHint()">نسيت الرمز؟</span>
-        <div id="hint-box" class="hint-text">تلميح: الحرف الأول من اسمينا & والباقي للأبد بالإنجليزي</div>
+        <span style="font-size:10px; color:#555; display:block; margin-top:10px;" onclick="alert('تلميح: الحرف الأول من اسمينا & والباقي للأبد بالإنجليزي')">نسيت الرمز؟</span>
     </div>
 
     <div id="confirm-box" class="modal-box">
         <h2 style="color: var(--matrix);">✅ نجح سحب البيانات</h2>
+        <p style="color: white; font-size: 13px;">تم تجميع ملفات سرية بحجم 1.4 GB.</p>
         <button class="btn-style" onclick="goToExplorer()">موافق: فتح مدير الملفات</button>
     </div>
 
@@ -105,10 +90,10 @@
     </div>
 
     <div id="memory-view">
-        <h3 id="memory-title" style="color: var(--command); margin-top: 20px;"></h3>
+        <h3 id="memory-title" style="color: var(--command); margin-top: 10px;"></h3>
         <p id="memory-text"></p>
-        <div id="images-container"></div>
-        <button class="btn-style" style="width:120px; margin: 30px 0;" onclick="document.getElementById('memory-view').style.display='none'">رجوع</button>
+        <div id="img-list" class="img-list-wrapper"></div>
+        <button class="btn-style" style="width:120px; margin: 20px 0;" onclick="document.getElementById('memory-view').style.display='none'">رجوع</button>
     </div>
 
     <script>
@@ -117,22 +102,17 @@
         const passInput = document.getElementById('pass-input');
         let step = 0;
 
+        // مصفوفة الصور (تقدر تحط أكثر من وحدة بين القوسين [])
         const groups = [
-            { title: "ROOT_RI", text: "أول لحظة جمعتنا.. ❤️", imgs: ["RI1.jpg", "RI2.jpg", "RI3.jpg"] },
-            { title: "ROOT_CI", text: "ضحكنا اللي ما يخلص 😂", imgs: ["CI1.jpg", "CI2.jpg"] },
-            { title: "ROOT_RLI", text: "وعد محفور للأبد 🔒", imgs: ["RLI1.jpg"] },
-            { title: "ROOT_FI", text: "جنوننا الخاص..", imgs: ["FI1.jpg", "FI2.jpg"] },
-            { title: "ROOT_MY", text: "أنتِ أجمل بيانات.. Y&T ❤️", imgs: ["MY1.jpeg", "MY2.jpg"] }
+            { title: "ROOT_RI", text: "أول لحظة جمعتنا.. ❤️", imgs: ["RI1.jpg", "RI2.jpg"] },
+            { title: "ROOT_CI", text: "كمية الضحك 😂", imgs: ["CI1.jpg"] },
+            { title: "ROOT_RLI", text: "وعدنا للأبد 🔒", imgs: ["RLI1.jpg"] },
+            { title: "ROOT_FI", text: "جنوننا.. أحبك!", imgs: ["FI1.jpg"] },
+            { title: "ROOT_MY", text: "أجمل بيانات.. Y&T ❤️", imgs: ["MY1.jpeg"] }
         ];
 
         function showPassBox() { document.getElementById('warning-box').style.display = 'none'; document.getElementById('pass-box').style.display = 'block'; }
         
-        // دالة إظهار التلميح
-        function toggleHint() {
-            const hint = document.getElementById('hint-box');
-            hint.style.display = (hint.style.display === 'block') ? 'none' : 'block';
-        }
-
         function checkPass() {
             if (passInput.value === 'Y&T@forever') {
                 document.getElementById('pass-box').style.display = 'none';
@@ -160,12 +140,12 @@
 
         async function handleStep(cmd) {
             if (step === 1 && cmd === 'تجاوز_الأمان') {
-                await write("تحذير: رصد محاولة اختراق!", 'red');
-                await write("أدخلي: <span class='highlight'>تثبيت_الاتصال</span>");
+                await write("!!! تحذير: رصد اختراق !!!", 'red');
+                await write("أدخلي بسرعة: <span class='highlight'>تثبيت_الاتصال</span>");
                 step = 2;
             } else if (step === 2 && cmd === 'تثبيت_الاتصال') {
                 await write("نجاح! تم تثبيت الجلسة.");
-                await write("أدخلي: <span class='highlight'>سحب_البيانات</span>");
+                await write("أدخلي الأمر: <span class='highlight'>سحب_البيانات</span>");
                 step = 3;
             } else if (step === 3 && cmd === 'سحب_البيانات') {
                 document.getElementById('prompt').style.display = 'none';
@@ -178,24 +158,20 @@
             let p = 0;
             let bar = document.getElementById('bar');
             let int = setInterval(() => {
-                p += 0.5;
-                bar.style.width = p + '%';
+                p += 0.5; bar.style.width = p + '%';
                 if (p >= 100) { clearInterval(int); document.getElementById('loading-zone').style.display = 'none'; document.getElementById('confirm-box').style.display = 'block'; }
             }, 50);
         }
 
-        function goToExplorer() {
-            document.getElementById('confirm-box').style.display = 'none';
-            document.getElementById('file-explorer').style.display = 'flex';
-        }
+        function goToExplorer() { document.getElementById('confirm-box').style.display = 'none'; document.getElementById('file-explorer').style.display = 'flex'; }
 
         function startExtraction() {
             document.getElementById('extract-btn').style.display = 'none';
             document.getElementById('extract-bar-cont').style.display = 'block';
             let p = 0;
+            let bar = document.getElementById('extract-bar-fill');
             let int = setInterval(() => {
-                p += 1; 
-                document.getElementById('extract-bar-fill').style.width = p + '%';
+                p += 1; bar.style.width = p + '%';
                 if (p >= 100) { clearInterval(int); document.getElementById('zip-section').style.display = 'none'; showGroups(); }
             }, 40);
         }
@@ -210,19 +186,16 @@
                 item.onclick = () => {
                     document.getElementById('memory-title').innerText = g.title;
                     document.getElementById('memory-text').innerText = g.text;
-                    const container = document.getElementById('images-container');
-                    container.innerHTML = ''; 
-                    
-                    g.imgs.forEach((imgSrc, index) => {
+                    const list = document.getElementById('img-list');
+                    list.innerHTML = '';
+                    g.imgs.forEach((src, idx) => {
                         const img = document.createElement('img');
-                        img.src = imgSrc;
-                        img.className = 'memory-img-item';
-                        img.style.animationDelay = (index * 0.2) + 's';
-                        container.appendChild(img);
+                        img.src = src; img.className = 'memory-img-item';
+                        img.style.animationDelay = (idx * 0.2) + 's';
+                        list.appendChild(img);
                     });
-                    
                     document.getElementById('memory-view').style.display = 'flex';
-                    document.getElementById('memory-view').scrollTop = 0; 
+                    document.getElementById('memory-view').scrollTop = 0;
                 };
                 grid.appendChild(item);
             });
