@@ -3,87 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>S.Y.S.T.E.M_DECRYPTOR_V3</title>
+    <title>S.Y.S.T.E.M_ENCRYPTED</title>
     <style>
         :root { --matrix: #00ff41; --danger: #ff0033; --bg: #050505; --command: #ffff00; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body, html { background-color: var(--bg); color: var(--matrix); font-family: monospace; margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; }
 
-        /* الشاشات المنبثقة */
         .modal-box { border: 2px solid var(--danger); padding: 25px; text-align: center; background: #000; box-shadow: 0 0 20px var(--danger); z-index: 5000; width: 90%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; }
         #confirm-box { border-color: var(--matrix); box-shadow: 0 0 25px var(--matrix); }
         .btn-style { background: transparent; border: 1px solid var(--matrix); color: var(--matrix); padding: 12px; cursor: pointer; width: 100%; margin-top: 10px; font-weight: bold; font-family: inherit; }
-        .btn-red { border-color: var(--danger); color: var(--danger); }
-        .pass-input { background: #111; border: 1px solid #333; color: yellow; width: 100%; padding: 12px; text-align: center; margin-top: 10px; font-size: 16px; }
-
-        /* الترمينال */
+        
         .system-container { display: flex; flex-direction: column; height: 100vh; padding: 15px; }
-        #log { flex: 1; overflow-y: auto; font-size: 14px; line-height: 1.6; padding-bottom: 100px; scroll-behavior: smooth; }
-        #prompt { position: fixed; bottom: 0; left: 0; right: 0; background: #000; padding: 15px; display: none; align-items: center; border-top: 1px solid #222; z-index: 999; }
-        #command-input { background: transparent; border: none; color: white; outline: none; flex: 1; font-size: 16px; font-family: monospace; }
+        #log { flex: 1; overflow-y: auto; font-size: 14px; line-height: 1.6; padding-bottom: 100px; }
+        #prompt { position: fixed; bottom: 0; left: 0; right: 0; background: #000; padding: 15px; display: none; border-top: 1px solid #222; z-index: 999; }
+        #command-input { background: transparent; border: none; color: white; outline: none; flex: 1; font-size: 16px; width: 100%; }
 
-        /* مدير الملفات */
-        #file-explorer { display: none; position: fixed; top: 10px; left: 10px; right: 10px; bottom: 10px; background: #000; border: 2px solid var(--matrix); z-index: 3000; padding: 15px; flex-direction: column; }
-        .explorer-header { border-bottom: 1px solid var(--matrix); padding-bottom: 10px; margin-bottom: 15px; font-size: 12px; color: yellow; }
-        .explorer-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; overflow-y: auto; }
-        .file-item { display: flex; flex-direction: column; align-items: center; border: 1px solid #222; padding: 12px; border-radius: 5px; background: #0a0a0a; }
-
-        /* شاشة الذكرى */
-        #memory-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 6000; padding: 20px; flex-direction: column; align-items: center; justify-content: center; }
-        #memory-text { color: #fff; text-align: center; margin: 15px 0; font-size: 14px; line-height: 1.5; border-right: 2px solid var(--matrix); padding-right: 10px; }
-        #memory-img { max-width: 100%; max-height: 60%; border: 1px solid var(--matrix); border-radius: 5px; }
-
-        /* أشرطة التحميل */
         #loading-zone { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; background: #000; padding: 20px; border: 1px solid var(--matrix); z-index: 2000; text-align: center; }
         .bar-container { width: 100%; border: 1px solid var(--matrix); height: 18px; margin-top: 10px; background: #111; }
         .bar-fill { width: 0%; height: 100%; background: var(--matrix); }
 
+        #file-explorer { display: none; position: fixed; top: 10px; left: 10px; right: 10px; bottom: 10px; background: #000; border: 2px solid var(--matrix); z-index: 3000; padding: 15px; flex-direction: column; }
+        .explorer-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; overflow-y: auto; margin-top: 10px; }
+        .file-item { display: flex; flex-direction: column; align-items: center; border: 1px solid #222; padding: 15px; border-radius: 5px; background: #0a0a0a; }
+
+        #memory-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 6000; padding: 20px; flex-direction: column; align-items: center; justify-content: center; }
+        #memory-img { max-width: 100%; max-height: 60%; border: 1px solid var(--matrix); border-radius: 5px; }
+        #memory-text { color: #fff; text-align: center; margin: 15px 0; font-size: 14px; }
         .highlight { color: var(--command); font-weight: bold; }
-        .glitch { animation: flash 0.3s infinite; color: var(--danger) !important; }
-        @keyframes flash { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
     </style>
 </head>
 <body>
 
     <div id="warning-box" class="modal-box" style="display: block;">
-        <h2 class="glitch">⚠️ اختراق خارجي</h2>
-        <p></p>تم إكتشافك من قبل النظام الرجاء محاولة التجاوز اليدوي!!! </p>
-        <button class="btn-style btn-red" onclick="showPassBox()">تجاوز يدوي</button>
+        <h2 style="color:var(--danger)">⚠️ CRITICAL_BREACH</h2>
+        <button class="btn-style" style="color:var(--danger); border-color:var(--danger);" onclick="showPassBox()">BYPASS_SYSTEM</button>
     </div>
 
     <div id="pass-box" class="modal-box">
-        <h2>أدخل رمز التشفير</h2>
-        <input type="text" id="pass-input" class="pass-input" placeholder="الرمز السري..." autocomplete="off">
-        <button class="btn-style" onclick="checkPass()">فك القفل</button>
-        <span style="font-size:10px; color:#555; display:block; margin-top:10px;" onclick="alert('تلميح: الحرف الأول من اسمينا & والباقي للأبد بالإنجليزي')">نسيت الرمز؟</span>
+        <h2>ACCESS_CODE_REQUIRED</h2>
+        <input type="text" id="pass-input" style="background:#111; border:1px solid #333; color:yellow; width:100%; padding:12px; text-align:center;" placeholder="ENTER CODE..." autocomplete="off">
+        <button class="btn-style" onclick="checkPass()">VERIFY</button>
     </div>
 
     <div id="confirm-box" class="modal-box">
-        <h2 style="color: var(--matrix);">✅ نجح سحب البيانات</h2>
-        <p style="color: white; font-size: 13px;">تم تجميع 5 ملفات سرية بحجم 1.4 GB.</p>
-        <p style="color: yellow; font-size: 11px;">تحذير: هذه البيانات تحتوي على ملفات حساسة جداً.</p>
-        <button class="btn-style" onclick="goToExplorer()">موافق: فتح مدير الملفات</button>
-        <button class="btn-style btn-red" onclick="location.reload()" style="font-size: 10px;">إلغاء وتدمير البيانات</button>
+        <h2 style="color: var(--matrix);">✅ DATA_READY</h2>
+        <p style="color: white; font-size: 13px;">تم فك تشفير 5 حزم بيانات سرية.</p>
+        <p style="color: yellow; font-size: 11px;">هل ترغبين في استعراض الأرشيف المستخرج؟</p>
+        <button class="btn-style" onclick="goToExplorer()">OPEN_EXPLORER</button>
     </div>
 
     <div class="system-container">
         <div id="log"></div>
         <div id="loading-zone">
-            <div id="status" style="color: yellow; font-size: 12px;">جاري سحب البيانات (هذا قد يستغرق وقتاً)...</div>
+            <div id="status" style="color: yellow; font-size: 12px;">PULLING_PACKETS...</div>
             <div class="bar-container"><div id="bar" class="bar-fill"></div></div>
         </div>
         <div id="prompt">
             <span style="color:var(--matrix); margin-left:5px;">$~:</span>
-            <input type="text" id="command-input" autofocus autocomplete="off" spellcheck="false">
+            <input type="text" id="command-input" autofocus autocomplete="off">
         </div>
     </div>
 
     <div id="file-explorer">
-        <div class="explorer-header">/ROOT/STORAGE/MEMORIES_ARCHIVE/</div>
+        <div style="color:yellow; font-size:10px; border-bottom:1px solid var(--matrix); padding-bottom:5px;">/ROOT/STORAGE/PRIVATE_ARCHIVE/</div>
         <div id="zip-section" style="text-align:center; padding:20px;">
-            <div style="font-size:50px; margin-bottom:10px;">📦</div>
-            <p id="zip-status">Secret_Files.zip</p>
-            <button class="btn-style" id="extract-btn" onclick="startExtraction()">بدء عملية فك الضغط</button>
+            <div style="font-size:50px;">📦</div>
+            <p id="zip-status">SECURE_DATA.zip</p>
+            <button class="btn-style" id="extract-btn" onclick="startExtraction()">EXTRACT_ALL</button>
             <div id="extract-bar-cont" style="display:none; width:100%; margin-top:15px;">
                 <div class="bar-container"><div id="extract-bar-fill" class="bar-fill"></div></div>
             </div>
@@ -94,8 +80,8 @@
     <div id="memory-view">
         <h3 id="memory-title" style="color: var(--command); margin: 0;"></h3>
         <p id="memory-text"></p>
-        <img id="memory-img" src="" alt="Memory">
-        <button class="btn-style" style="width:120px; margin-top:20px;" onclick="document.getElementById('memory-view').style.display='none'">رجوع للمدير</button>
+        <img id="memory-img" src="">
+        <button class="btn-style" style="width:120px; margin-top:20px;" onclick="document.getElementById('memory-view').style.display='none'">CLOSE</button>
     </div>
 
     <script>
@@ -103,14 +89,13 @@
         const cmdInput = document.getElementById('command-input');
         const passInput = document.getElementById('pass-input');
         let step = 0;
-        let countdown;
 
         const groups = [
-            { title: "مجموعة البداية", text: "أول لحظة جمعتنا.. كانت صدفة غيرت قدري ❤️", img: "photo1.jpg" },
-            { title: "مجموعة الضحك", text: "كمية الضحك اللي في هالصورة تكفي سنة 😂", img: "photo2.jpg" },
-            { title: "مجموعة الوعود", text: "وعدنا لبعضنا يظل محفور هنا للأبد 🔒", img: "photo3.jpg" },
-            { title: "مجموعة الجنون", text: "مافي أحد بيفهم جنوننا غيرنا.. أحبك!", img: "photo4.jpg" },
-            { title: "مجموعة Forever", text: "أنتِ أجمل بيانات دخلت نظامي.. Y&T ❤️", img: "myphoto.jpg" }
+            { title: "ROOT_RI", text: "ARCHIVE_RI: Decrypted successfully.", img: "RI1.jpg" },
+            { title: "ROOT_CI", text: "ARCHIVE_CI: Decrypted successfully.", img: "CI1.jpg" },
+            { title: "ROOT_RLI", text: "ARCHIVE_RLI: Decrypted successfully.", img: "RLI1.jpg" },
+            { title: "ROOT_FI", text: "ARCHIVE_FI: Decrypted successfully.", img: "FI1.jpg" },
+            { title: "ROOT_MY", text: "PRIVATE_MY: Unauthorized access granted. ❤️", img: "MY1.jpeg" }
         ];
 
         function showPassBox() { document.getElementById('warning-box').style.display = 'none'; document.getElementById('pass-box').style.display = 'block'; }
@@ -120,10 +105,10 @@
                 document.getElementById('pass-box').style.display = 'none';
                 document.getElementById('prompt').style.display = 'flex';
                 initHack();
-            } else { alert("الرمز خاطئ!"); passInput.value = ''; }
+            } else { alert("ACCESS DENIED"); passInput.value = ''; }
         }
 
-        async function write(text, color = 'var(--matrix)', delay = 500) {
+        async function write(text, color = 'var(--matrix)', delay = 600) {
             return new Promise(r => { setTimeout(() => {
                 const d = document.createElement('div'); d.style.color = color;
                 d.innerHTML = `> ${text}`; log.appendChild(d); log.scrollTop = log.scrollHeight; r();
@@ -131,8 +116,8 @@
         }
 
         async function initHack() {
-            await write("بدء عملية كسر التشفير...");
-            await write("أدخلي الأمر: <span class='highlight'>تجاوز_الأمان</span>");
+            await write("INITIALIZING_OVERRIDE...");
+            await write("INPUT: <span class='highlight'>تجاوز_الأمان</span>");
             step = 1;
         }
 
@@ -142,45 +127,30 @@
 
         async function handleStep(cmd) {
             if (step === 1 && cmd === 'تجاوز_الأمان') {
-                await write("!!! تحذير: رصد محاولة اختراق !!!", 'red');
-                await write("الوقت المتبقي: <span id='timer-num'>10</span>ث", 'red', 0);
-                await write("أدخلي بسرعة: <span class='highlight'>تثبيت_الاتصال</span>");
-                startCountdown();
+                await write("FIREWALL_BYPASSED.", 'red');
+                await write("INPUT: <span class='highlight'>تثبيت_الاتصال</span>");
                 step = 2;
-            } 
-            else if (step === 2 && cmd === 'تثبيت_الاتصال') {
-                clearInterval(countdown);
-                await write("نجاح! تم تثبيت الجلسة بشكل سري.");
-                await write("أدخلي الأمر: <span class='highlight'>سحب_البيانات</span>");
+            } else if (step === 2 && cmd === 'تثبيت_الاتصال') {
+                await write("CONNECTION_STABLE. TARGET_LOCATED.");
+                await write("INPUT: <span class='highlight'>سحب_البيانات</span>");
                 step = 3;
-            }
-            else if (step === 3 && cmd === 'سحب_البيانات') {
+            } else if (step === 3 && cmd === 'سحب_البيانات') {
                 document.getElementById('prompt').style.display = 'none';
                 document.getElementById('loading-zone').style.display = 'block';
                 runLoading();
             }
         }
 
-        function startCountdown() {
-            let timeLeft = 10;
-            countdown = setInterval(() => {
-                timeLeft--;
-                if(document.getElementById('timer-num')) document.getElementById('timer-num').innerText = timeLeft;
-                if (timeLeft <= 0) location.reload();
-            }, 1000);
-        }
-
-        // تحميل بطيء (تم تقليل السرعة هنا)
         function runLoading() {
             let p = 0;
-            let bar = document.getElementById('bar');
             let int = setInterval(() => {
-                p += 0.3; // سرعة أبطأ بكثير
-                bar.style.width = p + '%';
+                p += 0.15; // تحميل بطيء جداً للواقعية
+                document.getElementById('bar').style.width = p + '%';
+                document.getElementById('status').innerText = `DOWNLOADING_DATA... ${Math.floor(p)}%`;
                 if (p >= 100) { 
                     clearInterval(int); 
                     document.getElementById('loading-zone').style.display = 'none';
-                    document.getElementById('confirm-box').style.display = 'block';
+                    document.getElementById('confirm-box').style.display = 'block'; 
                 }
             }, 50);
         }
@@ -190,21 +160,15 @@
             document.getElementById('file-explorer').style.display = 'flex';
         }
 
-        // فك ضغط بطيء
         function startExtraction() {
             document.getElementById('extract-btn').style.display = 'none';
             document.getElementById('extract-bar-cont').style.display = 'block';
             let p = 0;
-            let bar = document.getElementById('extract-bar-fill');
             let int = setInterval(() => {
-                p += 0.7; // فك ضغط بطيء لزيادة الحماس
-                bar.style.width = p + '%';
-                document.getElementById('zip-status').innerText = `جاري المعالجة: ${Math.floor(p)}%`;
-                if (p >= 100) { 
-                    clearInterval(int); 
-                    document.getElementById('zip-section').style.display = 'none'; 
-                    showGroups(); 
-                }
+                p += 0.4; 
+                document.getElementById('extract-bar-fill').style.width = p + '%';
+                document.getElementById('zip-status').innerText = `DECOMPRESSING: ${Math.floor(p)}%`;
+                if (p >= 100) { clearInterval(int); document.getElementById('zip-section').style.display = 'none'; showGroups(); }
             }, 40);
         }
 
@@ -214,7 +178,7 @@
             groups.forEach(g => {
                 const item = document.createElement('div');
                 item.className = 'file-item';
-                item.innerHTML = `<span style="font-size:30px;">📁</span><span style="font-size:11px; color:#fff; margin-top:5px;">${g.title}</span>`;
+                item.innerHTML = `<span style="font-size:30px;">📂</span><span style="font-size:10px; color:#fff; margin-top:5px;">${g.title}</span>`;
                 item.onclick = () => {
                     document.getElementById('memory-title').innerText = g.title;
                     document.getElementById('memory-text').innerText = g.text;
