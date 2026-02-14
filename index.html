@@ -97,7 +97,6 @@
 
     <div id="memory-view">
         <h3 id="memory-title" style="color: var(--command); margin-top: 10px;"></h3>
-        <p id="memory-text" style="color:#fff; text-align:center; padding:0 15px;"></p>
         <div id="images-container" class="images-list-container"></div>
         <button class="btn-style" style="width:120px; margin-bottom: 30px;" onclick="document.getElementById('memory-view').style.display='none'">رجوع</button>
     </div>
@@ -106,7 +105,6 @@
         const GH_USER = "xXYBG5Xx"; 
         const GH_REPO = "xXYBG5Xx.github.io"; 
 
-        // القائمة المحدثة بـ 30 جملة
         let originalQuotes = [
             "أنتِ أجمل صدفة في حياتي.. ❤️", "كل صورة هنا تحكي حكاية حبنا.. ✨", "يا بختي فيكِ ويا حظ قلبي.. 🔒",
             "ضحكتك هي اللي تحلي أيامي.. 😊", "عسى ربي لا يحرمني منكِ للأبد.. ♾️", "أحبك في كل ثانية ألف مرة.. 💕",
@@ -120,7 +118,8 @@
             "أنتِ أجمل بيانات دخلت نظامي.. 💾", "حبك هو الشفرة اللي ما أبي أفكها.. 🔐", "أنتِ وطني وأهلي وكل ناسي.. 🏠"
         ];
 
-        let availableQuotes = [...originalQuotes]; // نسخة للعمل عليها ومنع التكرار
+        // مصفوفة الحالة العالمية لمنع التكرار نهائياً حتى بين المجلدات
+        let availableQuotes = [...originalQuotes];
 
         const log = document.getElementById('log');
         const cmdInput = document.getElementById('command-input');
@@ -130,11 +129,11 @@
         let allGitHubImages = [];
 
         const groups = [
-            { title: "ROOT_RI", filter: "RI", text: "أول لحظة جمعتنا.. ❤️" },
-            { title: "ROOT_CI", filter: "CI", text: "ضحكنا اللي ما يخلص 😂" },
-            { title: "ROOT_RLI", filter: "RLI", text: "وعدنا للأبد 🔒" },
-            { title: "ROOT_FI", filter: "FI", text: "جنوننا الخاص.." },
-            { title: "ROOT_MY", filter: "MY", text: "أنتِ أجمل بيانات.. ❤️" }
+            { title: "ROOT_RI", filter: "RI" },
+            { title: "ROOT_CI", filter: "CI" },
+            { title: "ROOT_RLI", filter: "RLI" },
+            { title: "ROOT_FI", filter: "FI" },
+            { title: "ROOT_MY", filter: "MY" }
         ];
 
         async function fetchImages() {
@@ -224,13 +223,13 @@
             }, 30);
         }
 
-        function getUniqueQuote() {
+        function getGlobalUniqueQuote() {
             if (availableQuotes.length === 0) {
-                availableQuotes = [...originalQuotes]; // إعادة الملء إذا خلصت الجمل
+                availableQuotes = [...originalQuotes]; // إذا خلصت الـ 30، يصفر القائمة
             }
             const randomIndex = Math.floor(Math.random() * availableQuotes.length);
             const quote = availableQuotes[randomIndex];
-            availableQuotes.splice(randomIndex, 1); // حذف الجملة المختارة لعدم التكرار
+            availableQuotes.splice(randomIndex, 1);
             return quote;
         }
 
@@ -243,13 +242,9 @@
                 item.innerHTML = `<span style="font-size:35px;">📁</span><span style="font-size:11px; color:#fff; margin-top:5px;">${g.title}</span>`;
                 item.onclick = () => {
                     document.getElementById('memory-title').innerText = g.title;
-                    document.getElementById('memory-text').innerText = g.text;
                     const container = document.getElementById('images-container');
                     container.innerHTML = '';
                     
-                    // تصفير القائمة المتاحة عند فتح مجلد جديد لضمان تنوع الجمل في كل مرة
-                    availableQuotes = [...originalQuotes];
-
                     const filtered = allGitHubImages.filter(img => img.name.toUpperCase().startsWith(g.filter));
                     filtered.forEach(imgObj => {
                         const card = document.createElement('div');
@@ -260,7 +255,7 @@
                         
                         const caption = document.createElement('div');
                         caption.className = 'love-caption';
-                        caption.innerText = getUniqueQuote(); // وظيفة منع التكرار
+                        caption.innerText = getGlobalUniqueQuote(); 
                         
                         card.appendChild(img);
                         card.appendChild(caption);
