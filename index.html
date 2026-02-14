@@ -3,37 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>S.Y.S.T.E.M_DECRYPTOR_V4</title>
+    <title>S.Y.S.T.E.M_DECRYPTOR_V3</title>
     <style>
         :root { --matrix: #00ff41; --danger: #ff0033; --bg: #050505; --command: #ffff00; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body, html { background-color: var(--bg); color: var(--matrix); font-family: monospace; margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; }
 
-        /* الشاشات المنبثقة */
         .modal-box { border: 2px solid var(--danger); padding: 25px; text-align: center; background: #000; box-shadow: 0 0 20px var(--danger); z-index: 5000; width: 90%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; }
         #confirm-box { border-color: var(--matrix); box-shadow: 0 0 25px var(--matrix); }
         .btn-style { background: transparent; border: 1px solid var(--matrix); color: var(--matrix); padding: 12px; cursor: pointer; width: 100%; margin-top: 10px; font-weight: bold; font-family: inherit; }
         .btn-red { border-color: var(--danger); color: var(--danger); }
         .pass-input { background: #111; border: 1px solid #333; color: yellow; width: 100%; padding: 12px; text-align: center; margin-top: 10px; font-size: 16px; }
 
-        /* الترمينال */
         .system-container { display: flex; flex-direction: column; height: 100vh; padding: 15px; }
         #log { flex: 1; overflow-y: auto; font-size: 14px; line-height: 1.6; padding-bottom: 100px; scroll-behavior: smooth; }
         #prompt { position: fixed; bottom: 0; left: 0; right: 0; background: #000; padding: 15px; display: none; align-items: center; border-top: 1px solid #222; z-index: 999; }
         #command-input { background: transparent; border: none; color: white; outline: none; flex: 1; font-size: 16px; font-family: monospace; }
 
-        /* مدير الملفات */
         #file-explorer { display: none; position: fixed; top: 10px; left: 10px; right: 10px; bottom: 10px; background: #000; border: 2px solid var(--matrix); z-index: 3000; padding: 15px; flex-direction: column; }
         .explorer-header { border-bottom: 1px solid var(--matrix); padding-bottom: 10px; margin-bottom: 15px; font-size: 12px; color: yellow; }
         .explorer-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; overflow-y: auto; }
         .file-item { display: flex; flex-direction: column; align-items: center; border: 1px solid #222; padding: 12px; border-radius: 5px; background: #0a0a0a; cursor: pointer; }
 
-        /* شاشة عرض الصور المتعددة */
-        #memory-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 6000; padding: 20px; overflow-y: auto; text-align: center; }
-        .gallery-img { width: 100%; max-width: 400px; margin-bottom: 15px; border: 1px solid var(--matrix); border-radius: 5px; box-shadow: 0 0 10px var(--matrix); }
-        #memory-text { color: #fff; margin-bottom: 20px; font-size: 14px; border-right: 2px solid var(--matrix); padding-right: 10px; }
+        /* تعديل شاشة عرض الصور لتسمح بالنزول لتحت */
+        #memory-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 6000; padding: 20px; flex-direction: column; align-items: center; overflow-y: auto; }
+        #memory-text { color: #fff; text-align: center; margin: 15px 0; font-size: 14px; line-height: 1.5; border-right: 2px solid var(--matrix); padding-right: 10px; }
+        
+        /* تنسيق الصور لتكون تحت بعضها */
+        .img-wrapper { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .memory-img-item { max-width: 100%; border: 1px solid var(--matrix); border-radius: 5px; box-shadow: 0 0 10px rgba(0,255,65,0.2); }
 
-        /* التحميل */
         #loading-zone { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; background: #000; padding: 20px; border: 1px solid var(--matrix); z-index: 2000; text-align: center; }
         .bar-container { width: 100%; border: 1px solid var(--matrix); height: 18px; margin-top: 10px; background: #111; }
         .bar-fill { width: 0%; height: 100%; background: var(--matrix); transition: width 0.1s; }
@@ -83,10 +82,10 @@
     </div>
 
     <div id="memory-view">
-        <h3 id="memory-title" style="color: var(--command); margin: 0 0 10px 0;"></h3>
+        <h3 id="memory-title" style="color: var(--command); margin-top: 20px;"></h3>
         <p id="memory-text"></p>
-        <div id="images-container"></div>
-        <button class="btn-style" style="width:120px; margin:20px 0;" onclick="document.getElementById('memory-view').style.display='none'">رجوع للمدير</button>
+        <div id="img-list" class="img-wrapper"></div>
+        <button class="btn-style" style="width:120px; margin:30px 0;" onclick="document.getElementById('memory-view').style.display='none'">رجوع للمدير</button>
     </div>
 
     <script>
@@ -95,13 +94,13 @@
         const passInput = document.getElementById('pass-input');
         let step = 0;
 
-        // مصفوفة البيانات: تقدر تضيف أي عدد من الصور في كل مصفوفة []
+        // عدّل مصفوفات الصور هنا (تقدر تضيف أي عدد من الصور لكل مجلد)
         const groups = [
-            { title: "ROOT_RI", text: "ذكريات RI..", images: ["RI1.jpg", "RI2.jpg", "RI3.jpg"] },
-            { title: "ROOT_CI", text: "ذكريات CI..", images: ["CI1.jpg", "CI2.jpg"] },
-            { title: "ROOT_RLI", text: "ذكريات RLI..", images: ["RLI1.jpg"] },
-            { title: "ROOT_FI", text: "ذكريات FI..", images: ["FI1.jpg", "FI2.jpg"] },
-            { title: "ROOT_MY", text: "ذكرياتنا الخاصة ❤️", images: ["MY1.jpeg", "MY2.jpg"] }
+            { title: "ROOT_RI", text: "أول لحظة جمعتنا.. ❤️", images: ["RI1.jpg", "RI2.jpg", "RI3.jpg"] },
+            { title: "ROOT_CI", text: "كمية الضحك اللي في هالصورة 😂", images: ["CI1.jpg", "CI2.jpg"] },
+            { title: "ROOT_RLI", text: "وعدنا لبعضنا يظل محفور 🔒", images: ["RLI1.jpg"] },
+            { title: "ROOT_FI", text: "مافي أحد بيفهم جنوننا..", images: ["FI1.jpg", "FI2.jpg"] },
+            { title: "ROOT_MY", text: "أنتِ أجمل بيانات.. Y&T ❤️", images: ["MY1.jpeg", "MY2.jpg"] }
         ];
 
         function showPassBox() { document.getElementById('warning-box').style.display = 'none'; document.getElementById('pass-box').style.display = 'block'; }
@@ -123,7 +122,7 @@
 
         async function initHack() {
             await write("بدء عملية كسر التشفير...");
-            await write("أدخلي الأمر: <span style='color:yellow'>تجاوز_الأمان</span>");
+            await write("أدخلي الأمر: <span class='highlight'>تجاوز_الأمان</span>");
             step = 1;
         }
 
@@ -133,12 +132,12 @@
 
         async function handleStep(cmd) {
             if (step === 1 && cmd === 'تجاوز_الأمان') {
-                await write("!!! تحذير: رصد اختراق !!!", 'red');
-                await write("أدخلي بسرعة: <span style='color:yellow'>تثبيت_الاتصال</span>");
+                await write("!!! تحذير: رصد محاولة اختراق !!!", 'red');
+                await write("أدخلي بسرعة: <span class='highlight'>تثبيت_الاتصال</span>");
                 step = 2;
             } else if (step === 2 && cmd === 'تثبيت_الاتصال') {
-                await write("تم تثبيت الجلسة.");
-                await write("أدخلي الأمر: <span style='color:yellow'>سحب_البيانات</span>");
+                await write("نجاح! تم تثبيت الجلسة.");
+                await write("أدخلي الأمر: <span class='highlight'>سحب_البيانات</span>");
                 step = 3;
             } else if (step === 3 && cmd === 'سحب_البيانات') {
                 document.getElementById('prompt').style.display = 'none';
@@ -149,9 +148,10 @@
 
         function runLoading() {
             let p = 0;
+            let bar = document.getElementById('bar');
             let int = setInterval(() => {
-                p += 0.15; 
-                document.getElementById('bar').style.width = p + '%';
+                p += 0.5;
+                bar.style.width = p + '%';
                 if (p >= 100) { clearInterval(int); document.getElementById('loading-zone').style.display = 'none'; document.getElementById('confirm-box').style.display = 'block'; }
             }, 50);
         }
@@ -162,9 +162,10 @@
             document.getElementById('extract-btn').style.display = 'none';
             document.getElementById('extract-bar-cont').style.display = 'block';
             let p = 0;
+            let bar = document.getElementById('extract-bar-fill');
             let int = setInterval(() => {
-                p += 0.8;
-                document.getElementById('extract-bar-fill').style.width = p + '%';
+                p += 1;
+                bar.style.width = p + '%';
                 if (p >= 100) { clearInterval(int); document.getElementById('zip-section').style.display = 'none'; showGroups(); }
             }, 40);
         }
@@ -175,19 +176,23 @@
             groups.forEach(g => {
                 const item = document.createElement('div');
                 item.className = 'file-item';
-                item.innerHTML = `<span>📁</span><span style="font-size:11px; color:#fff; margin-top:5px;">${g.title}</span>`;
+                item.innerHTML = `<span style="font-size:30px;">📁</span><span style="font-size:11px; color:#fff;">${g.title}</span>`;
                 item.onclick = () => {
                     document.getElementById('memory-title').innerText = g.title;
                     document.getElementById('memory-text').innerText = g.text;
-                    const container = document.getElementById('images-container');
-                    container.innerHTML = ''; // تفريغ الصور السابقة
-                    g.images.forEach(src => {
+                    const imgList = document.getElementById('img-list');
+                    imgList.innerHTML = ''; // تنظيف الصور القديمة
+                    
+                    // إضافة كل الصور الموجودة في المجلد تحت بعض
+                    g.images.forEach(imgSrc => {
                         const img = document.createElement('img');
-                        img.src = src;
-                        img.className = 'gallery-img';
-                        container.appendChild(img);
+                        img.src = imgSrc;
+                        img.className = 'memory-img-item';
+                        imgList.appendChild(img);
                     });
-                    document.getElementById('memory-view').style.display = 'block';
+                    
+                    document.getElementById('memory-view').style.display = 'flex';
+                    document.getElementById('memory-view').scrollTop = 0; // يبدأ من فوق
                 };
                 grid.appendChild(item);
             });
